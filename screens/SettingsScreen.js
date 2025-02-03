@@ -16,10 +16,10 @@ import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 
 const SettingsScreen = () => {
+  const { t, i18n } = useTranslation();
+
   const [language, setLanguage] = React.useState(i18n.language);
   const { theme } = React.useContext(ThemeContext);
-
-  const { t, i18n } = useTranslation();
 
   const styles = getStyles(theme);
 
