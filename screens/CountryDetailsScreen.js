@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -13,8 +13,9 @@ import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 
 const CountryDetailsScreen = ({ route, navigation }) => {
+  const { theme } = React.useContext(ThemeContext);
+
   const { t } = useTranslation();
-  const { theme } = useContext(ThemeContext);
   const styles = getStyles(theme);
 
   const { country } = route.params;

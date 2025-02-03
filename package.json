@@ -18,10 +18,9 @@
     "@react-navigation/stack": "^7.1.1",
     "axios": "^1.7.9",
     "expo": "~52.0.28",
-    "expo-app-loading": "^2.1.1",
     "expo-constants": "~17.0.5",
     "expo-font": "~13.0.3",
-    "expo-splash-screen": "~0.29.21",
+    "expo-splash-screen": "^0.29.21",
     "expo-status-bar": "~2.0.1",
     "expo-updates": "~0.26.15",
     "i18next": "^24.2.2",
@@ -38,8 +37,15 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~18.3.12",
-    "@types/react-native": "^0.72.8",
     "typescript": "^5.3.3"
   },
-  "private": true
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "exclude": [
+          "react-native-maps"
+        ]
+      }
+    }
+  }
 }

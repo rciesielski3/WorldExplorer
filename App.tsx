@@ -1,20 +1,20 @@
 import React from "react";
-
 import { ActivityIndicator } from "react-native";
+import Toast from "react-native-toast-message";
+import * as Font from "expo-font";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import * as Font from "expo-font";
-import Toast from "react-native-toast-message";
 
+import { ThemeProvider } from "./context/ThemeContext";
 import HomeScreen from "./screens/HomeScreen";
 import ExploreScreen from "./screens/ExploreScreen";
 import MapScreen from "./screens/MapScreen";
 import QuizScreen from "./screens/quiz/QuizScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import CountryDetailsScreen from "./screens/CountryDetailsScreen";
-import { ThemeProvider } from "./context/ThemeContext";
-import "./i18n";
 import QuizResultsScreen from "./screens/quiz/QuizResultsScreen";
+import "./i18n";
 
 const Stack = createStackNavigator();
 

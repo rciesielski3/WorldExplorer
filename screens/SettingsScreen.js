@@ -5,20 +5,21 @@ import {
   Switch,
   TouchableOpacity,
   ImageBackground,
+  Linking,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import * as Constants from "expo-constants";
 import { useTranslation } from "react-i18next";
-import Toast from "react-native-toast-message";
-import { Linking } from "react-native";
+
+import { Picker } from "@react-native-picker/picker";
 
 import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 
 const SettingsScreen = () => {
-  const { theme } = React.useContext(ThemeContext);
-  const { t, i18n } = useTranslation();
   const [language, setLanguage] = React.useState(i18n.language);
+  const { theme } = React.useContext(ThemeContext);
+
+  const { t, i18n } = useTranslation();
 
   const styles = getStyles(theme);
 

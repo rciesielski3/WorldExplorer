@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React from "react";
 import {
   FlatList,
   Text,
@@ -15,20 +15,20 @@ import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 
 const ExploreScreen = ({ navigation }) => {
-  const [countries, setCountries] = useState([]);
-  const [searchQuery, setSearchQuery] = useState(""); // ✅ State for search
-  const { theme } = useContext(ThemeContext);
+  const [countries, setCountries] = React.useState([]);
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const { theme } = React.useContext(ThemeContext);
+
   const { t } = useTranslation();
 
   const styles = getStyles(theme);
 
-  useEffect(() => {
+  React.useEffect(() => {
     axios.get("https://restcountries.com/v3.1/all").then((response) => {
       setCountries(response.data);
     });
   }, []);
 
-  // ✅ Filter countries based on searchQuery
   const filteredCountries = countries.filter((country) =>
     country.name.common.toLowerCase().startsWith(searchQuery.toLowerCase())
   );

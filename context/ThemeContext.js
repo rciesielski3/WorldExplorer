@@ -1,5 +1,6 @@
 import React from "react";
-import { View, ImageBackground } from "react-native";
+import { ImageBackground } from "react-native";
+
 import { getStyles } from "../styles";
 
 export const ThemeContext = React.createContext();
