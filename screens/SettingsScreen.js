@@ -60,21 +60,30 @@ const SettingsScreen = () => {
             {t("appVersion")}: {Constants.expoConfig?.version || "1.0.0"}
           </Text>
         </View>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() =>
-            Toast.show({
-              type: "info",
-              text1: "Created by Rafał Ciesielski",
-              text2: "Click here to visit portfolio",
-              onPress: () =>
-                Linking.openURL("https://rciesielski3.github.io/portfolio/"),
-              position: "bottom",
-            })
-          }
-        >
-          <Text style={styles.buttonText}>{t("aboutDeveloper")}</Text>
-        </TouchableOpacity>
+        <View style={{ marginTop: 40, alignItems: "center" }}>
+          <View style={{ alignItems: "center" }}>
+            <Text style={styles.buttonText}>Created by Rafał Ciesielski</Text>
+            <TouchableOpacity
+              onPress={() =>
+                Linking.openURL("https://rciesielski3.github.io/portfolio/")
+              }
+            >
+              <Text
+                style={[
+                  styles.buttonText,
+                  { color: "lightblue", textDecorationLine: "underline" },
+                ]}
+              >
+                Portfolio
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ marginTop: 20 }}>
+            <Text style={[styles.buttonText, { fontSize: 12 }]}>
+              © {new Date().getFullYear()} Adateo. All rights reserved.
+            </Text>
+          </View>
+        </View>
       </View>
     </ImageBackground>
   );

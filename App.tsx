@@ -60,7 +60,6 @@ export default function App() {
           <Stack.Screen
             name="CountryDetails"
             component={CountryDetailsScreen}
-            // options={{ title: "Country Details" }}
           />
         </Stack.Navigator>
         <Toast />
