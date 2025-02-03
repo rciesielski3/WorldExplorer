@@ -1,16 +1,20 @@
 import React from "react";
 import { View, Text, TouchableOpacity, ImageBackground } from "react-native";
 import { useTranslation } from "react-i18next";
-import { styles } from "../styles";
+
+import { ThemeContext } from "../context/ThemeContext";
+import { getStyles } from "../styles";
 
 const HomeScreen = ({ navigation }) => {
   const { t } = useTranslation();
+
+  const { theme } = React.useContext(ThemeContext);
+  const styles = getStyles(theme);
 
   return (
     <ImageBackground
       source={require("../assets/worldMapBackground.png")}
       style={styles.backgroundImage}
-      resizeMode="cover"
     >
       <View style={styles.container}>
         <View style={styles.containerButtons}>

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -8,14 +8,19 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import * as Constants from "expo-constants";
-import { ThemeContext } from "../context/ThemeContext";
 import { useTranslation } from "react-i18next";
-import { styles } from "../styles";
+import Toast from "react-native-toast-message";
+import { Linking } from "react-native";
+
+import { ThemeContext } from "../context/ThemeContext";
+import { getStyles } from "../styles";
 
 const SettingsScreen = () => {
-  const { isDarkMode, toggleTheme } = useContext(ThemeContext);
+  const { theme } = React.useContext(ThemeContext);
   const { t, i18n } = useTranslation();
-  const [language, setLanguage] = useState(i18n.language);
+  const [language, setLanguage] = React.useState(i18n.language);
+
+  const styles = getStyles(theme);
 
   const changeLanguage = (value) => {
     setLanguage(value);
@@ -26,18 +31,17 @@ const SettingsScreen = () => {
     <ImageBackground
       source={require("../assets/worldMapBackground.png")}
       style={styles.backgroundImage}
-      resizeMode="cover"
     >
       <View style={styles.containerContent}>
         <Text style={styles.title}>{t("settings")}</Text>
 
         <View style={styles.settingItem}>
-          <Text style={{ color: "#333333" }}>{t("darkMode")}</Text>
-          <Switch value={isDarkMode} onValueChange={toggleTheme} />
+          <Text style={styles.buttonText}>{t("darkMode")}</Text>
+          <Switch value={theme.isDarkMode} onValueChange={theme.toggleTheme} />
         </View>
 
         <View style={styles.settingItem}>
-          <Text style={{ color: "#333333" }}>{t("language")}</Text>
+          <Text style={styles.buttonText}>{t("language")}</Text>
           <Picker
             selectedValue={language}
             onValueChange={changeLanguage}
@@ -52,14 +56,22 @@ const SettingsScreen = () => {
         </View>
 
         <View style={styles.settingItem}>
-          <Text style={{ color: "#333333" }}>
+          <Text style={styles.buttonText}>
             {t("appVersion")}: {Constants.expoConfig?.version || "1.0.0"}
           </Text>
         </View>
-
         <TouchableOpacity
           style={styles.button}
-          onPress={() => alert("Created by Rafał Ciesielski")}
+          onPress={() =>
+            Toast.show({
+              type: "info",
+              text1: "Created by Rafał Ciesielski",
+              text2: "Click here to visit portfolio",
+              onPress: () =>
+                Linking.openURL("https://rciesielski3.github.io/portfolio/"),
+              position: "bottom",
+            })
+          }
         >
           <Text style={styles.buttonText}>{t("aboutDeveloper")}</Text>
         </TouchableOpacity>

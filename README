@@ -1,9 +1,135 @@
----
-### How to Use
+# World Explorer
 
-1. Copy the entire content above.
-2. Create a new file named `README.md` in the root of your project.
-3. Paste the content into the `README.md` file.
-4. Replace placeholders like `your-username` and `your-email@example.com` with your actual details.
-5. Add screenshots to the `screenshots` folder and update the screenshot paths in the `README.md` file.
+**World Explorer** is a mobile app designed to help users learn about countries, their capitals, flags, and interesting facts. The app includes interactive features like a world map, quizzes, and customizable settings for theme and language.
+
 ---
+
+## Features
+
+1. **Explore**:
+
+   - Browse a list of all countries.
+   - View detailed information about each country, including:
+     - Flag
+     - Capital
+     - Population
+     - Official language(s)
+     - Currency
+     - Interesting facts
+
+2. **Map**:
+
+   - Interactive world map with zoom and click functionality.
+   - Click on a country to view its details.
+
+3. **Quiz**:
+
+   - Automatically generated quizzes with questions like:
+     - Identify the country from its flag.
+     - Identify the flag from the country name.
+     - Identify the country from its capital.
+
+4. **Settings**:
+   - Toggle between light and dark themes.
+   - Change the app language (English, Spanish, French, German, Polish).
+   - View app version and developer information.
+
+---
+
+## Screenshots
+
+| Explore Screen                      | Map Screen                  | Quiz Screen                   | Settings Screen                       |
+| ----------------------------------- | --------------------------- | ----------------------------- | ------------------------------------- |
+| ![Explore](screenshots/explore.png) | ![Map](screenshots/map.png) | ![Quiz](screenshots/quiz.png) | ![Settings](screenshots/settings.png) |
+
+---
+
+## Installation
+
+### Prerequisites
+
+- Node.js (v16 or higher)
+- Expo CLI
+- Android/iOS device or emulator
+
+### Steps
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/your-username/world-explorer.git
+
+   cd world-explorer
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   bash
+   Copy
+   npx expo start
+
+4. Run the app:
+
+   Scan the QR code with the Expo Go app on your phone.
+
+   Or use an Android/iOS emulator.
+
+## Configuration
+
+### Environment Variables
+
+No environment variables are required for this app.
+
+### Localization
+
+The app supports multiple languages. To add a new language:
+
+Create a new JSON file in the locales folder (e.g., it.json for Italian).
+
+Add translations for all keys used in the app.
+
+Update the language picker in SettingsScreen.js to include the new language.
+
+### Technologies Used
+
+Frontend: React Native, Expo
+
+Navigation: React Navigation
+
+API: REST Countries
+
+Localization: i18next
+
+Maps: React Native Maps
+
+Styling: React Native Stylesheet
+
+## Contributing
+
+Contributions are welcome! Follow these steps:
+
+1. Fork the repository.
+2. Create a new branch:
+
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+3. Commit your changes:
+
+   ```bash
+   git commit -m "Add your feature"
+   ```
+
+4. Push to the branch:
+
+   ```bash
+    git push origin feature/your-feature-name
+   ```
+
+5. Open a pull request.

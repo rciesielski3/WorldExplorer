@@ -1,22 +1,46 @@
 import React from "react";
 
+import { ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import * as Font from "expo-font";
+import Toast from "react-native-toast-message";
 
 import HomeScreen from "./screens/HomeScreen";
 import ExploreScreen from "./screens/ExploreScreen";
 import MapScreen from "./screens/MapScreen";
-import QuizScreen from "./screens/QuizScreen";
+import QuizScreen from "./screens/quiz/QuizScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import CountryDetailsScreen from "./screens/CountryDetailsScreen";
 import { ThemeProvider } from "./context/ThemeContext";
 import "./i18n";
+import QuizResultsScreen from "./screens/quiz/QuizResultsScreen";
 
 const Stack = createStackNavigator();
 
 export default function App() {
+  const [isDarkMode, setIsDarkMode] = React.useState(false);
+
+  const toggleTheme = () => setIsDarkMode((prev) => !prev);
+  const [fontsLoaded, setFontsLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    async function loadFonts() {
+      await Font.loadAsync({
+        "Exo2-Regular": require("./assets/fonts/Exo2-Regular.ttf"),
+        "Exo2-Bold": require("./assets/fonts/Exo2-Bold.ttf"),
+      });
+      setFontsLoaded(true);
+    }
+    loadFonts();
+  }, []);
+
+  if (!fontsLoaded) {
+    return <ActivityIndicator size="large" color="#6366F1" />;
+  }
+
   return (
-    <ThemeProvider>
+    <ThemeProvider isDarkMode={isDarkMode} toggleTheme={toggleTheme}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen
@@ -27,13 +51,19 @@ export default function App() {
           <Stack.Screen name="Explore" component={ExploreScreen} />
           <Stack.Screen name="Map" component={MapScreen} />
           <Stack.Screen name="Quiz" component={QuizScreen} />
+          <Stack.Screen
+            name="QuizResults"
+            component={QuizResultsScreen}
+            options={{ title: "Your Score" }}
+          />
           <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen
             name="CountryDetails"
             component={CountryDetailsScreen}
-            options={{ title: "Country Details" }}
+            // options={{ title: "Country Details" }}
           />
         </Stack.Navigator>
+        <Toast />
       </NavigationContainer>
     </ThemeProvider>
   );

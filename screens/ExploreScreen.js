@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   FlatList,
   Text,
@@ -6,21 +6,32 @@ import {
   Image,
   TouchableOpacity,
   ImageBackground,
+  TextInput,
 } from "react-native";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 
-import { styles } from "../styles";
+import { ThemeContext } from "../context/ThemeContext";
+import { getStyles } from "../styles";
 
 const ExploreScreen = ({ navigation }) => {
-  const [countries, setCountries] = React.useState([]);
+  const [countries, setCountries] = useState([]);
+  const [searchQuery, setSearchQuery] = useState(""); // ✅ State for search
+  const { theme } = useContext(ThemeContext);
   const { t } = useTranslation();
 
-  React.useEffect(() => {
+  const styles = getStyles(theme);
+
+  useEffect(() => {
     axios.get("https://restcountries.com/v3.1/all").then((response) => {
       setCountries(response.data);
     });
   }, []);
+
+  // ✅ Filter countries based on searchQuery
+  const filteredCountries = countries.filter((country) =>
+    country.name.common.toLowerCase().startsWith(searchQuery.toLowerCase())
+  );
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -42,12 +53,20 @@ const ExploreScreen = ({ navigation }) => {
     <ImageBackground
       source={require("../assets/worldMapBackground.png")}
       style={styles.backgroundImage}
-      resizeMode="cover"
     >
-      <View style={styles.container}>
+      <View style={styles.containerContent}>
         <Text style={styles.title}>{t("exploreCountries")}</Text>
+        <Text style={styles.subtitle2}>{t("search")}</Text>
+        <TextInput
+          style={styles.searchBox}
+          placeholder={t("searchEnterName")}
+          placeholderTextColor={theme.colors.buttonText}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+        <Text style={styles.subtitle2}>{t("searchResults")}</Text>
         <FlatList
-          data={countries}
+          data={filteredCountries}
           renderItem={renderItem}
           keyExtractor={(item) => item.cca3}
         />
