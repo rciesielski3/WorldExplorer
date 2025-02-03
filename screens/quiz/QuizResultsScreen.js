@@ -23,17 +23,13 @@ const QuizResultsScreen = ({ route, navigation }) => {
       source={require("../../assets/worldMapBackground.png")}
       style={styles.backgroundImage}
     >
-      <ScrollView
-        style={styles.containerScrollView}
-        contentContainerStyle={{ justifyContent: "center" }}
-      >
-        {/* <View style={styles.innerContainer}> */}
+      <ScrollView style={styles.containerScrollView}>
         <Text style={styles.title}>
           {t("quizScore")} {score}/{questions.length}
         </Text>
 
         {questions.map((question, index) => (
-          <View style={styles.containerContent}>
+          <View style={styles.containerContent} key={index}>
             <Text style={styles.subtitle}>
               {t("quizQuestion")} {index + 1}
             </Text>

@@ -89,15 +89,14 @@ export const getStyles = (theme) =>
       backgroundColor: theme.colors.card,
     },
     flag: {
-      width: 50,
-      height: 30,
+      width: 100,
+      height: 60,
       marginRight: 16,
       borderRadius: 4,
     },
     flagCountryDetails: {
-      width: "100%",
+      width: "80%",
       height: 150,
-      resizeMode: "contain",
       marginBottom: 16,
       borderRadius: 8,
     },

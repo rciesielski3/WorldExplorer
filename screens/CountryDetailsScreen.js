@@ -34,12 +34,7 @@ const CountryDetailsScreen = ({ route, navigation }) => {
       style={styles.backgroundImage}
       resizeMode="cover"
     >
-      <ScrollView
-        style={styles.containerScrollView}
-        contentContainerStyle={{
-          justifyContent: "center",
-        }}
-      >
+      <ScrollView style={styles.containerScrollView}>
         <View style={styles.innerContainer}>
           <Image
             source={{ uri: country.flags.png }}
