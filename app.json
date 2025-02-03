@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "WorldExplorer",
+    "slug": "WorldExplorer",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/WorldExplorer.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/WorldExplorer.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": ["expo-font"]
+  }
+}

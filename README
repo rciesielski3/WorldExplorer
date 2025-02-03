@@ -1,0 +1,9 @@
+---
+### How to Use
+
+1. Copy the entire content above.
+2. Create a new file named `README.md` in the root of your project.
+3. Paste the content into the `README.md` file.
+4. Replace placeholders like `your-username` and `your-email@example.com` with your actual details.
+5. Add screenshots to the `screenshots` folder and update the screenshot paths in the `README.md` file.
+---
