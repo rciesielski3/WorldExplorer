@@ -2,6 +2,7 @@ import React from "react";
 import { ActivityIndicator } from "react-native";
 import Toast from "react-native-toast-message";
 import * as Font from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -18,21 +19,28 @@ import "./i18n";
 
 const Stack = createStackNavigator();
 
+SplashScreen.preventAutoHideAsync();
+
 export default function App() {
   const [isDarkMode, setIsDarkMode] = React.useState(false);
-
   const toggleTheme = () => setIsDarkMode((prev) => !prev);
   const [fontsLoaded, setFontsLoaded] = React.useState(false);
 
   React.useEffect(() => {
-    async function loadFonts() {
-      await Font.loadAsync({
-        "Exo2-Regular": require("./assets/fonts/Exo2-Regular.ttf"),
-        "Exo2-Bold": require("./assets/fonts/Exo2-Bold.ttf"),
-      });
-      setFontsLoaded(true);
+    async function loadFontsAndHideSplash() {
+      try {
+        await Font.loadAsync({
+          "Exo2-Regular": require("./assets/fonts/Exo2-Regular.ttf"),
+          "Exo2-Bold": require("./assets/fonts/Exo2-Bold.ttf"),
+        });
+        setFontsLoaded(true);
+      } catch (error) {
+        console.error("Error loading fonts: ", error);
+      } finally {
+        SplashScreen.hideAsync();
+      }
     }
-    loadFonts();
+    loadFontsAndHideSplash();
   }, []);
 
   if (!fontsLoaded) {
