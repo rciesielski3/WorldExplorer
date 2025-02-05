@@ -4,11 +4,11 @@
     "slug": "WorldExplorer",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/worldExplorer.png",
+    "icon": "./assets/world.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/worldExplorer.png",
+      "image": "./assets/world.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

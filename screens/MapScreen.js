@@ -27,6 +27,7 @@ const MapScreen = ({ route }) => {
       <View style={styles.mapContainer}>
         <Text style={styles.title}>{countryName}</Text>
         <MapView
+          provider="google"
           style={{ flex: 1 }}
           initialRegion={{
             latitude,

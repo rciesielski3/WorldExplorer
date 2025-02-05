@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -14,16 +14,15 @@ import { ThemeContext } from "../../context/ThemeContext";
 import { getStyles } from "../../styles";
 
 const QuizScreen = ({ navigation }) => {
-  const [score, setScore] = useState(0);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [questions, setQuestions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const { theme } = useContext(ThemeContext);
-  const { t, i18n } = useTranslation();
+  const [score, setScore] = React.useState(0);
+  const [currentQuestion, setCurrentQuestion] = React.useState(0);
+  const [questions, setQuestions] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const { theme } = React.useContext(ThemeContext);
+  const { t } = useTranslation();
   const styles = getStyles(theme);
 
-  // Fetch and Generate Questions
-  useEffect(() => {
+  React.useEffect(() => {
     let isMounted = true;
     axios
       .get("https://restcountries.com/v3.1/all")
@@ -37,7 +36,7 @@ const QuizScreen = ({ navigation }) => {
       })
       .catch((error) => console.error("Error fetching countries:", error));
 
-    return () => (isMounted = false); // Cleanup function
+    return () => (isMounted = false);
   }, []);
 
   const generateQuestions = (countries) => {

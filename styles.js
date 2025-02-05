@@ -95,7 +95,7 @@ export const getStyles = (theme) =>
       borderRadius: 4,
     },
     flagCountryDetails: {
-      width: "80%",
+      width: "100%",
       height: 150,
       marginBottom: 16,
       borderRadius: 8,

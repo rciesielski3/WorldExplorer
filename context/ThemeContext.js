@@ -1,5 +1,4 @@
 import React from "react";
-import { ImageBackground } from "react-native";
 
 import { getStyles } from "../styles";
 
@@ -31,13 +30,6 @@ export const ThemeProvider = ({ children, isDarkMode, toggleTheme }) => {
   const styles = getStyles(theme);
 
   return (
-    <ThemeContext.Provider value={{ theme }}>
-      <ImageBackground
-        source={require("../assets/worldMapBackground.png")}
-        style={styles.backgroundImage}
-      >
-        {children}
-      </ImageBackground>
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={{ theme }}>{children}</ThemeContext.Provider>
   );
 };
