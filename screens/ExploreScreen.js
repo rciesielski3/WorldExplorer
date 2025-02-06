@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ImageBackground,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
@@ -17,6 +18,7 @@ import { getStyles } from "../styles";
 const ExploreScreen = ({ navigation }) => {
   const [countries, setCountries] = React.useState([]);
   const [searchQuery, setSearchQuery] = React.useState("");
+  const [loading, setLoading] = React.useState(true);
   const { theme } = React.useContext(ThemeContext);
 
   const { t } = useTranslation();
@@ -24,9 +26,13 @@ const ExploreScreen = ({ navigation }) => {
   const styles = getStyles(theme);
 
   React.useEffect(() => {
-    axios.get("https://restcountries.com/v3.1/all").then((response) => {
-      setCountries(response.data);
-    });
+    axios
+      .get("https://restcountries.com/v3.1/all")
+      .then((response) => {
+        setCountries(response.data);
+      })
+      .catch((error) => console.error("Error fetching countries:", error))
+      .finally(() => setLoading(false));
   }, []);
 
   const filteredCountries = countries.filter((country) =>
@@ -65,11 +71,17 @@ const ExploreScreen = ({ navigation }) => {
           onChangeText={setSearchQuery}
         />
         <Text style={styles.subtitle2}>{t("searchResults")}</Text>
-        <FlatList
-          data={filteredCountries}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.cca3}
-        />
+        {loading ? (
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator size="large" color="#6366F1" />
+          </View>
+        ) : (
+          <FlatList
+            data={filteredCountries}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.cca3}
+          />
+        )}
       </View>
     </ImageBackground>
   );

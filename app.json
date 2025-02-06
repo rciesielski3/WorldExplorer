@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/world.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/world.png",
       "resizeMode": "contain",
@@ -23,6 +23,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "@env.GOOGLE_MAPS_API_KEY"
+        }
       },
       "package": "com.adateo.WorldExplorer"
     },

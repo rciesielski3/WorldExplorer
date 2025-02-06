@@ -159,4 +159,10 @@ export const getStyles = (theme) =>
       borderRadius: 8,
       color: theme.colors.buttonText,
     },
+    loaderContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: 20,
+    },
   });
