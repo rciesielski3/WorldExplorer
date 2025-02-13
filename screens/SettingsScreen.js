@@ -58,7 +58,7 @@ const SettingsScreen = () => {
 
         <View style={styles.settingItem}>
           <Text style={styles.buttonText}>
-            {t("appVersion")}: {Constants.expoConfig?.version || "1.0.0"}
+            {t("appVersion")}: {Constants.expoConfig?.version || "1.1.0"}
           </Text>
         </View>
         <View style={{ marginTop: 40, alignItems: "center" }}>

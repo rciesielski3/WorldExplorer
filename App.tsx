@@ -6,6 +6,9 @@ import {
   Exo2_700Bold,
 } from "@expo-google-fonts/exo-2";
 import { ActivityIndicator } from "react-native";
+import { useTranslation } from "react-i18next";
+import "./i18n";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -17,13 +20,14 @@ import QuizScreen from "./screens/quiz/QuizScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import CountryDetailsScreen from "./screens/CountryDetailsScreen";
 import QuizResultsScreen from "./screens/quiz/QuizResultsScreen";
-import "./i18n";
 
 const Stack = createStackNavigator();
 
 export default function App() {
   const [isDarkMode, setIsDarkMode] = React.useState(false);
   const toggleTheme = () => setIsDarkMode((prev) => !prev);
+
+  const { t } = useTranslation();
 
   const [fontsLoaded] = useFonts({
     "Exo2-Regular": Exo2_400Regular,
@@ -43,24 +47,44 @@ export default function App() {
   return (
     <ThemeProvider isDarkMode={isDarkMode} toggleTheme={toggleTheme}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
+        <Stack.Navigator
+          initialRouteName="Home"
+          screenOptions={{ headerShown: false }}
+        >
           <Stack.Screen
             name="Home"
             component={HomeScreen}
             options={{ title: "World Explorer" }}
           />
-          <Stack.Screen name="Explore" component={ExploreScreen} />
-          <Stack.Screen name="Map" component={MapScreen} />
-          <Stack.Screen name="Quiz" component={QuizScreen} />
+          <Stack.Screen
+            name="Explore"
+            component={ExploreScreen}
+            options={{ title: t("explore") }}
+          />
+          <Stack.Screen
+            name="Map"
+            component={MapScreen}
+            options={{ title: t("map") }}
+          />
+          <Stack.Screen
+            name="Quiz"
+            component={QuizScreen}
+            options={{ title: t("quiz") }}
+          />
           <Stack.Screen
             name="QuizResults"
             component={QuizResultsScreen}
-            options={{ title: "Your Score" }}
+            options={{ title: t("yourScore") }}
           />
-          <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen
+            name="Settings"
+            component={SettingsScreen}
+            options={{ title: t("settings") }}
+          />
           <Stack.Screen
             name="CountryDetails"
             component={CountryDetailsScreen}
+            options={{ title: t("countryDetails") }}
           />
         </Stack.Navigator>
         <Toast />

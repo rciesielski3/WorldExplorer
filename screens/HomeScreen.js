@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
+import LottieView from "lottie-react-native";
 
 const HomeScreen = ({ navigation }) => {
   const { t } = useTranslation();
@@ -17,6 +18,16 @@ const HomeScreen = ({ navigation }) => {
       style={styles.backgroundImage}
     >
       <View style={styles.container}>
+        <LottieView
+          source={require("../assets/animations/explore.json")}
+          autoPlay
+          loop
+          style={{
+            width: 200,
+            height: 200,
+            alignSelf: "center",
+          }}
+        />
         <View style={styles.containerButtons}>
           <Text style={styles.title}>{t("welcome")} World Explorer</Text>
           <View style={{ width: "100%" }}>
