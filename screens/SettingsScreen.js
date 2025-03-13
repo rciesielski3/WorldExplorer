@@ -66,7 +66,9 @@ const SettingsScreen = () => {
             <Text style={styles.buttonText}>Created by Rafał Ciesielski</Text>
             <TouchableOpacity
               onPress={() =>
-                Linking.openURL("https://rciesielski3.github.io/portfolio/")
+                Linking.openURL(
+                  "https://rciesielski3.github.io/portfolio/#/contact"
+                )
               }
             >
               <Text
@@ -75,7 +77,7 @@ const SettingsScreen = () => {
                   { color: "lightblue", textDecorationLine: "underline" },
                 ]}
               >
-                Portfolio
+                {t("contact")}
               </Text>
             </TouchableOpacity>
           </View>
