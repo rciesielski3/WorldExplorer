@@ -31,5 +31,11 @@
   "language": "Idioma",
   "appVersion": "Versión de la Aplicación",
   "aboutDeveloper": "Acerca del Desarrollador",
-  "contact": "Contacto"
+  "contact": "Contacto",
+  "premium": "Premium",
+  "premiumActive": "Premium activo. Los anuncios están desactivados.",
+  "premiumDescription": "Elimina los anuncios de World Explorer.",
+  "buyPremium": "Comprar Premium",
+  "restorePurchases": "Restaurar",
+  "loading": "Cargando..."
 }

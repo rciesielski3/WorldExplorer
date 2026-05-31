@@ -41,5 +41,8 @@
       }
     },
     "assetBundlePatterns": ["**/*"]
+  },
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-4185040274135926~2042240790"
   }
 }

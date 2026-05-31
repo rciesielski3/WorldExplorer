@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
+import AdBanner from "../components/AdBanner";
 
 const MapScreen = ({ route }) => {
   const { isDarkMode, theme } = React.useContext(ThemeContext);
@@ -38,6 +39,7 @@ const MapScreen = ({ route }) => {
           <Marker coordinate={{ latitude, longitude }} title={countryName} />
         </MapView>
       </View>
+      <AdBanner />
     </ImageBackground>
   );
 };

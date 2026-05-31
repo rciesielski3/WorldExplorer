@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 
 import { ThemeContext } from "../../context/ThemeContext";
 import { getStyles } from "../../styles";
+import AdBanner from "../../components/AdBanner";
 
 const QuizScreen = ({ navigation }) => {
   const [score, setScore] = React.useState(0);
@@ -194,6 +195,7 @@ const QuizScreen = ({ navigation }) => {
           </>
         )}
       </View>
+      <AdBanner />
     </ImageBackground>
   );
 };

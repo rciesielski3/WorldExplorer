@@ -31,5 +31,11 @@
   "language": "Language",
   "appVersion": "App Version",
   "aboutDeveloper": "About Developer",
-  "contact": "Contact"
+  "contact": "Contact",
+  "premium": "Premium",
+  "premiumActive": "Premium active. Ads are disabled.",
+  "premiumDescription": "Remove ads from World Explorer.",
+  "buyPremium": "Buy Premium",
+  "restorePurchases": "Restore",
+  "loading": "Loading..."
 }

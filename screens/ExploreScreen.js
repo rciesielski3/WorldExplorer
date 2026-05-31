@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 
 import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
+import AdBanner from "../components/AdBanner";
 
 const ExploreScreen = ({ navigation }) => {
   const [countries, setCountries] = React.useState([]);
@@ -83,6 +84,7 @@ const ExploreScreen = ({ navigation }) => {
           />
         )}
       </View>
+      <AdBanner />
     </ImageBackground>
   );
 };
