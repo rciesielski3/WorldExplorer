@@ -58,7 +58,7 @@ const SettingsScreen = () => {
 
         <View style={styles.settingItem}>
           <Text style={styles.buttonText}>
-            {t("appVersion")}: {Constants.expoConfig?.version || "1.2.1"}
+            {t("appVersion")}: {Constants.expoConfig?.version || ""}
           </Text>
         </View>
 
