@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 
 import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
+import AdBanner from "../components/AdBanner";
 
 const CountryDetailsScreen = ({ route, navigation }) => {
   const { theme } = React.useContext(ThemeContext);
@@ -68,6 +69,7 @@ const CountryDetailsScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      <AdBanner />
     </ImageBackground>
   );
 };

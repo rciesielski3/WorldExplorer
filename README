@@ -83,7 +83,41 @@
 
 ### Environment Variables
 
-No environment variables are required for this app.
+Create a local ignored `.env.local` or configure the same values in EAS/CI:
+
+```bash
+EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY=goog_xxxxxxxxxxxxxxxxx
+EXPO_PUBLIC_REVENUECAT_IOS_API_KEY=appl_xxxxxxxxxxxxxxxxx
+EXPO_PUBLIC_PREMIUM_PRODUCT_ID=worldexplorer_premium_lifetime
+EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID=premium
+
+ADMOB_APP_ID=ca-app-pub-4185040274135926~2042240790
+ADMOB_BANNER_ID=ca-app-pub-4185040274135926/5472119846
+ADMOB_IOS_APP_ID=ca-app-pub-3940256099942544~1458002511
+```
+
+`EXPO_PUBLIC_PREMIUM_PRODUCT_ID` defaults to `worldexplorer_premium_lifetime`.
+`EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID` defaults to `premium`.
+
+### RevenueCat Premium Setup
+
+Configure RevenueCat and Google Play before testing real purchases:
+
+1. Create or reuse a RevenueCat project.
+2. Add the Android app with package name `com.adateo.WorldExplorer`.
+3. Add the iOS app with bundle id `com.adateo.WorldExplorer` if iOS is enabled.
+4. In Google Play Console, create a one-time in-app product named `worldexplorer_premium_lifetime`.
+5. In RevenueCat, import or create the product `worldexplorer_premium_lifetime`.
+6. Create entitlement `premium`.
+7. Attach `worldexplorer_premium_lifetime` to entitlement `premium`.
+8. Optionally create a `default` offering for dashboard visibility; the app purchases the direct product id.
+9. Connect Google Play service credentials in RevenueCat.
+10. Upload a signed build to an internal testing track before expecting products to resolve on device.
+11. Add Play license tester accounts for purchase testing.
+
+The app uses anonymous RevenueCat users, syncs entitlement status on startup, exposes Restore Purchase in Settings, and hides ads whenever entitlement `premium` is active.
+
+Expo Go cannot run native purchase modules. Use a development build, `expo run:android`, or a release/internal testing build.
 
 ### Localization
 

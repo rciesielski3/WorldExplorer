@@ -1,6 +1,9 @@
 require("dotenv").config();
 
-const admobAndroidAppId = process.env.ADMOB_APP_ID || process.env.ADMOB_UNIT_ID;
+const admobAndroidAppId =
+  process.env.ADMOB_APP_ID ||
+  process.env.ADMOB_UNIT_ID ||
+  "ca-app-pub-4185040274135926~2042240790";
 const admobIosAppId =
   process.env.ADMOB_IOS_APP_ID || "ca-app-pub-3940256099942544~1458002511";
 
@@ -23,6 +26,7 @@ module.exports = {
     android: {
       package: "com.adateo.WorldExplorer",
       versionCode: 90,
+      permissions: ["com.android.vending.BILLING"],
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#ffffff",
