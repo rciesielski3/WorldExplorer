@@ -13,7 +13,6 @@ import { useTranslation } from "react-i18next";
 import { Picker } from "@react-native-picker/picker";
 
 import { ThemeContext } from "../context/ThemeContext";
-import { usePremium } from "../context/PremiumContext";
 import { getStyles } from "../styles";
 
 const SettingsScreen = () => {
@@ -21,14 +20,6 @@ const SettingsScreen = () => {
 
   const [language, setLanguage] = React.useState(i18n.language);
   const { theme } = React.useContext(ThemeContext);
-  const {
-    isPremium,
-    isConfigured,
-    isLoading,
-    error,
-    purchasePremium,
-    restorePurchases,
-  } = usePremium();
 
   const styles = getStyles(theme);
 
@@ -67,53 +58,8 @@ const SettingsScreen = () => {
 
         <View style={styles.settingItem}>
           <Text style={styles.buttonText}>
-            {t("appVersion")}: {Constants.expoConfig?.version || "1.1.0"}
+            {t("appVersion")}: {Constants.expoConfig?.version || "1.2.1"}
           </Text>
-        </View>
-
-        <View style={styles.settingItem}>
-          <View style={{ flex: 1, marginRight: 12 }}>
-            <Text style={styles.buttonText}>{t("premium")}</Text>
-            <Text style={[styles.buttonText, { fontSize: 12, marginTop: 4 }]}>
-              {isPremium ? t("premiumActive") : t("premiumDescription")}
-            </Text>
-            {error ? (
-              <Text
-                style={[
-                  styles.buttonText,
-                  { color: "#B00020", fontSize: 12, marginTop: 4 },
-                ]}
-              >
-                {error}
-              </Text>
-            ) : null}
-          </View>
-          <View style={{ minWidth: 120 }}>
-            <TouchableOpacity
-              style={[
-                styles.button,
-                { padding: 10, marginBottom: 8 },
-                (isPremium || !isConfigured || isLoading) && { opacity: 0.5 },
-              ]}
-              disabled={isPremium || !isConfigured || isLoading}
-              onPress={purchasePremium}
-            >
-              <Text style={styles.buttonText}>
-                {isLoading ? t("loading") : t("buyPremium")}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.button,
-                { padding: 10, marginBottom: 0 },
-                (!isConfigured || isLoading) && { opacity: 0.5 },
-              ]}
-              disabled={!isConfigured || isLoading}
-              onPress={restorePurchases}
-            >
-              <Text style={styles.buttonText}>{t("restorePurchases")}</Text>
-            </TouchableOpacity>
-          </View>
         </View>
 
         <View style={{ marginTop: 40, alignItems: "center" }}>

@@ -14,7 +14,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import { ThemeProvider } from "./context/ThemeContext";
-import { PremiumProvider } from "./context/PremiumContext";
 import HomeScreen from "./screens/HomeScreen";
 import ExploreScreen from "./screens/ExploreScreen";
 import MapScreen from "./screens/MapScreen";
@@ -53,52 +52,50 @@ export default function App() {
   }, []);
 
   return (
-    <PremiumProvider>
-      <ThemeProvider isDarkMode={isDarkMode} toggleTheme={toggleTheme}>
-        <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName="Home"
-            screenOptions={{ headerShown: false }}
-          >
-            <Stack.Screen
-              name="Home"
-              component={HomeScreen}
-              options={{ title: "World Explorer" }}
-            />
-            <Stack.Screen
-              name="Explore"
-              component={ExploreScreen}
-              options={{ title: t("explore") }}
-            />
-            <Stack.Screen
-              name="Map"
-              component={MapScreen}
-              options={{ title: t("map") }}
-            />
-            <Stack.Screen
-              name="Quiz"
-              component={QuizScreen}
-              options={{ title: t("quiz") }}
-            />
-            <Stack.Screen
-              name="QuizResults"
-              component={QuizResultsScreen}
-              options={{ title: t("yourScore") }}
-            />
-            <Stack.Screen
-              name="Settings"
-              component={SettingsScreen}
-              options={{ title: t("settings") }}
-            />
-            <Stack.Screen
-              name="CountryDetails"
-              component={CountryDetailsScreen}
-              options={{ title: t("countryDetails") }}
-            />
-          </Stack.Navigator>
-          <Toast />
-        </NavigationContainer>
-      </ThemeProvider>
-    </PremiumProvider>
+    <ThemeProvider isDarkMode={isDarkMode} toggleTheme={toggleTheme}>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Home"
+          screenOptions={{ headerShown: false }}
+        >
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{ title: "World Explorer" }}
+          />
+          <Stack.Screen
+            name="Explore"
+            component={ExploreScreen}
+            options={{ title: t("explore") }}
+          />
+          <Stack.Screen
+            name="Map"
+            component={MapScreen}
+            options={{ title: t("map") }}
+          />
+          <Stack.Screen
+            name="Quiz"
+            component={QuizScreen}
+            options={{ title: t("quiz") }}
+          />
+          <Stack.Screen
+            name="QuizResults"
+            component={QuizResultsScreen}
+            options={{ title: t("yourScore") }}
+          />
+          <Stack.Screen
+            name="Settings"
+            component={SettingsScreen}
+            options={{ title: t("settings") }}
+          />
+          <Stack.Screen
+            name="CountryDetails"
+            component={CountryDetailsScreen}
+            options={{ title: t("countryDetails") }}
+          />
+        </Stack.Navigator>
+        <Toast />
+      </NavigationContainer>
+    </ThemeProvider>
   );
 }
