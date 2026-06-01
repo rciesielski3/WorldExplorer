@@ -14,16 +14,34 @@ import { ThemeContext } from "../../context/ThemeContext";
 import { getStyles } from "../../styles";
 import AdBanner from "../../components/AdBanner";
 
-const QuizScreen = ({ navigation }) => {
-  const [score, setScore] = React.useState(0);
+const {
+  answerQuestion,
+  countCorrectAnswers,
+  getScoreMessageKey,
+} = require("./quizSession");
+
+const QuizScreen = ({ route, navigation }) => {
   const [currentQuestion, setCurrentQuestion] = React.useState(0);
   const [questions, setQuestions] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+  const [selectedAnswer, setSelectedAnswer] = React.useState(null);
   const { theme } = React.useContext(ThemeContext);
   const { t } = useTranslation();
   const styles = getStyles(theme);
+  const practiceQuestions = route.params?.practiceQuestions;
 
   React.useEffect(() => {
+    if (practiceQuestions?.length) {
+      setQuestions(
+        practiceQuestions.map(
+          ({ selectedAnswer: _selectedAnswer, isCorrect: _isCorrect, ...question }) =>
+            question
+        )
+      );
+      setLoading(false);
+      return undefined;
+    }
+
     let isMounted = true;
     axios
       .get("https://restcountries.com/v3.1/all")
@@ -38,7 +56,7 @@ const QuizScreen = ({ navigation }) => {
       .catch((error) => console.error("Error fetching countries:", error));
 
     return () => (isMounted = false);
-  }, []);
+  }, [practiceQuestions]);
 
   const generateQuestions = (countries) => {
     const generatedQuestions = [];
@@ -113,11 +131,26 @@ const QuizScreen = ({ navigation }) => {
   };
 
   const handleAnswer = (answer) => {
-    if (answer === questions[currentQuestion].answer) {
-      setScore((prevScore) => prevScore + 1);
+    if (selectedAnswer) {
+      return;
     }
+
+    setSelectedAnswer(answer);
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((question, index) =>
+        index === currentQuestion ? answerQuestion(question, answer) : question
+      )
+    );
+  };
+
+  const handleNextQuestion = () => {
+    setSelectedAnswer(null);
     setCurrentQuestion((prev) => prev + 1);
   };
+
+  const answeredQuestion = questions[currentQuestion];
+  const hasAnsweredCurrentQuestion = Boolean(selectedAnswer);
+  const score = countCorrectAnswers(questions);
 
   if (loading) {
     return (
@@ -158,13 +191,51 @@ const QuizScreen = ({ navigation }) => {
 
             {questions[currentQuestion].options.map((option, index) => (
               <TouchableOpacity
-                style={styles.button}
+                style={[
+                  styles.button,
+                  hasAnsweredCurrentQuestion &&
+                    option === answeredQuestion.answer &&
+                    styles.correctOption,
+                  hasAnsweredCurrentQuestion &&
+                    option === selectedAnswer &&
+                    option !== answeredQuestion.answer &&
+                    styles.incorrectOption,
+                ]}
                 key={index}
                 onPress={() => handleAnswer(option)}
+                disabled={hasAnsweredCurrentQuestion}
               >
                 <Text style={styles.buttonText}>{option}</Text>
               </TouchableOpacity>
             ))}
+
+            {hasAnsweredCurrentQuestion && (
+              <View style={styles.quizFeedbackCard}>
+                <Text style={styles.quizFeedbackTitle}>
+                  {answeredQuestion.isCorrect
+                    ? t("quizAnswerCorrect")
+                    : t("quizAnswerIncorrect")}
+                </Text>
+                <Text style={styles.quizFeedbackText}>
+                  {t("quizYourAnswer")}: {selectedAnswer}
+                </Text>
+                {!answeredQuestion.isCorrect && (
+                  <Text style={styles.quizFeedbackText}>
+                    {t("quizCorrectAnswer")}: {answeredQuestion.answer}
+                  </Text>
+                )}
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleNextQuestion}
+                >
+                  <Text style={styles.buttonText}>
+                    {currentQuestion + 1 === questions.length
+                      ? t("quizFinish")
+                      : t("quizNextQuestion")}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
 
             <Text style={styles.subtitle2}>
               {t("questionProgress", {
@@ -177,6 +248,9 @@ const QuizScreen = ({ navigation }) => {
           <>
             <Text style={styles.subtitle}>
               {t("quizScore")} {score}/{questions.length}
+            </Text>
+            <Text style={styles.subtitle2}>
+              {t(getScoreMessageKey(score, questions.length))}
             </Text>
             <TouchableOpacity
               style={styles.button}

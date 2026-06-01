@@ -134,6 +134,35 @@ export const getStyles = (theme) =>
       alignItems: "center",
       marginBottom: 12,
     },
+    correctOption: {
+      backgroundColor: "#1B7F4C",
+    },
+    incorrectOption: {
+      backgroundColor: "#B42318",
+    },
+    quizFeedbackCard: {
+      padding: 16,
+      borderRadius: 8,
+      backgroundColor: theme.colors.card,
+      marginBottom: 16,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    quizFeedbackTitle: {
+      fontSize: 20,
+      color: theme.colors.text,
+      fontFamily: "Exo2-Bold",
+      marginBottom: 8,
+    },
+    quizFeedbackText: {
+      fontSize: 16,
+      color: theme.colors.text,
+      fontFamily: "Exo2-Regular",
+      marginBottom: 8,
+    },
     buttonText: {
       color: theme.colors.buttonText,
       fontFamily: "Exo2-Bold",
