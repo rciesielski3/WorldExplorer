@@ -1,41 +1,43 @@
 import React from "react";
 import { Platform } from "react-native";
-import Purchases from "react-native-purchases";
-import {
-  REVENUECAT_ANDROID_API_KEY,
-  REVENUECAT_IOS_API_KEY,
-  REVENUECAT_ENTITLEMENT_ID,
-} from "@env";
+import Purchases, { LOG_LEVEL, PURCHASE_TYPE } from "react-native-purchases";
+
+const PREMIUM_PRODUCT_ID =
+  process.env.EXPO_PUBLIC_PREMIUM_PRODUCT_ID ||
+  "worldexplorer_premium_lifetime";
+const PREMIUM_ENTITLEMENT_ID =
+  process.env.EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID || "premium";
+
+const REVENUECAT_API_KEYS = {
+  android: process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY,
+  ios: process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY,
+};
 
 const PremiumContext = React.createContext({
   isPremium: false,
   isConfigured: false,
   isLoading: true,
-  offerings: null,
   error: null,
   purchasePremium: async () => false,
   restorePurchases: async () => false,
   refreshCustomerInfo: async () => {},
 });
 
-const entitlementId = REVENUECAT_ENTITLEMENT_ID || "premium";
-
 const hasPremiumEntitlement = (customerInfo) =>
-  Boolean(customerInfo?.entitlements?.active?.[entitlementId]);
+  Boolean(customerInfo?.entitlements?.active?.[PREMIUM_ENTITLEMENT_ID]);
 
 const getRevenueCatApiKey = () => {
-  if (Platform.OS === "ios") {
-    return REVENUECAT_IOS_API_KEY;
+  if (Platform.OS !== "android" && Platform.OS !== "ios") {
+    return undefined;
   }
 
-  return REVENUECAT_ANDROID_API_KEY;
+  return REVENUECAT_API_KEYS[Platform.OS];
 };
 
 export const PremiumProvider = ({ children }) => {
   const [isPremium, setIsPremium] = React.useState(false);
   const [isConfigured, setIsConfigured] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [offerings, setOfferings] = React.useState(null);
   const [error, setError] = React.useState(null);
 
   const applyCustomerInfo = React.useCallback((customerInfo) => {
@@ -65,7 +67,7 @@ export const PremiumProvider = ({ children }) => {
       }
 
       try {
-        Purchases.setLogLevel(Purchases.LOG_LEVEL.WARN);
+        Purchases.setLogLevel(__DEV__ ? LOG_LEVEL.DEBUG : LOG_LEVEL.WARN);
         Purchases.configure({ apiKey });
         if (isMounted) {
           setIsConfigured(true);
@@ -81,16 +83,8 @@ export const PremiumProvider = ({ children }) => {
 
         const customerInfo = await Purchases.getCustomerInfo();
 
-        let loadedOfferings = null;
-        try {
-          loadedOfferings = await Purchases.getOfferings();
-        } catch (offeringsError) {
-          console.warn("RevenueCat offerings unavailable", offeringsError);
-        }
-
         if (isMounted) {
           applyCustomerInfo(customerInfo);
-          setOfferings(loadedOfferings);
           setError(null);
         }
 
@@ -130,17 +124,16 @@ export const PremiumProvider = ({ children }) => {
     setError(null);
 
     try {
-      const currentOffering = offerings?.current;
-      const premiumPackage =
-        currentOffering?.availablePackages?.[0] || currentOffering?.lifetime;
-
-      if (!premiumPackage) {
-        throw new Error("No RevenueCat offering is available.");
-      }
-
-      const { customerInfo } = await Purchases.purchasePackage(premiumPackage);
+      const { customerInfo } = await Purchases.purchaseProduct(
+        PREMIUM_PRODUCT_ID,
+        null,
+        PURCHASE_TYPE.INAPP
+      );
       const hasPremium = hasPremiumEntitlement(customerInfo);
       setIsPremium(hasPremium);
+      if (!hasPremium) {
+        setError("No active Premium purchase was found for this account.");
+      }
       return hasPremium;
     } catch (purchaseError) {
       if (!purchaseError?.userCancelled) {
@@ -164,6 +157,9 @@ export const PremiumProvider = ({ children }) => {
       const customerInfo = await Purchases.restorePurchases();
       const hasPremium = hasPremiumEntitlement(customerInfo);
       setIsPremium(hasPremium);
+      if (!hasPremium) {
+        setError("No active Premium purchase was found for this account.");
+      }
       return hasPremium;
     } catch (restoreError) {
       setError(restoreError?.message || "Restore failed.");
@@ -178,7 +174,6 @@ export const PremiumProvider = ({ children }) => {
       isPremium,
       isConfigured,
       isLoading,
-      offerings,
       error,
       purchasePremium,
       restorePurchases,
@@ -189,7 +184,6 @@ export const PremiumProvider = ({ children }) => {
       isConfigured,
       isLoading,
       isPremium,
-      offerings,
       purchasePremium,
       refreshCustomerInfo,
       restorePurchases,
