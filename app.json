@@ -1,47 +1,4 @@
 {
-  "expo": {
-    "name": "WorldExplorer",
-    "slug": "WorldExplorer",
-    "version": "1.1.0",
-    "orientation": "portrait",
-    "icon": "./assets/world.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": false,
-    "splash": {
-      "image": "./assets/world.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.adateo.WorldExplorer",
-      "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
-      }
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "config": {
-        "googleMaps": {
-          "apiKey": "${GOOGLE_MAPS_API_KEY}"
-        }
-      },
-      "package": "com.adateo.WorldExplorer"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "plugins": ["expo-font"],
-    "extra": {
-      "eas": {
-        "projectId": "b2f8d32c-e15b-4b06-a2e2-f19c508b1987"
-      }
-    },
-    "assetBundlePatterns": ["**/*"]
-  },
   "react-native-google-mobile-ads": {
     "android_app_id": "ca-app-pub-4185040274135926~2042240790"
   }
