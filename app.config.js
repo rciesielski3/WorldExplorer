@@ -1,5 +1,9 @@
 require("dotenv").config();
 
+const admobAndroidAppId = process.env.ADMOB_APP_ID || process.env.ADMOB_UNIT_ID;
+const admobIosAppId =
+  process.env.ADMOB_IOS_APP_ID || "ca-app-pub-3940256099942544~1458002511";
+
 module.exports = {
   expo: {
     name: "WorldExplorer",
@@ -45,8 +49,8 @@ module.exports = {
       [
         "react-native-google-mobile-ads",
         {
-          androidAppId: process.env.ADMOB_UNIT_ID,
-          iosAppId: process.env.ADMOB_UNIT_ID,
+          androidAppId: admobAndroidAppId,
+          iosAppId: admobIosAppId,
         },
       ],
     ],
@@ -54,7 +58,7 @@ module.exports = {
       eas: {
         projectId: "b2f8d32c-e15b-4b06-a2e2-f19c508b1987",
       },
-      ADMOB_UNIT_ID: process.env.ADMOB_UNIT_ID,
+      ADMOB_APP_ID: admobAndroidAppId,
       ADMOB_BANNER_ID: process.env.ADMOB_BANNER_ID,
       ADMOB_INTERSTITIAL_ID: process.env.ADMOB_INTERSTITIAL_ID,
       FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
