@@ -26,6 +26,7 @@ module.exports = {
     android: {
       package: "com.adateo.WorldExplorer",
       versionCode: 91,
+      permissions: ["com.android.vending.BILLING"],
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#ffffff",
@@ -64,6 +65,13 @@ module.exports = {
       ADMOB_APP_ID: admobAndroidAppId,
       ADMOB_BANNER_ID: process.env.ADMOB_BANNER_ID,
       ADMOB_INTERSTITIAL_ID: process.env.ADMOB_INTERSTITIAL_ID,
+      EXPO_PUBLIC_PREMIUM_ENABLED: process.env.EXPO_PUBLIC_PREMIUM_ENABLED,
+      EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY:
+        process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY,
+      EXPO_PUBLIC_REVENUECAT_IOS_API_KEY:
+        process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY,
+      EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID:
+        process.env.EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID,
       FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
       FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
       FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,

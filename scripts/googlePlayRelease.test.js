@@ -35,16 +35,18 @@ test("Google Play release has native AdMob app id metadata", () => {
   );
 });
 
-test("Google Play ad release does not ship the incomplete premium billing flow", () => {
+test("Premium foundation is installed without exposing purchase UI or hiding ads", () => {
   const app = read("App.tsx");
   const adBanner = read("components/AdBanner.js");
   const settings = read("screens/SettingsScreen.js");
+  const premiumContext = read("context/PremiumContext.js");
   const androidManifest = read("android/app/src/main/AndroidManifest.xml");
   const packageJson = requireFromRoot("package.json");
 
-  assert.doesNotMatch(app, /PremiumProvider|PremiumContext/);
+  assert.match(app, /PremiumProvider/);
+  assert.match(premiumContext, /EXPO_PUBLIC_PREMIUM_ENABLED/);
   assert.doesNotMatch(adBanner, /usePremium|PremiumContext/);
   assert.doesNotMatch(settings, /usePremium|purchasePremium|restorePurchases/);
-  assert.doesNotMatch(androidManifest, /com\.android\.vending\.BILLING/);
-  assert.equal(packageJson.dependencies["react-native-purchases"], undefined);
+  assert.match(androidManifest, /com\.android\.vending\.BILLING/);
+  assert.equal(packageJson.dependencies["react-native-purchases"], "^10.2.0");
 });
