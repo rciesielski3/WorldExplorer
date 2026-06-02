@@ -48,6 +48,8 @@ test("Premium purchase flow is available without hiding ads yet", () => {
   assert.match(premiumContext, /Purchases\.getOfferings/);
   assert.match(premiumContext, /Purchases\.purchasePackage/);
   assert.match(premiumContext, /Purchases\.restorePurchases/);
+  assert.match(premiumContext, /storeProduct\?\.identifier/);
+  assert.doesNotMatch(premiumContext, /offeringPackage\?\.product\?\.identifier/);
   assert.match(premiumContext, /worldexplorer_premium_lifetime/);
   assert.doesNotMatch(adBanner, /usePremium|PremiumContext/);
   assert.match(settings, /usePremium/);

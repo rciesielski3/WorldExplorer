@@ -38,7 +38,7 @@ const getPremiumPackage = (offerings) => {
   return (
     availablePackages.find(
       (offeringPackage) =>
-        offeringPackage?.product?.identifier === PREMIUM_PRODUCT_ID
+        offeringPackage?.storeProduct?.identifier === PREMIUM_PRODUCT_ID
     ) ||
     currentOffering?.lifetime ||
     availablePackages[0] ||
@@ -99,6 +99,8 @@ export const PremiumProvider = ({ children }) => {
   }, [isConfigured]);
 
   const purchasePremium = React.useCallback(async () => {
+    setError(null);
+
     if (!isConfigured) {
       setError("RevenueCat is not configured.");
       return false;
@@ -128,6 +130,8 @@ export const PremiumProvider = ({ children }) => {
   }, [applyCustomerInfo, isConfigured, premiumPackage]);
 
   const restorePurchases = React.useCallback(async () => {
+    setError(null);
+
     if (!isConfigured) {
       setError("RevenueCat is not configured.");
       return false;
