@@ -46,8 +46,15 @@ export const PremiumProvider = ({ children }) => {
       return;
     }
 
-    const customerInfo = await Purchases.getCustomerInfo();
-    applyCustomerInfo(customerInfo);
+    try {
+      const customerInfo = await Purchases.getCustomerInfo();
+      applyCustomerInfo(customerInfo);
+      setError(null);
+    } catch (refreshError) {
+      setError(
+        refreshError?.message || "RevenueCat customer info refresh failed."
+      );
+    }
   }, [applyCustomerInfo, isConfigured]);
 
   React.useEffect(() => {
