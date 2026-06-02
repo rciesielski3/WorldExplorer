@@ -72,6 +72,9 @@ module.exports = {
         process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY,
       EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID:
         process.env.EXPO_PUBLIC_REVENUECAT_ENTITLEMENT_ID,
+      EXPO_PUBLIC_REVENUECAT_PREMIUM_PRODUCT_ID:
+        process.env.EXPO_PUBLIC_REVENUECAT_PREMIUM_PRODUCT_ID ||
+        "worldexplorer_premium_lifetime",
       FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
       FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
       FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
