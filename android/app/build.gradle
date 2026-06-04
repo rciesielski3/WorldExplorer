@@ -6,6 +6,7 @@ def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
 def requestedReleaseTask = gradle.startParameter.taskNames.any { taskName ->
     taskName.toLowerCase().contains("release")
 }
+def easBuildGradle = file("./eas-build.gradle")
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -117,7 +118,7 @@ android {
                 keyAlias keystoreProperties["keyAlias"]
                 keyPassword keystoreProperties["keyPassword"]
             } else {
-                if (requestedReleaseTask) {
+                if (requestedReleaseTask && !easBuildGradle.exists()) {
                     throw new FileNotFoundException("ERROR: key.properties file not found at expected location: " + keystorePropertiesFile)
                 }
 
@@ -147,6 +148,10 @@ android {
     androidResources {
         ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~'
     }
+}
+
+if (easBuildGradle.exists()) {
+    apply from: easBuildGradle
 }
 
 // Apply static values from `gradle.properties` to the `android.packagingOptions`
