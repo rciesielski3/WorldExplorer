@@ -1,0 +1,47 @@
+# Dependencies and package-manager noise
+.git/
+node_modules/
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Local Expo and web build output
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+*.tsbuildinfo
+
+# Native build output and IDE files
+android/.gradle/
+android/build/
+android/app/build/
+android/app/.cxx/
+android/app/*.iml
+android/local.properties
+.gradle/
+build/
+.idea/
+.vscode/
+
+# Local artifacts that are useful on this machine but should not be uploaded
+.codex-local/
+ios/
+
+# Local env and signing material
+.env
+.env.*
+.env*.local
+credentials.json
+credentials/
+key.properties
+*.keystore
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.pem
+
+# OS metadata
+.DS_Store
