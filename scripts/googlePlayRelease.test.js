@@ -64,8 +64,10 @@ test("EAS Android builds can inject remote signing credentials", () => {
 
   assert.match(appBuildGradle, /eas-build\.gradle/);
   assert.match(appBuildGradle, /easBuildGradle\.exists\(\)/);
+  assert.match(appBuildGradle, /System\.getenv\("EAS_BUILD"\)/);
+  assert.match(appBuildGradle, /isEasBuild/);
   assert.doesNotMatch(
     appBuildGradle,
-    /if \(requestedReleaseTask\) \{\s*throw new FileNotFoundException/
+    /if \(requestedReleaseTask && !easBuildGradle\.exists\(\)\)/
   );
 });

@@ -6,6 +6,7 @@ def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
 def requestedReleaseTask = gradle.startParameter.taskNames.any { taskName ->
     taskName.toLowerCase().contains("release")
 }
+def isEasBuild = System.getenv("EAS_BUILD") == "true"
 def easBuildGradle = file("./eas-build.gradle")
 
 /**
@@ -118,7 +119,7 @@ android {
                 keyAlias keystoreProperties["keyAlias"]
                 keyPassword keystoreProperties["keyPassword"]
             } else {
-                if (requestedReleaseTask && !easBuildGradle.exists()) {
+                if (requestedReleaseTask && !isEasBuild && !easBuildGradle.exists()) {
                     throw new FileNotFoundException("ERROR: key.properties file not found at expected location: " + keystorePropertiesFile)
                 }
 
