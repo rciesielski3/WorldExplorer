@@ -58,3 +58,9 @@ test("Premium purchase flow is available without hiding ads yet", () => {
   assert.match(androidManifest, /com\.android\.vending\.BILLING/);
   assert.equal(packageJson.dependencies["react-native-purchases"], "^10.2.0");
 });
+
+test("Android Gradle config does not pin a local Java home", () => {
+  const gradleProperties = read("android/gradle.properties");
+
+  assert.doesNotMatch(gradleProperties, /^org\.gradle\.java\.home=/m);
+});
