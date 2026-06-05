@@ -58,3 +58,16 @@ test("Premium purchase flow is available without hiding ads yet", () => {
   assert.match(androidManifest, /com\.android\.vending\.BILLING/);
   assert.equal(packageJson.dependencies["react-native-purchases"], "^10.2.0");
 });
+
+test("EAS Android builds can inject remote signing credentials", () => {
+  const appBuildGradle = read("android/app/build.gradle");
+
+  assert.match(appBuildGradle, /eas-build\.gradle/);
+  assert.match(appBuildGradle, /easBuildGradle\.exists\(\)/);
+  assert.match(appBuildGradle, /System\.getenv\("EAS_BUILD"\)/);
+  assert.match(appBuildGradle, /isEasBuild/);
+  assert.doesNotMatch(
+    appBuildGradle,
+    /if \(requestedReleaseTask && !easBuildGradle\.exists\(\)\)/
+  );
+});

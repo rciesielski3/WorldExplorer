@@ -13,7 +13,7 @@ module.exports = {
     slug: "WorldExplorer",
     sdkVersion: "53.0.0",
     platforms: ["android"],
-    version: "1.2.1",
+    version: "1.2.2",
     orientation: "portrait",
     icon: "./assets/world.png",
     userInterfaceStyle: "light",
@@ -25,7 +25,7 @@ module.exports = {
     },
     android: {
       package: "com.adateo.WorldExplorer",
-      versionCode: 91,
+      versionCode: 92,
       permissions: ["com.android.vending.BILLING"],
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
