@@ -199,6 +199,13 @@ export const getStyles = (theme) =>
       fontSize: 14,
       marginTop: 8,
     },
+    settingMetaText: {
+      color: theme.colors.text,
+      fontFamily: "Exo2-Regular",
+      fontSize: 13,
+      marginTop: 10,
+      opacity: 0.8,
+    },
     settingError: {
       color: "#B42318",
       fontFamily: "Exo2-Bold",
@@ -234,6 +241,10 @@ export const getStyles = (theme) =>
       color: theme.colors.buttonText,
       fontFamily: "Exo2-Bold",
       fontSize: 14,
+    },
+    settingLinkText: {
+      color: "#3B82F6",
+      textDecorationLine: "underline",
     },
     picker: {
       width: 150,

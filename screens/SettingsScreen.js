@@ -17,6 +17,8 @@ import { usePremium } from "../context/PremiumContext";
 import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 
+const CONTACT_URL = "https://rciesielski.dev/contact";
+
 const SettingsScreen = () => {
   const { t, i18n } = useTranslation();
 
@@ -130,31 +132,30 @@ const SettingsScreen = () => {
           </View>
         ) : null}
 
-        <View style={{ marginTop: 40, alignItems: "center" }}>
-          <View style={{ alignItems: "center" }}>
-            <Text style={styles.buttonText}>Created by Rafał Ciesielski</Text>
-            <TouchableOpacity
-              onPress={() =>
-                Linking.openURL(
-                  "https://rciesielski3.github.io/portfolio/#/contact"
-                )
-              }
-            >
+        <View style={styles.settingItemColumn}>
+          <Text style={styles.buttonText}>{t("aboutApp")}</Text>
+          <Text style={styles.settingDescription}>
+            {t("aboutAppDescription")}
+          </Text>
+          <Text style={styles.settingMetaText}>{t("createdBy")}</Text>
+          <View style={styles.settingActions}>
+            <TouchableOpacity onPress={() => Linking.openURL(CONTACT_URL)}>
               <Text
                 style={[
-                  styles.buttonText,
-                  { color: "lightblue", textDecorationLine: "underline" },
+                  styles.settingActionText,
+                  styles.settingLinkText,
                 ]}
               >
                 {t("contact")}
               </Text>
             </TouchableOpacity>
           </View>
-          <View style={{ marginTop: 20 }}>
-            <Text style={[styles.buttonText, { fontSize: 12 }]}>
-              © {new Date().getFullYear()} Adateo. All rights reserved.
-            </Text>
-          </View>
+        </View>
+
+        <View style={{ marginTop: 4, alignItems: "center" }}>
+          <Text style={[styles.buttonText, { fontSize: 12 }]}>
+            © {new Date().getFullYear()} Adateo. All rights reserved.
+          </Text>
         </View>
       </View>
     </ImageBackground>
