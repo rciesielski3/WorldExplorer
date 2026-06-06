@@ -63,12 +63,9 @@ test("Premium purchase flow is available without hiding ads yet", () => {
 test("EAS Android builds can inject remote signing credentials", () => {
   const appBuildGradle = read("android/app/build.gradle");
 
-  assert.match(appBuildGradle, /eas-build\.gradle/);
-  assert.match(appBuildGradle, /easBuildGradle\.exists\(\)/);
-  assert.match(appBuildGradle, /System\.getenv\("EAS_BUILD"\)/);
-  assert.match(appBuildGradle, /isEasBuild/);
-  assert.doesNotMatch(
-    appBuildGradle,
-    /if \(requestedReleaseTask && !easBuildGradle\.exists\(\)\)/
-  );
+  assert.match(appBuildGradle, /EAS injects the release signing config/);
+  assert.match(appBuildGradle, /key\.properties/);
+  assert.doesNotMatch(appBuildGradle, /FileNotFoundException/);
+  assert.doesNotMatch(appBuildGradle, /requestedReleaseTask/);
+  assert.doesNotMatch(appBuildGradle, /System\.getenv\("EAS_BUILD"\)/);
 });
