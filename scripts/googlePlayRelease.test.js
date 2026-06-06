@@ -27,6 +27,7 @@ test("Google Play release has native AdMob app id metadata", () => {
 
   assert.match(androidManifest, /com\.google\.android\.gms\.ads\.APPLICATION_ID/);
   assert.match(androidManifest, /@string\/admob_app_id/);
+  assert.match(androidManifest, /com\.google\.android\.gms\.permission\.AD_ID/);
   assert.match(
     strings,
     new RegExp(
