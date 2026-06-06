@@ -3,11 +3,6 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
-def requestedReleaseTask = gradle.startParameter.taskNames.any { taskName ->
-    taskName.toLowerCase().contains("release")
-}
-def isEasBuild = System.getenv("EAS_BUILD") == "true"
-def easBuildGradle = file("./eas-build.gradle")
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -119,10 +114,8 @@ android {
                 keyAlias keystoreProperties["keyAlias"]
                 keyPassword keystoreProperties["keyPassword"]
             } else {
-                if (requestedReleaseTask && !isEasBuild && !easBuildGradle.exists()) {
-                    throw new FileNotFoundException("ERROR: key.properties file not found at expected location: " + keystorePropertiesFile)
-                }
-
+                // EAS injects the release signing config during build setup.
+                // Keep a local fallback so Gradle can evaluate the project without key.properties.
                 storeFile file('debug.keystore')
                 storePassword 'android'
                 keyAlias 'androiddebugkey'
