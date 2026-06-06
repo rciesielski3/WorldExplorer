@@ -117,6 +117,49 @@ export const getStyles = (theme) =>
     cardContent: {
       flex: 1,
     },
+    dailyCountryCard: {
+      width: "100%",
+      padding: 12,
+      borderRadius: 8,
+      backgroundColor: theme.colors.card,
+      marginBottom: 12,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    dailyCountryEyebrow: {
+      color: theme.colors.text,
+      fontFamily: "Exo2-Bold",
+      fontSize: 13,
+      marginBottom: 8,
+      opacity: 0.8,
+    },
+    dailyCountryContent: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    dailyCountryFlag: {
+      width: 72,
+      height: 46,
+      borderRadius: 4,
+      marginRight: 12,
+    },
+    dailyCountryText: {
+      flex: 1,
+    },
+    dailyCountryAction: {
+      color: "#3B82F6",
+      fontFamily: "Exo2-Bold",
+      fontSize: 13,
+      marginTop: 8,
+      textDecorationLine: "underline",
+    },
+    dailyCountryLoader: {
+      alignSelf: "flex-start",
+      marginVertical: 8,
+    },
     countryName: {
       fontSize: 18,
       fontFamily: "Exo2-Bold",
