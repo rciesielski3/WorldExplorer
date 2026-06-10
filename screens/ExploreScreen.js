@@ -28,7 +28,7 @@ const ExploreScreen = ({ navigation }) => {
 
   React.useEffect(() => {
     axios
-      .get("https://restcountries.com/v3.1/all")
+      .get("https://restcountries.com/v3.1/all?fields=name,flags")
       .then((response) => {
         setCountries(response.data);
       })
@@ -37,7 +37,7 @@ const ExploreScreen = ({ navigation }) => {
   }, []);
 
   const filteredCountries = countries.filter((country) =>
-    country.name.common.toLowerCase().startsWith(searchQuery.toLowerCase())
+    country.name.common.toLowerCase().startsWith(searchQuery.toLowerCase()),
   );
 
   const renderItem = ({ item }) => (
