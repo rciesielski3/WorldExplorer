@@ -64,6 +64,10 @@ test("EAS Android builds can inject remote signing credentials", () => {
   const appBuildGradle = read("android/app/build.gradle");
 
   assert.match(appBuildGradle, /EAS injects the release signing config/);
+  assert.match(
+    appBuildGradle,
+    /buildTypes\s*\{[\s\S]*?release\s*\{\s*signingConfig signingConfigs\.release/
+  );
   assert.match(appBuildGradle, /def easBuildGradle = file\("\.\/eas-build\.gradle"\)/);
   assert.match(appBuildGradle, /if \(easBuildGradle\.exists\(\)\)/);
   assert.match(appBuildGradle, /apply from: easBuildGradle/);

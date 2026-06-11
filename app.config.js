@@ -25,8 +25,11 @@ module.exports = {
     },
     android: {
       package: "com.adateo.WorldExplorer",
-      versionCode: 92,
-      permissions: ["com.android.vending.BILLING"],
+      versionCode: 124,
+      permissions: [
+        "com.google.android.gms.permission.AD_ID",
+        "com.android.vending.BILLING",
+      ],
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#ffffff",
