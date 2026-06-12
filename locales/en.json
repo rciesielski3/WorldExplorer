@@ -1,5 +1,10 @@
 {
   "welcome": "Welcome to",
+  "homeHeroSubtitle": "Discover countries, flags, maps, capitals, and quick geography facts.",
+  "homeExploreSubtitle": "Browse every country",
+  "homeMapSubtitle": "See the world map",
+  "homeQuizSubtitle": "Practice geography",
+  "homeSettingsSubtitle": "Tune your app",
   "explore": "Explore",
   "exploreCountries": "Explore countries",
   "countryDetails": "Country details",
@@ -7,6 +12,7 @@
   "search": "Search",
   "searchEnterName": "Enter name...",
   "searchResults": "Results",
+  "exploreEmptyState": "No countries match your search yet.",
   "worldMap": "World Map",
   "showOnMap": "Show on map",
   "dailyCountry": "Country of the day",
