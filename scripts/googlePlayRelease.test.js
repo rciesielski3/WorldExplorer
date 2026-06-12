@@ -68,6 +68,9 @@ test("EAS Android builds can inject remote signing credentials", () => {
     appBuildGradle,
     /buildTypes\s*\{[\s\S]*?release\s*\{\s*signingConfig signingConfigs\.release/
   );
+  assert.match(appBuildGradle, /shrinkResources true/);
+  assert.match(appBuildGradle, /minifyEnabled true/);
+  assert.match(appBuildGradle, /getDefaultProguardFile\("proguard-android-optimize\.txt"\)/);
   assert.match(appBuildGradle, /def easBuildGradle = file\("\.\/eas-build\.gradle"\)/);
   assert.match(appBuildGradle, /if \(easBuildGradle\.exists\(\)\)/);
   assert.match(appBuildGradle, /apply from: easBuildGradle/);
