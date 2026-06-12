@@ -38,7 +38,7 @@ const ExploreScreen = ({ navigation }) => {
   }, []);
 
   const filteredCountries = countries.filter((country) =>
-    country.name.common.toLowerCase().startsWith(searchQuery.toLowerCase()),
+    country.name?.common?.toLowerCase()?.startsWith(searchQuery.toLowerCase()),
   );
 
   const renderItem = ({ item }) => (

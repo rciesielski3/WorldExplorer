@@ -5,7 +5,8 @@ const path = require("node:path");
 
 const rootDir = path.resolve(__dirname, "..");
 
-const read = (filePath) => fs.readFileSync(path.join(rootDir, filePath), "utf8");
+const read = (filePath) =>
+  fs.readFileSync(path.join(rootDir, filePath), "utf8");
 const requireFromRoot = (filePath) => require(path.join(rootDir, filePath));
 
 test("Google Play release uses one version across Expo and native Android", () => {
@@ -16,7 +17,10 @@ test("Google Play release uses one version across Expo and native Android", () =
   const escapedVersion = version.replaceAll(".", "\\.");
 
   assert.match(appBuildGradle, new RegExp(`versionCode\\s+${versionCode}`));
-  assert.match(appBuildGradle, new RegExp(`versionName\\s+"${escapedVersion}"`));
+  assert.match(
+    appBuildGradle,
+    new RegExp(`versionName\\s+"${escapedVersion}"`),
+  );
 });
 
 test("Google Play release has native AdMob app id metadata", () => {
@@ -25,14 +29,17 @@ test("Google Play release has native AdMob app id metadata", () => {
   const strings = read("android/app/src/main/res/values/strings.xml");
   const admobAppId = appConfig.expo.extra.ADMOB_APP_ID;
 
-  assert.match(androidManifest, /com\.google\.android\.gms\.ads\.APPLICATION_ID/);
+  assert.match(
+    androidManifest,
+    /com\.google\.android\.gms\.ads\.APPLICATION_ID/,
+  );
   assert.match(androidManifest, /@string\/admob_app_id/);
   assert.match(androidManifest, /com\.google\.android\.gms\.permission\.AD_ID/);
   assert.match(
     strings,
     new RegExp(
-      `<string name="admob_app_id" translatable="false">${admobAppId}</string>`
-    )
+      `<string name="admob_app_id" translatable="false">${admobAppId}</string>`,
+    ),
   );
 });
 
@@ -50,7 +57,10 @@ test("Premium purchase flow is available without hiding ads yet", () => {
   assert.match(premiumContext, /Purchases\.purchasePackage/);
   assert.match(premiumContext, /Purchases\.restorePurchases/);
   assert.match(premiumContext, /storeProduct\?\.identifier/);
-  assert.doesNotMatch(premiumContext, /offeringPackage\?\.product\?\.identifier/);
+  assert.doesNotMatch(
+    premiumContext,
+    /offeringPackage\?\.product\?\.identifier/,
+  );
   assert.match(premiumContext, /worldexplorer_premium_lifetime/);
   assert.doesNotMatch(adBanner, /usePremium|PremiumContext/);
   assert.match(settings, /usePremium/);
@@ -66,15 +76,24 @@ test("EAS Android builds can inject remote signing credentials", () => {
   assert.match(appBuildGradle, /EAS injects the release signing config/);
   assert.match(
     appBuildGradle,
-    /buildTypes\s*\{[\s\S]*?release\s*\{\s*signingConfig signingConfigs\.release/
+    /buildTypes\s*\{[\s\S]*?release\s*\{\s*signingConfig signingConfigs\.release/,
   );
   assert.match(appBuildGradle, /shrinkResources true/);
   assert.match(appBuildGradle, /minifyEnabled true/);
-  assert.match(appBuildGradle, /getDefaultProguardFile\("proguard-android-optimize\.txt"\)/);
-  assert.match(appBuildGradle, /def easBuildGradle = file\("\.\/eas-build\.gradle"\)/);
+  assert.match(
+    appBuildGradle,
+    /getDefaultProguardFile\("proguard-android-optimize\.txt"\)/,
+  );
+  assert.match(
+    appBuildGradle,
+    /def easBuildGradle = file\("\.\/eas-build\.gradle"\)/,
+  );
   assert.match(appBuildGradle, /if \(easBuildGradle\.exists\(\)\)/);
   assert.match(appBuildGradle, /apply from: easBuildGradle/);
-  assert.match(appBuildGradle, /extraPackagerArgs = \["--max-workers", "1", "--reset-cache"\]/);
+  assert.match(
+    appBuildGradle,
+    /extraPackagerArgs = \["--max-workers", "1", "--reset-cache"\]/,
+  );
   assert.match(appBuildGradle, /key\.properties/);
   assert.doesNotMatch(appBuildGradle, /FileNotFoundException/);
   assert.doesNotMatch(appBuildGradle, /requestedReleaseTask/);

@@ -23,6 +23,7 @@ test("REST Countries all requests specify the fields required by each screen", (
     /https:\/\/restcountries\.com\/v3\.1\/all\?fields=\$\{QUIZ_COUNTRY_FIELDS\}/
   );
   assert.match(exploreScreen, /API_URL/);
+  assert.match(exploreScreen, /country\.name\?\.common\?/);
   assert.doesNotMatch(exploreScreen, /restcountries\.com\/v3\.1\/all(?!\?fields=)/);
   assert.match(quizScreen, /QUIZ_API_URL/);
   assert.doesNotMatch(quizScreen, /restcountries\.com\/v3\.1\/all(?!\?fields=)/);
