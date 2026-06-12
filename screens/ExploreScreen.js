@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import AdBanner from "../components/AdBanner";
+import { API_URL } from "../constants";
 
 const ExploreScreen = ({ navigation }) => {
   const [countries, setCountries] = React.useState([]);
@@ -28,7 +29,7 @@ const ExploreScreen = ({ navigation }) => {
 
   React.useEffect(() => {
     axios
-      .get("https://restcountries.com/v3.1/all")
+      .get(API_URL)
       .then((response) => {
         setCountries(response.data);
       })
@@ -37,7 +38,7 @@ const ExploreScreen = ({ navigation }) => {
   }, []);
 
   const filteredCountries = countries.filter((country) =>
-    country.name.common.toLowerCase().startsWith(searchQuery.toLowerCase())
+    country.name.common.toLowerCase().startsWith(searchQuery.toLowerCase()),
   );
 
   const renderItem = ({ item }) => (

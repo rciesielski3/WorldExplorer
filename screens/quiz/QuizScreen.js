@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { ThemeContext } from "../../context/ThemeContext";
 import { getStyles } from "../../styles";
 import AdBanner from "../../components/AdBanner";
+import { QUIZ_API_URL } from "../../constants";
 
 const {
   answerQuestion,
@@ -44,7 +45,7 @@ const QuizScreen = ({ route, navigation }) => {
 
     let isMounted = true;
     axios
-      .get("https://restcountries.com/v3.1/all")
+      .get(QUIZ_API_URL)
       .then((response) => {
         if (isMounted) {
           const countries = response.data;
