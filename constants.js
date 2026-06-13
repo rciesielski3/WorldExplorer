@@ -9,6 +9,10 @@ export const COUNTRY_LIST_FIELDS = [
   "languages",
   "currencies",
   "latlng",
+  "area",
+  "borders",
+  "timezones",
+  "tld",
 ].join(",");
 
 export const QUIZ_COUNTRY_FIELDS = ["name", "flags", "capital"].join(",");
