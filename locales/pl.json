@@ -12,7 +12,18 @@
   "search": "Szukaj",
   "searchEnterName": "Wprowadź nazwę...",
   "searchResults": "Wyniki",
+<<<<<<< HEAD
+  "searchCountryCapital": "Szukaj kraju lub stolicy...",
+  "allCountries": "Wszystkie",
+  "regionEurope": "Europa",
+  "regionAsia": "Azja",
+  "regionAmericas": "Ameryki",
+  "regionAfrica": "Afryka",
+  "regionOceania": "Oceania",
+  "noCountriesFound": "Nie znaleziono krajów.",
+=======
   "exploreEmptyState": "Brak krajów pasujących do wyszukiwania.",
+>>>>>>> main
   "worldMap": "Mapa świata",
   "showOnMap": "Pokaż na mapie",
   "dailyCountry": "Kraj dnia",
