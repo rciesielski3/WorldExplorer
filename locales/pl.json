@@ -12,7 +12,6 @@
   "search": "Szukaj",
   "searchEnterName": "Wprowadź nazwę...",
   "searchResults": "Wyniki",
-<<<<<<< HEAD
   "searchCountryCapital": "Szukaj kraju lub stolicy...",
   "allCountries": "Wszystkie",
   "regionEurope": "Europa",
@@ -21,10 +20,14 @@
   "regionAfrica": "Afryka",
   "regionOceania": "Oceania",
   "noCountriesFound": "Nie znaleziono krajów.",
-=======
   "exploreEmptyState": "Brak krajów pasujących do wyszukiwania.",
->>>>>>> main
   "worldMap": "Mapa świata",
+  "selectedCountry": "Zaznaczony",
+  "visitedCountry": "Odwiedzony",
+  "unvisitedCountry": "Nieodwiedzony",
+  "zoomIn": "Przybliż",
+  "zoomOut": "Oddal",
+  "resetMap": "Resetuj mapę",
   "showOnMap": "Pokaż na mapie",
   "dailyCountry": "Kraj dnia",
   "dailyCountrySubtitle": "Dzisiaj: {{capital}} i więcej krótkich faktów.",

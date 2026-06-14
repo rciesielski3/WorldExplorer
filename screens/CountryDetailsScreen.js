@@ -119,6 +119,7 @@ const CountryDetailsScreen = ({ route, navigation }) => {
       latitude: coordinates.latitude,
       longitude: coordinates.longitude,
       countryName,
+      country,
     });
   };
 
