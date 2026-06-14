@@ -18,6 +18,7 @@ import { getStyles } from "../styles";
 import AdBanner from "../components/AdBanner";
 import { API_URL } from "../constants";
 
+<<<<<<< HEAD
 const REGION_FILTERS = [
   { key: "all", labelKey: "allCountries", value: null },
   { key: "europe", labelKey: "regionEurope", value: "Europe" },
@@ -41,6 +42,22 @@ const formatPopulation = (population) => {
   }
 
   return population.toLocaleString();
+=======
+const formatPopulation = (population) => {
+  if (!population) {
+    return "";
+  }
+
+  if (population >= 1000000) {
+    return `${Math.round(population / 1000000)}M`;
+  }
+
+  if (population >= 1000) {
+    return `${Math.round(population / 1000)}K`;
+  }
+
+  return String(population);
+>>>>>>> main
 };
 
 const ExploreScreen = ({ navigation }) => {
@@ -107,6 +124,7 @@ const ExploreScreen = ({ navigation }) => {
         onPress={() => navigation.navigate("CountryDetails", { country: item })}
         activeOpacity={0.78}
       >
+<<<<<<< HEAD
         <View style={styles.countryCard}>
           <Image source={{ uri: item.flags?.png }} style={styles.countryCardFlag} />
           <View style={styles.cardContent}>
@@ -114,6 +132,13 @@ const ExploreScreen = ({ navigation }) => {
             <Text style={styles.countryCardMeta}>
               {metadata.join(" · ")}
             </Text>
+=======
+        <View style={styles.card}>
+          <Image source={{ uri: item.flags?.png }} style={styles.flag} />
+          <View style={styles.cardContent}>
+            <Text style={styles.countryName}>{item.name?.common}</Text>
+            <Text style={styles.countryMetaText}>{metadata.join(" · ")}</Text>
+>>>>>>> main
           </View>
           <MaterialCommunityIcons
             name="chevron-right"
@@ -131,6 +156,7 @@ const ExploreScreen = ({ navigation }) => {
       style={styles.backgroundImage}
     >
       <View style={styles.containerContent}>
+<<<<<<< HEAD
         <View style={styles.exploreHeaderRow}>
           <Text style={styles.title}>{t("exploreCountries")}</Text>
         </View>
@@ -182,6 +208,26 @@ const ExploreScreen = ({ navigation }) => {
           })}
         </ScrollView>
 
+=======
+        <View style={styles.exploreHeaderCard}>
+          <Text style={styles.title}>{t("exploreCountries")}</Text>
+          <Text style={styles.subtitle2}>{t("homeHeroSubtitle")}</Text>
+          <View style={styles.searchInputWrap}>
+            <MaterialCommunityIcons
+              name="magnify"
+              size={20}
+              color={theme.colors.text}
+            />
+            <TextInput
+              style={styles.searchBox}
+              placeholder={t("searchEnterName")}
+              placeholderTextColor={theme.colors.text}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
+        </View>
+>>>>>>> main
         {loading ? (
           renderSkeletonRows()
         ) : (
@@ -189,10 +235,26 @@ const ExploreScreen = ({ navigation }) => {
             data={filteredCountries}
             renderItem={renderItem}
             keyExtractor={(item) => item.cca3}
+<<<<<<< HEAD
             keyboardShouldPersistTaps="handled"
             ListEmptyComponent={
               <Text style={styles.emptyStateText}>{t("noCountriesFound")}</Text>
             }
+=======
+            ListEmptyComponent={
+              <View style={styles.exploreEmptyState}>
+                <MaterialCommunityIcons
+                  name="map-search-outline"
+                  size={32}
+                  color={theme.colors.text}
+                />
+                <Text style={styles.settingDescription}>
+                  {t("exploreEmptyState")}
+                </Text>
+              </View>
+            }
+            contentContainerStyle={styles.exploreListContent}
+>>>>>>> main
           />
         )}
       </View>

@@ -1,5 +1,10 @@
 {
   "welcome": "Witamy w",
+  "homeHeroSubtitle": "Odkrywaj kraje, flagi, mapy, stolice i szybkie fakty geograficzne.",
+  "homeExploreSubtitle": "Przeglądaj kraje",
+  "homeMapSubtitle": "Zobacz mapę świata",
+  "homeQuizSubtitle": "Ćwicz geografię",
+  "homeSettingsSubtitle": "Dopasuj aplikację",
   "explore": "Odkrywaj",
   "exploreCountries": "Odkrywaj kraje",
   "yourScore": "Twój wynik",
@@ -7,6 +12,7 @@
   "search": "Szukaj",
   "searchEnterName": "Wprowadź nazwę...",
   "searchResults": "Wyniki",
+<<<<<<< HEAD
   "searchCountryCapital": "Szukaj kraju lub stolicy...",
   "allCountries": "Wszystkie",
   "regionEurope": "Europa",
@@ -15,6 +21,9 @@
   "regionAfrica": "Afryka",
   "regionOceania": "Oceania",
   "noCountriesFound": "Nie znaleziono krajów.",
+=======
+  "exploreEmptyState": "Brak krajów pasujących do wyszukiwania.",
+>>>>>>> main
   "worldMap": "Mapa świata",
   "showOnMap": "Pokaż na mapie",
   "dailyCountry": "Kraj dnia",

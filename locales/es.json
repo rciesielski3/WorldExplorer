@@ -1,5 +1,10 @@
 {
   "welcome": "Bienvenido a",
+  "homeHeroSubtitle": "Descubre países, banderas, mapas, capitales y datos rápidos de geografía.",
+  "homeExploreSubtitle": "Explora todos los países",
+  "homeMapSubtitle": "Mira el mapa mundial",
+  "homeQuizSubtitle": "Practica geografía",
+  "homeSettingsSubtitle": "Ajusta tu app",
   "explore": "Explorar",
   "exploreCountries": "Explorar países",
   "yourScore": "Tu puntuación",
@@ -15,6 +20,7 @@
   "regionAfrica": "África",
   "regionOceania": "Oceanía",
   "noCountriesFound": "No se encontraron países.",
+  "exploreEmptyState": "No hay países que coincidan con tu búsqueda.",
   "worldMap": "Mapa mundial",
   "showOnMap": "Mostrar en el mapa",
   "dailyCountry": "País del día",
