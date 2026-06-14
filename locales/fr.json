@@ -1,5 +1,10 @@
 {
   "welcome": "Bienvenue à",
+  "homeHeroSubtitle": "Découvre les pays, les drapeaux, les cartes, les capitales et des faits de géographie.",
+  "homeExploreSubtitle": "Parcourir les pays",
+  "homeMapSubtitle": "Voir la carte du monde",
+  "homeQuizSubtitle": "Réviser la géographie",
+  "homeSettingsSubtitle": "Ajuster l'app",
   "explore": "Explorer",
   "exploreCountries": "Découvrir les pays",
   "yourScore": "Votre score",
@@ -7,6 +12,7 @@
   "search": "Rechercher",
   "searchEnterName": "Entrer le nom...",
   "searchResults": "Résultats",
+  "exploreEmptyState": "Aucun pays ne correspond à ta recherche.",
   "worldMap": "Carte du monde",
   "showOnMap": "Afficher sur la carte",
   "dailyCountry": "Pays du jour",

@@ -1,5 +1,10 @@
 {
   "welcome": "Willkommen bei",
+  "homeHeroSubtitle": "Entdecke Länder, Flaggen, Karten, Hauptstädte und kurze Geografie-Fakten.",
+  "homeExploreSubtitle": "Alle Länder durchsuchen",
+  "homeMapSubtitle": "Weltkarte ansehen",
+  "homeQuizSubtitle": "Geografie üben",
+  "homeSettingsSubtitle": "App anpassen",
   "explore": "Erkunden",
   "exploreCountries": "Länder erkunden",
   "yourScore": "Deine Punktzahl",
@@ -7,6 +12,7 @@
   "search": "Suchen",
   "searchEnterName": "Namen eingeben...",
   "searchResults": "Ergebnisse",
+  "exploreEmptyState": "Keine Länder passen zu deiner Suche.",
   "worldMap": "Weltkarte",
   "showOnMap": "Auf Karte anzeigen",
   "dailyCountry": "Land des Tages",
