@@ -36,6 +36,12 @@ export default function App() {
     "Exo2-Bold": Exo2_700Bold,
   });
 
+  React.useEffect(() => {
+    mobileAds()
+      .initialize()
+      .catch((error) => console.warn("AdMob initialization failed", error));
+  }, []);
+
   if (!fontsLoaded) {
     return (
       <ActivityIndicator
@@ -45,12 +51,6 @@ export default function App() {
       />
     );
   }
-
-  React.useEffect(() => {
-    mobileAds()
-      .initialize()
-      .catch((error) => console.warn("AdMob initialization failed", error));
-  }, []);
 
   return (
     <PremiumProvider>
