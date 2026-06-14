@@ -16,7 +16,6 @@ import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import { API_URL } from "../constants";
 import { getDailyCountry } from "../utils/dailyCountry";
-import LottieView from "lottie-react-native";
 
 const HomeScreen = ({ navigation }) => {
   const { t } = useTranslation();
@@ -25,38 +24,41 @@ const HomeScreen = ({ navigation }) => {
     React.useState(true);
 
   const { theme } = React.useContext(ThemeContext);
-  const styles = getStyles(theme);
+  const styles = React.useMemo(() => getStyles(theme), [theme]);
 
-  const HOME_ACTIONS = [
-    {
-      key: "explore",
-      icon: "earth",
-      label: t("explore"),
-      subtitle: t("homeExploreSubtitle"),
-      screen: "Explore",
-    },
-    {
-      key: "map",
-      icon: "map-outline",
-      label: t("map"),
-      subtitle: t("homeMapSubtitle"),
-      screen: "Map",
-    },
-    {
-      key: "quiz",
-      icon: "puzzle-outline",
-      label: t("quiz"),
-      subtitle: t("homeQuizSubtitle"),
-      screen: "Quiz",
-    },
-    {
-      key: "settings",
-      icon: "cog-outline",
-      label: t("settings"),
-      subtitle: t("homeSettingsSubtitle"),
-      screen: "Settings",
-    },
-  ];
+  const HOME_ACTIONS = React.useMemo(
+    () => [
+      {
+        key: "explore",
+        icon: "earth",
+        label: t("explore"),
+        subtitle: t("homeExploreSubtitle"),
+        screen: "Explore",
+      },
+      {
+        key: "map",
+        icon: "map-outline",
+        label: t("map"),
+        subtitle: t("homeMapSubtitle"),
+        screen: "Map",
+      },
+      {
+        key: "quiz",
+        icon: "puzzle-outline",
+        label: t("quiz"),
+        subtitle: t("homeQuizSubtitle"),
+        screen: "Quiz",
+      },
+      {
+        key: "settings",
+        icon: "cog-outline",
+        label: t("settings"),
+        subtitle: t("homeSettingsSubtitle"),
+        screen: "Settings",
+      },
+    ],
+    [t],
+  );
 
   React.useEffect(() => {
     axios
@@ -79,15 +81,16 @@ const HomeScreen = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.homeHero}>
-          <LottieView
-            source={require("../assets/animations/explore.json")}
-            autoPlay
-            loop
-            style={styles.homeGlobe}
-          />
+          <View style={styles.homeGlobeBadge}>
+            <MaterialCommunityIcons
+              name="earth"
+              size={52}
+              color={theme.colors.button}
+            />
+          </View>
           <Text style={styles.homeEyebrow}>World Explorer</Text>
-          <Text style={styles.homeTitle}>{t("welcome")} World Explorer</Text>
-          <Text style={styles.homeSubtitle}>{t("homeHeroSubtitle")}</Text>
+          <Text style={styles.homeTitle}>{t("homeTitle")}</Text>
+          <Text style={styles.homeSubtitle}>{t("homeStatsLine")}</Text>
         </View>
 
         <View style={styles.homeQuickActions}>
@@ -114,59 +117,60 @@ const HomeScreen = ({ navigation }) => {
         </View>
 
         <View style={styles.dailyCountryCard}>
-          <View style={styles.dailyCountryHeader}>
-            <Text style={styles.dailyCountryEyebrow}>{t("dailyCountry")}</Text>
+          <Text style={styles.dailyCountryEyebrow}>
             <MaterialCommunityIcons
               name="sparkles"
-              size={18}
+              size={12}
               color={theme.colors.button}
+            />{" "}
+            {t("dailyCountry")}
+          </Text>
+          {isDailyCountryLoading ? (
+            <ActivityIndicator
+              color={theme.colors.button}
+              style={styles.dailyCountryLoader}
             />
-          </View>
-            {isDailyCountryLoading ? (
-              <ActivityIndicator
-                color={theme.colors.button}
-                style={styles.dailyCountryLoader}
-              />
-            ) : dailyCountry ? (
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("CountryDetails", {
-                    country: dailyCountry,
-                  })
-                }
-              >
-                <View style={styles.dailyCountryContent}>
-                  <Image
-                    source={{ uri: dailyCountry.flags?.png }}
-                    style={styles.dailyCountryFlag}
-                  />
-                  <View style={styles.dailyCountryText}>
-                    <Text style={styles.countryName}>
-                      {dailyCountry.name?.common}
+          ) : dailyCountry ? (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("CountryDetails", {
+                  country: dailyCountry,
+                })
+              }
+            >
+              <View style={styles.dailyCountryContent}>
+                <Image
+                  source={{ uri: dailyCountry.flags?.png }}
+                  style={styles.dailyCountryFlag}
+                />
+                <View style={styles.dailyCountryText}>
+                  <Text style={styles.countryName}>
+                    {dailyCountry.name?.common}
+                  </Text>
+                  <Text style={styles.settingDescription}>
+                    {t("dailyCountrySubtitle", {
+                      capital: dailyCountry.capital?.[0],
+                      region: dailyCountry.subregion || dailyCountry.region,
+                    })}
+                  </Text>
+                  <View style={styles.dailyCountryActionRow}>
+                    <Text style={styles.dailyCountryAction}>
+                      {t("viewCountry")}
                     </Text>
-                    <Text style={styles.settingDescription}>
-                      {t("dailyCountrySubtitle", {
-                        capital: dailyCountry.capital?.[0],
-                      })}
-                    </Text>
-                    <View style={styles.dailyCountryActionRow}>
-                      <Text style={styles.dailyCountryAction}>
-                        {t("viewCountry")}
-                      </Text>
-                      <MaterialCommunityIcons
-                        name="arrow-right"
-                        size={16}
-                        color={theme.colors.button}
-                      />
-                    </View>
+                    <MaterialCommunityIcons
+                      name="arrow-right"
+                      size={16}
+                      color={theme.colors.button}
+                    />
                   </View>
                 </View>
-              </TouchableOpacity>
-            ) : (
-              <Text style={styles.settingDescription}>
-                {t("dailyCountryUnavailable")}
-              </Text>
-            )}
+              </View>
+            </TouchableOpacity>
+          ) : (
+            <Text style={styles.settingDescription}>
+              {t("dailyCountryUnavailable")}
+            </Text>
+          )}
         </View>
       </ScrollView>
     </ImageBackground>
