@@ -7,19 +7,46 @@ import {
   TouchableOpacity,
   ImageBackground,
   TextInput,
-  ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import AdBanner from "../components/AdBanner";
 import { API_URL } from "../constants";
 
+const REGION_FILTERS = [
+  { key: "all", labelKey: "allCountries", value: null },
+  { key: "europe", labelKey: "regionEurope", value: "Europe" },
+  { key: "asia", labelKey: "regionAsia", value: "Asia" },
+  { key: "americas", labelKey: "regionAmericas", value: "Americas" },
+  { key: "africa", labelKey: "regionAfrica", value: "Africa" },
+  { key: "oceania", labelKey: "regionOceania", value: "Oceania" },
+];
+
+const formatPopulation = (population) => {
+  if (!Number.isFinite(population)) {
+    return null;
+  }
+
+  if (population >= 1_000_000) {
+    return `${Math.round(population / 1_000_000)}M`;
+  }
+
+  if (population >= 1_000) {
+    return `${Math.round(population / 1_000)}K`;
+  }
+
+  return population.toLocaleString();
+};
+
 const ExploreScreen = ({ navigation }) => {
   const [countries, setCountries] = React.useState([]);
   const [searchQuery, setSearchQuery] = React.useState("");
+  const [selectedRegion, setSelectedRegion] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
   const { theme } = React.useContext(ThemeContext);
 
@@ -37,25 +64,66 @@ const ExploreScreen = ({ navigation }) => {
       .finally(() => setLoading(false));
   }, []);
 
-  const filteredCountries = countries.filter((country) =>
-    country.name?.common?.toLowerCase()?.startsWith(searchQuery.toLowerCase()),
+  const filteredCountries = React.useMemo(() => {
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+
+    return countries.filter((country) => {
+      const matchesRegion =
+        !selectedRegion || country.region === selectedRegion;
+      const searchableText = [
+        country.name?.common?.toLowerCase(),
+        country.capital?.[0]?.toLowerCase(),
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+      return matchesRegion && searchableText.includes(normalizedQuery);
+    });
+  }, [countries, searchQuery, selectedRegion]);
+
+  const renderSkeletonRows = () => (
+    <View>
+      {Array.from({ length: 7 }).map((_, index) => (
+        <View key={index} style={styles.skeletonRow}>
+          <View style={styles.skeletonFlag} />
+          <View style={styles.skeletonTextColumn}>
+            <View style={styles.skeletonTitleLine} />
+            <View style={styles.skeletonMetaLine} />
+          </View>
+        </View>
+      ))}
+    </View>
   );
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => navigation.navigate("CountryDetails", { country: item })}
-    >
-      <View style={styles.card}>
-        <Image source={{ uri: item.flags.png }} style={styles.flag} />
-        <View style={styles.cardContent}>
-          <Text style={styles.countryName}>{item.name.common}</Text>
-          <Text style={styles.capitalText}>
-            {t("capital")}: {item.capital}
-          </Text>
+  const renderItem = ({ item }) => {
+    const metadata = [
+      item.capital?.[0],
+      item.region,
+      formatPopulation(item.population),
+    ].filter(Boolean);
+
+    return (
+      <TouchableOpacity
+        onPress={() => navigation.navigate("CountryDetails", { country: item })}
+        activeOpacity={0.78}
+      >
+        <View style={styles.countryCard}>
+          <Image source={{ uri: item.flags?.png }} style={styles.countryCardFlag} />
+          <View style={styles.cardContent}>
+            <Text style={styles.countryName}>{item.name?.common}</Text>
+            <Text style={styles.countryCardMeta}>
+              {metadata.join(" · ")}
+            </Text>
+          </View>
+          <MaterialCommunityIcons
+            name="chevron-right"
+            size={22}
+            color={theme.colors.text}
+          />
         </View>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <ImageBackground
@@ -63,25 +131,68 @@ const ExploreScreen = ({ navigation }) => {
       style={styles.backgroundImage}
     >
       <View style={styles.containerContent}>
-        <Text style={styles.title}>{t("exploreCountries")}</Text>
-        <Text style={styles.subtitle2}>{t("search")}</Text>
-        <TextInput
-          style={styles.searchBox}
-          placeholder={t("searchEnterName")}
-          placeholderTextColor={theme.colors.buttonText}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-        <Text style={styles.subtitle2}>{t("searchResults")}</Text>
+        <View style={styles.exploreHeaderRow}>
+          <Text style={styles.title}>{t("exploreCountries")}</Text>
+        </View>
+
+        <View style={styles.exploreSearchContainer}>
+          <MaterialCommunityIcons
+            name="magnify"
+            size={20}
+            color={theme.colors.text}
+          />
+          <TextInput
+            style={styles.exploreSearchInput}
+            placeholder={t("searchCountryCapital")}
+            placeholderTextColor={theme.colors.text}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.regionFilterRow}
+          contentContainerStyle={styles.regionFilterContent}
+        >
+          {REGION_FILTERS.map((filter) => {
+            const isActive = selectedRegion === filter.value;
+
+            return (
+              <TouchableOpacity
+                key={filter.key}
+                style={[
+                  styles.regionFilterChip,
+                  isActive && styles.regionFilterChipActive,
+                ]}
+                onPress={() => setSelectedRegion(filter.value)}
+                activeOpacity={0.78}
+              >
+                <Text
+                  style={[
+                    styles.regionFilterChipText,
+                    isActive && styles.regionFilterChipTextActive,
+                  ]}
+                >
+                  {t(filter.labelKey)}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+
         {loading ? (
-          <View style={styles.loaderContainer}>
-            <ActivityIndicator size="large" color="#6366F1" />
-          </View>
+          renderSkeletonRows()
         ) : (
           <FlatList
             data={filteredCountries}
             renderItem={renderItem}
             keyExtractor={(item) => item.cca3}
+            keyboardShouldPersistTaps="handled"
+            ListEmptyComponent={
+              <Text style={styles.emptyStateText}>{t("noCountriesFound")}</Text>
+            }
           />
         )}
       </View>
