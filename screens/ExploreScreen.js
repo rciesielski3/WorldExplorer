@@ -18,9 +18,8 @@ import { getStyles } from "../styles";
 import AdBanner from "../components/AdBanner";
 import { API_URL } from "../constants";
 
-<<<<<<< HEAD
 const REGION_FILTERS = [
-  { key: "all", labelKey: "allCountries", value: null },
+  { key: "all", labelKey: "regionAll", value: null },
   { key: "europe", labelKey: "regionEurope", value: "Europe" },
   { key: "asia", labelKey: "regionAsia", value: "Asia" },
   { key: "americas", labelKey: "regionAmericas", value: "Americas" },
@@ -29,35 +28,19 @@ const REGION_FILTERS = [
 ];
 
 const formatPopulation = (population) => {
-  if (!Number.isFinite(population)) {
-    return null;
-  }
+  if (!Number.isFinite(population)) return null;
 
   if (population >= 1_000_000) {
-    return `${Math.round(population / 1_000_000)}M`;
+    const value = Math.round((population / 1_000_000) * 10) / 10;
+    return `${value}M`;
   }
 
   if (population >= 1_000) {
-    return `${Math.round(population / 1_000)}K`;
+    const value = Math.round((population / 1_000) * 10) / 10;
+    return `${value}K`;
   }
 
   return population.toLocaleString();
-=======
-const formatPopulation = (population) => {
-  if (!population) {
-    return "";
-  }
-
-  if (population >= 1000000) {
-    return `${Math.round(population / 1000000)}M`;
-  }
-
-  if (population >= 1000) {
-    return `${Math.round(population / 1000)}K`;
-  }
-
-  return String(population);
->>>>>>> main
 };
 
 const ExploreScreen = ({ navigation }) => {
@@ -65,18 +48,16 @@ const ExploreScreen = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState("");
   const [selectedRegion, setSelectedRegion] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
-  const { theme } = React.useContext(ThemeContext);
 
+  const { theme } = React.useContext(ThemeContext);
   const { t } = useTranslation();
 
-  const styles = getStyles(theme);
+  const styles = React.useMemo(() => getStyles(theme), [theme]);
 
   React.useEffect(() => {
     axios
       .get(API_URL)
-      .then((response) => {
-        setCountries(response.data);
-      })
+      .then((response) => setCountries(response.data))
       .catch((error) => console.error("Error fetching countries:", error))
       .finally(() => setLoading(false));
   }, []);
@@ -87,12 +68,11 @@ const ExploreScreen = ({ navigation }) => {
     return countries.filter((country) => {
       const matchesRegion =
         !selectedRegion || country.region === selectedRegion;
-      const searchableText = [
-        country.name?.common?.toLowerCase(),
-        country.capital?.[0]?.toLowerCase(),
-      ]
+
+      const searchableText = [country.name?.common, country.capital?.[0]]
         .filter(Boolean)
-        .join(" ");
+        .join(" ")
+        .toLowerCase();
 
       return matchesRegion && searchableText.includes(normalizedQuery);
     });
@@ -124,21 +104,14 @@ const ExploreScreen = ({ navigation }) => {
         onPress={() => navigation.navigate("CountryDetails", { country: item })}
         activeOpacity={0.78}
       >
-<<<<<<< HEAD
         <View style={styles.countryCard}>
-          <Image source={{ uri: item.flags?.png }} style={styles.countryCardFlag} />
+          <Image
+            source={{ uri: item.flags?.png }}
+            style={styles.countryCardFlag}
+          />
           <View style={styles.cardContent}>
             <Text style={styles.countryName}>{item.name?.common}</Text>
-            <Text style={styles.countryCardMeta}>
-              {metadata.join(" · ")}
-            </Text>
-=======
-        <View style={styles.card}>
-          <Image source={{ uri: item.flags?.png }} style={styles.flag} />
-          <View style={styles.cardContent}>
-            <Text style={styles.countryName}>{item.name?.common}</Text>
-            <Text style={styles.countryMetaText}>{metadata.join(" · ")}</Text>
->>>>>>> main
+            <Text style={styles.countryCardMeta}>{metadata.join(" · ")}</Text>
           </View>
           <MaterialCommunityIcons
             name="chevron-right"
@@ -156,7 +129,6 @@ const ExploreScreen = ({ navigation }) => {
       style={styles.backgroundImage}
     >
       <View style={styles.containerContent}>
-<<<<<<< HEAD
         <View style={styles.exploreHeaderRow}>
           <Text style={styles.title}>{t("exploreCountries")}</Text>
         </View>
@@ -208,26 +180,6 @@ const ExploreScreen = ({ navigation }) => {
           })}
         </ScrollView>
 
-=======
-        <View style={styles.exploreHeaderCard}>
-          <Text style={styles.title}>{t("exploreCountries")}</Text>
-          <Text style={styles.subtitle2}>{t("homeHeroSubtitle")}</Text>
-          <View style={styles.searchInputWrap}>
-            <MaterialCommunityIcons
-              name="magnify"
-              size={20}
-              color={theme.colors.text}
-            />
-            <TextInput
-              style={styles.searchBox}
-              placeholder={t("searchEnterName")}
-              placeholderTextColor={theme.colors.text}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-          </View>
-        </View>
->>>>>>> main
         {loading ? (
           renderSkeletonRows()
         ) : (
@@ -235,29 +187,14 @@ const ExploreScreen = ({ navigation }) => {
             data={filteredCountries}
             renderItem={renderItem}
             keyExtractor={(item) => item.cca3}
-<<<<<<< HEAD
             keyboardShouldPersistTaps="handled"
             ListEmptyComponent={
               <Text style={styles.emptyStateText}>{t("noCountriesFound")}</Text>
             }
-=======
-            ListEmptyComponent={
-              <View style={styles.exploreEmptyState}>
-                <MaterialCommunityIcons
-                  name="map-search-outline"
-                  size={32}
-                  color={theme.colors.text}
-                />
-                <Text style={styles.settingDescription}>
-                  {t("exploreEmptyState")}
-                </Text>
-              </View>
-            }
-            contentContainerStyle={styles.exploreListContent}
->>>>>>> main
           />
         )}
       </View>
+
       <AdBanner />
     </ImageBackground>
   );
