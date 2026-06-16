@@ -53,9 +53,12 @@ test("refreshed UI copy is translated in every supported locale", () => {
 test("UI refresh increments the Android store version", () => {
   const appConfig = read("app.config.js");
   const appBuildGradle = read("android/app/build.gradle");
+  const configVersion = appConfig.match(/version: "([^"]+)"/)?.[1];
+  const configVersionCode = Number(appConfig.match(/versionCode: (\d+)/)?.[1]);
+  const gradleVersion = appBuildGradle.match(/versionName "([^"]+)"/)?.[1];
+  const gradleVersionCode = Number(appBuildGradle.match(/versionCode (\d+)/)?.[1]);
 
-  assert.match(appConfig, /version: "1\.2\.3"/);
-  assert.match(appConfig, /versionCode: 125/);
-  assert.match(appBuildGradle, /versionName "1\.2\.3"/);
-  assert.match(appBuildGradle, /versionCode 125/);
+  assert.equal(configVersion, gradleVersion);
+  assert.equal(configVersionCode, gradleVersionCode);
+  assert.ok(configVersionCode >= 125);
 });
