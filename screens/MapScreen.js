@@ -43,10 +43,10 @@ const DARK_MAP_STYLE = [
 ];
 
 const getInitialRouteData = (route, fallbackName) => {
-  const country = route.params?.country;
-  const latitude = route.params?.latitude ?? country?.latlng?.[0] ?? 51.9194;
-  const longitude = route.params?.longitude ?? country?.latlng?.[1] ?? 19.1451;
-  const countryName = route.params?.countryName ?? country?.name?.common ?? fallbackName;
+  const country = route?.params?.country;
+  const latitude = route?.params?.latitude ?? country?.latlng?.[0] ?? 51.9194;
+  const longitude = route?.params?.longitude ?? country?.latlng?.[1] ?? 19.1451;
+  const countryName = route?.params?.countryName ?? country?.name?.common ?? fallbackName;
 
   return {
     country,
@@ -108,24 +108,27 @@ const MapScreen = ({ route, navigation }) => {
     [country, latitude, longitude]
   );
   const [region, setRegion] = React.useState(initialRegion);
+  const regionRef = React.useRef(initialRegion);
 
   const animateToRegion = React.useCallback((nextRegion) => {
+    regionRef.current = nextRegion;
     setRegion(nextRegion);
     mapRef.current?.animateToRegion(nextRegion, 280);
   }, []);
 
   const handleZoom = React.useCallback(
     (direction) => {
+      const currentRegion = regionRef.current;
       const factor = direction === "in" ? 0.62 : 1.38;
       const nextRegion = {
-        ...region,
-        latitudeDelta: Math.min(Math.max(region.latitudeDelta * factor, 2), 80),
-        longitudeDelta: Math.min(Math.max(region.longitudeDelta * factor, 2), 80),
+        ...currentRegion,
+        latitudeDelta: Math.min(Math.max(currentRegion.latitudeDelta * factor, 2), 80),
+        longitudeDelta: Math.min(Math.max(currentRegion.longitudeDelta * factor, 2), 80),
       };
 
       animateToRegion(nextRegion);
     },
-    [animateToRegion, region]
+    [animateToRegion]
   );
 
   const handleResetMap = React.useCallback(() => {
@@ -159,7 +162,10 @@ const MapScreen = ({ route, navigation }) => {
             style={styles.mapView}
             customMapStyle={theme.isDarkMode ? DARK_MAP_STYLE : []}
             initialRegion={initialRegion}
-            onRegionChangeComplete={setRegion}
+            onRegionChangeComplete={(newRegion) => {
+              regionRef.current = newRegion;
+              setRegion(newRegion);
+            }}
           >
             <Marker coordinate={{ latitude, longitude }}>
               <View style={styles.mapPin}>
