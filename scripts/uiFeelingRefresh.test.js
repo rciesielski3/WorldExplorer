@@ -60,6 +60,6 @@ test("UI refresh increments the Android store version", () => {
 
   assert.equal(configVersion, gradleVersion);
   assert.equal(configVersionCode, gradleVersionCode);
-  assert.equal(configVersion, "1.2.7");
-  assert.equal(configVersionCode, 129);
+  assert.equal(configVersion, "1.2.8");
+  assert.equal(configVersionCode, 130);
 });
