@@ -89,7 +89,12 @@ Create a local ignored `.env.local` or configure the same values in EAS/CI:
 ADMOB_APP_ID=ca-app-pub-4185040274135926~2042240790
 ADMOB_BANNER_ID=ca-app-pub-4185040274135926/5472119846
 ADMOB_IOS_APP_ID=ca-app-pub-3940256099942544~1458002511
+EXPO_PUBLIC_REST_COUNTRIES_API_KEY=your_rest_countries_api_key
 ```
+
+REST Countries v5 requires an API key. For local development, add
+`EXPO_PUBLIC_REST_COUNTRIES_API_KEY` to your local `.env` file. For EAS builds,
+configure the same variable as an EAS environment secret.
 
 Premium purchases are intentionally not shipped in this Google Play ad release.
 RevenueCat, billing, and ad removal will be added in a separate release branch.

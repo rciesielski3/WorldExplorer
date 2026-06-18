@@ -7,13 +7,12 @@ import {
   Image,
   ImageBackground,
 } from "react-native";
-import axios from "axios";
 import { useTranslation } from "react-i18next";
 
 import { ThemeContext } from "../../context/ThemeContext";
 import { getStyles } from "../../styles";
 import AdBanner from "../../components/AdBanner";
-import { QUIZ_API_URL } from "../../constants";
+import { fetchCountries } from "../../utils/restCountriesApi";
 
 const {
   answerQuestion,
@@ -44,11 +43,9 @@ const QuizScreen = ({ route, navigation }) => {
     }
 
     let isMounted = true;
-    axios
-      .get(QUIZ_API_URL)
-      .then((response) => {
+    fetchCountries()
+      .then((countries) => {
         if (isMounted) {
-          const countries = response.data;
           const generatedQuestions = generateQuestions(countries);
           setQuestions(generatedQuestions);
           setLoading(false);

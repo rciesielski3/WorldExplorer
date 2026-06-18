@@ -9,13 +9,12 @@ import {
   ScrollView,
 } from "react-native";
 import { useTranslation } from "react-i18next";
-import axios from "axios";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
-import { API_URL } from "../constants";
 import { getDailyCountry } from "../utils/dailyCountry";
+import { fetchCountries } from "../utils/restCountriesApi";
 import LottieView from "lottie-react-native";
 
 const HomeScreen = ({ navigation }) => {
@@ -59,10 +58,9 @@ const HomeScreen = ({ navigation }) => {
   ];
 
   React.useEffect(() => {
-    axios
-      .get(API_URL)
-      .then((response) => {
-        setDailyCountry(getDailyCountry(response.data));
+    fetchCountries()
+      .then((countriesData) => {
+        setDailyCountry(getDailyCountry(countriesData));
       })
       .catch((error) => console.error("Error fetching daily country:", error))
       .finally(() => setIsDailyCountryLoading(false));
