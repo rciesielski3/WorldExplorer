@@ -9,14 +9,13 @@ import {
   TextInput,
   ScrollView,
 } from "react-native";
-import axios from "axios";
 import { useTranslation } from "react-i18next";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import AdBanner from "../components/AdBanner";
-import { API_URL } from "../constants";
+import { fetchCountries } from "../utils/restCountriesApi";
 
 const REGION_FILTERS = [
   { key: "all", labelKey: "allCountries", value: null },
@@ -54,10 +53,9 @@ const ExploreScreen = ({ navigation }) => {
   const styles = getStyles(theme);
 
   React.useEffect(() => {
-    axios
-      .get(API_URL)
-      .then((response) => {
-        setCountries(response.data);
+    fetchCountries()
+      .then((countriesData) => {
+        setCountries(countriesData);
       })
       .catch((error) => console.error("Error fetching countries:", error))
       .finally(() => setLoading(false));

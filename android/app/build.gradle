@@ -94,8 +94,8 @@ android {
         applicationId 'com.adateo.WorldExplorer'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 127
-        versionName "1.2.5"
+        versionCode 128
+        versionName "1.2.6"
     }
     signingConfigs {
         debug {
