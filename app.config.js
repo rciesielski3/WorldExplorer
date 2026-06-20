@@ -13,7 +13,7 @@ module.exports = {
     slug: "WorldExplorer",
     sdkVersion: "53.0.0",
     platforms: ["android"],
-    version: "1.2.6",
+    version: "1.2.8",
     orientation: "portrait",
     icon: "./assets/world.png",
     userInterfaceStyle: "light",

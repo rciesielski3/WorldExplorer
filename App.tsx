@@ -37,6 +37,12 @@ export default function App() {
   });
 
   React.useEffect(() => {
+    if (fontError) {
+      console.warn("Fonts failed to load:", fontError);
+    }
+  }, [fontError]);
+
+  React.useEffect(() => {
     mobileAds()
       .initialize()
       .catch((error) => console.warn("AdMob initialization failed", error));
