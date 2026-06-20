@@ -31,7 +31,7 @@ export default function App() {
 
   const { t } = useTranslation();
 
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     "Exo2-Regular": Exo2_400Regular,
     "Exo2-Bold": Exo2_700Bold,
   });
@@ -42,7 +42,7 @@ export default function App() {
       .catch((error) => console.warn("AdMob initialization failed", error));
   }, []);
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded && !fontError) {
     return (
       <ActivityIndicator
         size="large"
@@ -50,6 +50,10 @@ export default function App() {
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       />
     );
+  }
+
+  if (fontError) {
+    console.warn("Fonts failed to load:", fontError);
   }
 
   return (
