@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 import { ThemeContext } from "../../context/ThemeContext";
 import { getStyles } from "../../styles";
 import AdBanner from "../../components/AdBanner";
-import { fetchCountries } from "../../utils/restCountriesApi";
+import { fetchCountries } from "../../utils/countries";
 
 const {
   answerQuestion,
@@ -34,9 +34,12 @@ const QuizScreen = ({ route, navigation }) => {
     if (practiceQuestions?.length) {
       setQuestions(
         practiceQuestions.map(
-          ({ selectedAnswer: _selectedAnswer, isCorrect: _isCorrect, ...question }) =>
-            question
-        )
+          ({
+            selectedAnswer: _selectedAnswer,
+            isCorrect: _isCorrect,
+            ...question
+          }) => question,
+        ),
       );
       setLoading(false);
       return undefined;
@@ -71,39 +74,39 @@ const QuizScreen = ({ route, navigation }) => {
         question = {
           type: "flag",
           question: t("quizFlagBelong"),
-          flag: randomCountry.flags?.png || "",
+          flag: randomCountry.flagPng || "",
           options: generateOptions(
             countries,
-            randomCountry.name.common,
-            "country"
+            getLocalizedCountryName(randomCountry, i18n.language),
+            "country",
           ),
-          answer: randomCountry.name.common,
+          answer: getLocalizedCountryName(randomCountry, i18n.language),
         };
       } else if (type === "capital") {
         question = {
           type: "capital",
           question: t("quizCapital", {
-            country: randomCountry.name.common,
+            country: getLocalizedCountryName(randomCountry, i18n.language),
           }),
           options: generateOptions(
             countries,
-            randomCountry.capital?.[0] || t("noCapital"),
-            "capital"
+            randomCountry.capital || t("noCapital"),
+            "capital",
           ),
-          answer: randomCountry.capital?.[0] || t("noCapital"),
+          answer: randomCountry.capital || t("noCapital"),
         };
       } else {
         question = {
           type: "country",
           question: t("quizCountryCapital", {
-            country: randomCountry.name.common,
+            country: getLocalizedCountryName(randomCountry, i18n.language),
           }),
           options: generateOptions(
             countries,
-            randomCountry.name.common,
-            "country"
+            getLocalizedCountryName(randomCountry, i18n.language),
+            "country",
           ),
-          answer: randomCountry.name.common,
+          answer: getLocalizedCountryName(randomCountry, i18n.language),
         };
       }
       generatedQuestions.push(question);
@@ -119,8 +122,8 @@ const QuizScreen = ({ route, navigation }) => {
         countries[Math.floor(Math.random() * countries.length)];
       const option =
         type === "capital"
-          ? randomCountry.capital?.[0] || t("noCapital")
-          : randomCountry.name.common;
+          ? randomCountry.capital || t("noCapital")
+          : getLocalizedCountryName(randomCountry, i18n.language);
 
       options.add(option);
     }
@@ -136,8 +139,8 @@ const QuizScreen = ({ route, navigation }) => {
     setSelectedAnswer(answer);
     setQuestions((prevQuestions) =>
       prevQuestions.map((question, index) =>
-        index === currentQuestion ? answerQuestion(question, answer) : question
-      )
+        index === currentQuestion ? answerQuestion(question, answer) : question,
+      ),
     );
   };
 

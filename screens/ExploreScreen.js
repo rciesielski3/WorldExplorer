@@ -15,7 +15,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import AdBanner from "../components/AdBanner";
-import { fetchCountries } from "../utils/restCountriesApi";
+import { fetchCountries } from "../utils/countries";
 
 const REGION_FILTERS = [
   { key: "all", labelKey: "allCountries", value: null },
@@ -67,12 +67,7 @@ const ExploreScreen = ({ navigation }) => {
     return countries.filter((country) => {
       const matchesRegion =
         !selectedRegion || country.region === selectedRegion;
-      const searchableText = [
-        country.name?.common?.toLowerCase(),
-        country.capital?.[0]?.toLowerCase(),
-      ]
-        .filter(Boolean)
-        .join(" ");
+      const searchableText = getSearchableCountryText(country);
 
       return matchesRegion && searchableText.includes(normalizedQuery);
     });
@@ -94,7 +89,7 @@ const ExploreScreen = ({ navigation }) => {
 
   const renderItem = ({ item }) => {
     const metadata = [
-      item.capital?.[0],
+      item.capital,
       item.region,
       formatPopulation(item.population),
     ].filter(Boolean);
@@ -105,9 +100,14 @@ const ExploreScreen = ({ navigation }) => {
         activeOpacity={0.78}
       >
         <View style={styles.countryCard}>
-          <Image source={{ uri: item.flags?.png }} style={styles.countryCardFlag} />
+          <Image
+            source={{ uri: item.flagPng }}
+            style={styles.countryCardFlag}
+          />
           <View style={styles.cardContent}>
-            <Text style={styles.countryName}>{item.name?.common}</Text>
+            <Text style={styles.countryName}>
+              {getLocalizedCountryName(item, i18n.language)}
+            </Text>
             <Text style={styles.countryMetaText}>{metadata.join(" · ")}</Text>
           </View>
           <MaterialCommunityIcons
@@ -183,7 +183,7 @@ const ExploreScreen = ({ navigation }) => {
           <FlatList
             data={filteredCountries}
             renderItem={renderItem}
-            keyExtractor={(item) => item.cca3}
+            keyExtractor={(item) => item.code3}
             keyboardShouldPersistTaps="handled"
             ListEmptyComponent={
               <View style={styles.exploreEmptyState}>
