@@ -1,11 +1,38 @@
-import React from "react";
+import React, { ReactNode } from "react";
 
-import { getStyles } from "../styles";
+type Theme = {
+  isDarkMode: boolean;
+  toggleTheme: () => void;
+  colors: {
+    background: string;
+    text: string;
+    card: string;
+    button: string;
+    buttonText: string;
+    border: string;
+  };
+};
 
-export const ThemeContext = React.createContext();
+type ThemeContextType = {
+  theme: Theme;
+};
 
-export const ThemeProvider = ({ children, isDarkMode, toggleTheme }) => {
-  const theme = {
+type ThemeProviderProps = {
+  children: ReactNode;
+  isDarkMode: boolean;
+  toggleTheme: () => void;
+};
+
+export const ThemeContext = React.createContext<ThemeContextType | undefined>(
+  undefined,
+);
+
+export const ThemeProvider = ({
+  children,
+  isDarkMode,
+  toggleTheme,
+}: ThemeProviderProps) => {
+  const theme: Theme = {
     isDarkMode,
     toggleTheme,
     colors: isDarkMode
@@ -26,8 +53,6 @@ export const ThemeProvider = ({ children, isDarkMode, toggleTheme }) => {
           border: "#D1D5DB",
         },
   };
-
-  const styles = getStyles(theme);
 
   return (
     <ThemeContext.Provider value={{ theme }}>{children}</ThemeContext.Provider>

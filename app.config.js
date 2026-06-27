@@ -25,7 +25,7 @@ module.exports = {
     },
     android: {
       package: "com.adateo.WorldExplorer",
-      versionCode: 131,
+      versionCode: 134,
       permissions: [
         "com.google.android.gms.permission.AD_ID",
         "com.android.vending.BILLING",
