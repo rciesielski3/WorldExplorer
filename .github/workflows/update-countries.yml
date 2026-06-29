@@ -1,4 +1,4 @@
-name: Monthly Countries Dataset Update
+name: Update Countries Data
 
 on:
   schedule:
