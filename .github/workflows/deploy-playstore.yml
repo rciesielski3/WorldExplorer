@@ -1,0 +1,84 @@
+name: Deploy to Play Store
+
+on:
+  workflow_dispatch:
+    inputs:
+      track:
+        description: 'Release track (internal, alpha, beta, production)'
+        required: true
+        default: 'internal'
+      release_notes:
+        description: 'Release notes for Play Store'
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      aab-path: ${{ steps.build.outputs.aab-path }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Android
+        uses: ./.github/actions/setup-android
+
+      - name: Build AAB
+        id: build
+        uses: ./.github/actions/build-aab
+        with:
+          java-home: ${{ env.JAVA_HOME }}
+          android-home: ${{ env.ANDROID_HOME }}
+          keystore-base64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          keystore-password: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          key-alias: ${{ secrets.ANDROID_KEY_ALIAS }}
+          key-password: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+      - name: Verify Signing
+        uses: ./.github/actions/sign-aab
+        with:
+          expected-sha1: '34:C6:3A:57:7B:3C:06:5F:B3:5D:18:C6:65:E3:B6:6B:3A:29:F9:5F'
+
+      - name: Upload to Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAYSTORE_SERVICE_ACCOUNT_JSON }}
+          packageName: com.adateo.WorldExplorer
+          releaseFiles: 'android/app/build/outputs/bundle/release/app-release.aab'
+          track: ${{ github.event.inputs.track }}
+          releaseNotes: ${{ github.event.inputs.release_notes }}
+          status: completed
+
+      - name: Create Release
+        if: github.event.inputs.track == 'production'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: android/app/build/outputs/bundle/release/app-release.aab
+          tag_name: v1.3.0
+          body: |
+            WorldExplorer v1.3.0 - Release
+
+            ## Changes
+            - Fixed Gradle nested dependencies (expo-json-utils)
+            - Implemented secure API key handling
+            - GitHub Actions CI/CD infrastructure
+            - EAS CLI local build support
+
+            ## Build Details
+            - versionCode: 136
+            - versionName: 1.3.0
+            - buildType: release
+            - signingConfig: production
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
