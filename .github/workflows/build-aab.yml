@@ -1,0 +1,66 @@
+name: Build Android Bundle (No Upload)
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_notes:
+        description: 'Release notes (informational only, no upload)'
+        required: false
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Android
+        uses: ./.github/actions/setup-android
+
+      - name: Build AAB
+        id: build
+        uses: ./.github/actions/build-aab
+        with:
+          java-home: ${{ env.JAVA_HOME }}
+          android-home: ${{ env.ANDROID_HOME }}
+          keystore-base64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          keystore-password: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          key-alias: ${{ secrets.ANDROID_KEY_ALIAS }}
+          key-password: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+      - name: Verify Signing
+        uses: ./.github/actions/sign-aab
+        with:
+          expected-sha1: '34:C6:3A:57:7B:3C:06:5F:B3:5D:18:C6:65:E3:B6:6B:3A:29:F9:5F'
+
+      - name: Upload AAB Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Build Summary
+        run: |
+          echo "✅ Build completed successfully"
+          echo "📦 Artifact: app-release.aab"
+          echo "📍 Size: $(du -h android/app/build/outputs/bundle/release/app-release.aab | cut -f1)"
+          echo "🔗 Download from: Actions → Build Android Bundle → Artifacts"
+          if [ -n "${{ github.event.inputs.release_notes }}" ]; then
+            echo ""
+            echo "📝 Release Notes:"
+            echo "${{ github.event.inputs.release_notes }}"
+          fi
