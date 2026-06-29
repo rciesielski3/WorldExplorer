@@ -45,8 +45,8 @@ jobs:
           git add data/countries.json
           git commit -m "chore: update countries dataset
 
-Automated monthly update from countries.dev + mledoze/countries sources.
-All country descriptions preserved during this update."
+          Automated monthly update from countries.dev + mledoze/countries sources.
+          All country descriptions preserved during this update."
 
       - name: Create Pull Request
         if: steps.changes.outputs.has_changes == 'true'
