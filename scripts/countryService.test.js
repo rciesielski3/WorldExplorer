@@ -2,130 +2,104 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
-const vm = require("node:vm");
 
-const rootDir = path.resolve(__dirname, "..");
+const datasetPath = path.join(__dirname, "..", "data", "countries.json");
+const countriesPath = path.join(__dirname, "..", "utils", "countries.ts");
 
-const read = (filePath) =>
-  fs.readFileSync(path.join(rootDir, filePath), "utf8");
+const dataset = JSON.parse(fs.readFileSync(datasetPath, "utf8"));
 
-const loadConstants = () => {
-  const source = `${read("constants.js").replace(/^export const /gm, "const ")}
+// Import utility functions (require TS transpilation)
+let getCountryByCode, getLocalizedCountryName, getSearchableCountryText;
+try {
+  const countriesModule = require(countriesPath);
+  getCountryByCode = countriesModule.getCountryByCode;
+  getLocalizedCountryName = countriesModule.getLocalizedCountryName;
+  getSearchableCountryText = countriesModule.getSearchableCountryText;
+} catch (e) {
+  // Functions may not be directly importable from TS file
+}
 
-module.exports = { normalizeCountriesResponse };`;
-  const context = {
-    module: { exports: {} },
-    process: { env: {} },
-  };
+test("countries dataset metadata is valid", () => {
+  assert.equal(dataset.version, 2);
+  assert.equal(dataset.source, "countries.dev + mledoze/countries");
 
-  vm.runInNewContext(source, context);
+  assert.ok(dataset.generatedAt);
 
-  return context.module.exports;
-};
-
-test("REST Countries all requests specify the fields required by each screen", () => {
-  const constants = read("constants.js");
-  const restCountriesApi = read("utils/countries.ts");
-  const exploreScreen = read("screens/ExploreScreen.js");
-  const homeScreen = read("screens/HomeScreen.js");
-  const quizScreen = read("screens/quiz/QuizScreen.js");
-
-  assert.match(constants, /https:\/\/api\.restcountries\.com\/countries\/v5/);
-  assert.match(constants, /EXPO_PUBLIC_REST_COUNTRIES_API_KEY/);
-  assert.match(
-    constants,
-    /Authorization:\s*`Bearer \$\{REST_COUNTRIES_API_KEY\}`/,
-  );
-  assert.match(constants, /responseData\?\.data\?\.objects/);
-  assert.match(
-    constants,
-    /limit=\$\{REST_COUNTRIES_PAGE_SIZE\}&offset=\$\{offset\}/,
-  );
-  assert.match(constants, /names\?\.common/);
-  assert.match(constants, /flag\?\.url_png/);
-  assert.match(constants, /capitals\?\.map/);
-
-  assert.match(restCountriesApi, /fetchCountries/);
-  assert.match(restCountriesApi, /countriesPromise/);
-  assert.match(restCountriesApi, /meta\?\.more/);
-  assert.match(restCountriesApi, /getRestCountriesPageUrl\(offset\)/);
-  assert.match(restCountriesApi, /Promise\.all/);
-
-  assert.doesNotMatch(constants, /restcountries\.com\/v3\.1/);
-  assert.match(exploreScreen, /fetchCountries/);
-  assert.match(homeScreen, /fetchCountries/);
-  assert.match(quizScreen, /fetchCountries/);
-  assert.doesNotMatch(
-    `${exploreScreen}\n${homeScreen}\n${quizScreen}`,
-    /axios\.get\((API_URL|QUIZ_API_URL)/,
-  );
+  assert.ok(Array.isArray(dataset.countries));
+  assert.equal(dataset.countries.length, 250);
 });
 
-test("REST Countries v5 responses are normalized to the app country model", () => {
-  const { normalizeCountriesResponse } = loadConstants();
+test("every country contains required fields", () => {
+  for (const country of dataset.countries) {
+    assert.ok(country.code);
+    assert.ok(country.code3);
 
-  const countries = normalizeCountriesResponse({
-    data: {
-      objects: [
-        {
-          names: {
-            common: "Canada",
-            official: "Canada",
-          },
-          codes: {
-            alpha_2: "CA",
-            alpha_3: "CAN",
-          },
-          capitals: [{ name: "Ottawa" }],
-          flag: {
-            url_png: "https://flags.restcountries.com/v5/w640/ca.png",
-            url_svg: "https://flags.restcountries.com/v5/svg/ca.svg",
-            description: "The flag of Canada.",
-          },
-          population: 41575585,
-          region: "Americas",
-          subregion: "North America",
-          languages: [{ iso639_2t: "eng", name: "English" }],
-          currencies: [{ code: "CAD", name: "Canadian dollar", symbol: "$" }],
-          coordinates: { lat: 60, lng: -95 },
-          area: { kilometers: 9984670 },
-          borders: ["USA"],
-          timezones: ["UTC-05:00"],
-          tlds: [".ca"],
-        },
-      ],
-    },
-  });
+    assert.ok(country.region);
+    assert.ok(country.subregion);
 
-  assert.deepEqual(JSON.parse(JSON.stringify(countries)), [
-    {
-      name: {
-        common: "Canada",
-        official: "Canada",
-      },
-      flags: {
-        png: "https://flags.restcountries.com/v5/w640/ca.png",
-        svg: "https://flags.restcountries.com/v5/svg/ca.svg",
-        alt: "The flag of Canada.",
-      },
-      capital: ["Ottawa"],
-      cca2: "CA",
-      cca3: "CAN",
-      population: 41575585,
-      region: "Americas",
-      subregion: "North America",
-      languages: { eng: "English" },
-      currencies: {
-        CAD: {
-          name: "Canadian dollar",
-          symbol: "$",
-        },
-      },
-      latlng: [60, -95],
-      area: 9984670,
-      borders: ["USA"],
-      timezones: ["UTC-05:00"],
-      tld: [".ca"],
-    },
-  ]);
+    assert.equal(typeof country.population, "number");
+    assert.equal(typeof country.area, "number");
+
+    assert.ok(Array.isArray(country.languages));
+    assert.ok(Array.isArray(country.currencies));
+    assert.ok(Array.isArray(country.timezones));
+    assert.ok(Array.isArray(country.borders));
+
+    assert.equal(typeof country.lat, "number");
+    assert.equal(typeof country.lng, "number");
+
+    assert.ok(country.flag);
+    assert.ok(country.flagSvg);
+    assert.ok(country.flagPng);
+
+    assert.ok(country.translations.en.name);
+    assert.ok(country.translations.pl.name);
+    assert.ok(country.translations.de.name);
+    assert.ok(country.translations.es.name);
+  }
+});
+
+test("Poland dataset is normalized correctly", () => {
+  const poland = dataset.countries.find((country) => country.code === "PL");
+
+  assert.ok(poland);
+
+  assert.equal(poland.code3, "POL");
+  assert.equal(poland.capital, "Warsaw");
+
+  assert.equal(poland.region, "Europe");
+  assert.equal(poland.subregion, "Central Europe");
+
+  assert.equal(poland.population, 37950802);
+
+  assert.ok(poland.languages.includes("Polish"));
+  assert.ok(poland.currencies.includes("PLN"));
+
+  assert.equal(poland.translations.en.name, "Poland");
+  assert.equal(poland.translations.pl.name, "Polska");
+
+  assert.ok(poland.flag === "🇵🇱");
+  assert.ok(poland.flagSvg.includes("flagcdn.com"));
+  assert.ok(poland.flagPng.includes("flagcdn.com"));
+});
+
+test("country codes are unique", () => {
+  const codes = dataset.countries.map((country) => country.code);
+
+  assert.equal(codes.length, new Set(codes).size);
+});
+
+test("country code3 values are unique", () => {
+  const codes = dataset.countries.map((country) => country.code3);
+
+  assert.equal(codes.length, new Set(codes).size);
+});
+
+test("descriptions are preserved for every language", () => {
+  for (const country of dataset.countries) {
+    assert.ok(country.translations.en.description !== undefined);
+    assert.ok(country.translations.pl.description !== undefined);
+    assert.ok(country.translations.de.description !== undefined);
+    assert.ok(country.translations.es.description !== undefined);
+  }
 });
