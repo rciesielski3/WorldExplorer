@@ -16,11 +16,12 @@ runs:
       uses: gradle/actions/setup-gradle@v3
 
     - name: Decode Production Keystore
+      id: keystore
       shell: bash
       run: |
         if [ -n "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ]; then
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > /tmp/worldexplorer.keystore
-          echo "KEYSTORE_PATH=/tmp/worldexplorer.keystore" >> $GITHUB_ENV
+          echo "path=/tmp/worldexplorer.keystore" >> $GITHUB_OUTPUT
         else
           echo "ERROR: ANDROID_KEYSTORE_BASE64 secret not found"
           exit 1
@@ -32,7 +33,7 @@ runs:
       env:
         JAVA_HOME: ${{ inputs.java-home }}
         ANDROID_HOME: ${{ inputs.android-home }}
-        ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_STORE_FILE: ${{ env.KEYSTORE_PATH }}
+        ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_STORE_FILE: ${{ steps.keystore.outputs.path }}
         ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
