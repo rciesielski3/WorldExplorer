@@ -1,6 +1,3 @@
-apply from: file("../node_modules/expo-modules-core/android/autolinking.gradle")
-applyExpoModulesSettingsGradle()
-
 pluginManagement {
   def reactNativeGradlePlugin = new File(
     providers.exec {
@@ -9,7 +6,7 @@ pluginManagement {
     }.standardOutput.asText.get().trim()
   ).getParentFile().absolutePath
   includeBuild(reactNativeGradlePlugin)
-  
+
   def expoPluginsPath = new File(
     providers.exec {
       workingDir(rootDir)
@@ -19,6 +16,9 @@ pluginManagement {
   ).absolutePath
   includeBuild(expoPluginsPath)
 }
+
+apply from: file("../node_modules/expo-modules-core/android/autolinking.gradle")
+applyExpoModulesSettingsGradle()
 
 plugins {
   id("com.facebook.react.settings")
