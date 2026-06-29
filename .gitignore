@@ -53,3 +53,17 @@ yarn-error.*
 *.tsbuildinfo
 
 # @end expo-cli
+
+# IDE and Editor
+.vscode/
+.superpowers/
+
+# Build artifacts and generated files
+ios/
+android/.kotlin/
+files_worldExplorer/
+theme/
+
+# Local development
+.env.local
+.DS_Store
