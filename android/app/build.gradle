@@ -94,6 +94,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 135
         versionName "1.2.9"
+        manifestPlaceholders = [MAPS_API_KEY: (project.findProperty('MAPS_API_KEY') ?: '')]
     }
     signingConfigs {
         debug {
