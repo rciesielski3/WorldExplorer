@@ -86,6 +86,7 @@ For both build scenarios to work, configure these GitHub Secrets:
 | `ANDROID_KEY_ALIAS` | Key alias in keystore |
 | `ANDROID_KEY_PASSWORD` | Key password |
 | `PLAYSTORE_SERVICE_ACCOUNT_JSON` | Google Play service account (for deploy workflow) |
+| `MAPS_API_KEY` | Google Maps API Key (required for map features) |
 
 ---
 
@@ -105,7 +106,7 @@ Custom GitHub Actions used by workflows:
 The AAB signing verification failed. Check:
 1. ANDROID_KEYSTORE_BASE64 secret is set correctly
 2. Keystore file is valid and accessible
-3. Production keystore SHA1 matches `34:C6:3A:57:7B:3C:06:5F:B3:5D:18:C6:65:E3:B6:6B:3A:29:F9:5F`
+3. Production keystore SHA1 matches the one configured in Google Play Console (verify with: `keytool -list -v -keystore <path-to-keystore>`)
 
 ### Play Store upload fails
 Check:
