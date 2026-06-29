@@ -36,4 +36,7 @@ rootProject.name = 'WorldExplorer'
 expoAutolinking.useExpoVersionCatalog()
 
 include ':app'
+include ':expo-json-utils'
+project(':expo-json-utils').projectDir = new File(rootDir, '../node_modules/expo-manifests/node_modules/expo-json-utils/android')
+
 includeBuild(expoAutolinking.reactNativeGradlePlugin)
