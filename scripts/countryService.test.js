@@ -49,8 +49,8 @@ test("every country contains required fields", () => {
     assert.equal(typeof country.lng, "number");
 
     assert.ok(country.flag);
-    assert.ok(country.flagSvg);
-    assert.ok(country.flagPng);
+    assert.ok(country.flagPath);
+    assert.match(country.flagPath, /^[a-z]{2}\.png$/);
 
     assert.ok(country.translations.en.name);
     assert.ok(country.translations.pl.name);
@@ -79,8 +79,9 @@ test("Poland dataset is normalized correctly", () => {
   assert.equal(poland.translations.pl.name, "Polska");
 
   assert.ok(poland.flag === "🇵🇱");
-  assert.ok(poland.flagSvg.includes("flagcdn.com"));
-  assert.ok(poland.flagPng.includes("flagcdn.com"));
+  assert.equal(poland.flagPath, "pl.png");
+  assert.ok(!poland.flagPath.includes("flagcdn.com"));
+  assert.ok(!poland.flagPath.includes("http"));
 });
 
 test("country codes are unique", () => {

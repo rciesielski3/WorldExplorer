@@ -13,6 +13,7 @@ import { ThemeContext } from "../../context/ThemeContext";
 import { getStyles } from "../../styles";
 import AdBanner from "../../components/AdBanner";
 import { fetchCountries } from "../../utils/countries";
+import { FLAG_ASSETS } from "../../utils/flagAssets";
 
 const {
   answerQuestion,
@@ -74,7 +75,7 @@ const QuizScreen = ({ route, navigation }) => {
         question = {
           type: "flag",
           question: t("quizFlagBelong"),
-          flag: randomCountry.flagPng || "",
+          flag: randomCountry.flagPath || "",
           options: generateOptions(
             countries,
             getLocalizedCountryName(randomCountry, i18n.language),
@@ -179,7 +180,7 @@ const QuizScreen = ({ route, navigation }) => {
 
             {questions[currentQuestion].type === "flag" && (
               <Image
-                source={{ uri: questions[currentQuestion].flag }}
+                source={FLAG_ASSETS[questions[currentQuestion].flag]}
                 style={{
                   width: 200,
                   height: 120,
