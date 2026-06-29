@@ -8,6 +8,7 @@
     "countries:update": "tsx scripts/countries/update.ts",
     "countries:validate": "tsx scripts/countries/validate.ts",
     "flags:download": "tsx scripts/countries/download-flags.ts",
+    "flags:verify": "tsx scripts/countries/verify-flags.ts",
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
