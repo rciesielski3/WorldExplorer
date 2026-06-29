@@ -56,7 +56,7 @@ const main = async () => {
 
   for (let i = 0; i < codes.length; i += batchSize) {
     const batch = codes.slice(i, i + batchSize);
-    await Promise.all(batch.map((code) => downloadFlag(code)));
+    await Promise.all(batch.map((code: string) => downloadFlag(code)));
     completed += batch.length;
     console.log(`Progress: ${completed}/${codes.length}`);
   }
