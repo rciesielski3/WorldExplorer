@@ -17,13 +17,13 @@ pluginManagement {
   includeBuild(expoPluginsPath)
 }
 
-apply from: file("../node_modules/expo-modules-core/android/autolinking.gradle")
-applyExpoModulesSettingsGradle()
-
 plugins {
   id("com.facebook.react.settings")
   id("expo-autolinking-settings")
 }
+
+apply from: file("../node_modules/expo-modules-core/android/autolinking.gradle")
+applyExpoModulesSettingsGradle()
 
 extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   if (System.getenv('EXPO_USE_COMMUNITY_AUTOLINKING') == '1') {
