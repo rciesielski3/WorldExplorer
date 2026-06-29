@@ -3,7 +3,6 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
-def easBuildGradle = file("./eas-build.gradle")
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -20,7 +19,6 @@ react {
     // works correctly with Expo projects.
     cliFile = new File(["node", "--print", "require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })"].execute(null, rootDir).text.trim())
     bundleCommand = "export:embed"
-    extraPackagerArgs = ["--max-workers", "1", "--reset-cache"]
 
     /* Folders */
      //   The root of your project, i.e. where "package.json" lives. Default is '../..'
@@ -94,8 +92,8 @@ android {
         applicationId 'com.adateo.WorldExplorer'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 131
-        versionName "1.2.8"
+        versionCode 134
+        versionName "1.2.9"
     }
     signingConfigs {
         debug {
@@ -148,6 +146,7 @@ android {
     }
 }
 
+def easBuildGradle = file("./eas-build.gradle")
 if (easBuildGradle.exists()) {
     apply from: easBuildGradle
 }

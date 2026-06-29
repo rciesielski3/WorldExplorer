@@ -44,9 +44,10 @@ const DARK_MAP_STYLE = [
 
 const getInitialRouteData = (route, fallbackName) => {
   const country = route?.params?.country;
-  const latitude = route?.params?.latitude ?? country?.latlng?.[0] ?? 51.9194;
-  const longitude = route?.params?.longitude ?? country?.latlng?.[1] ?? 19.1451;
-  const countryName = route?.params?.countryName ?? country?.name?.common ?? fallbackName;
+  const latitude = route?.params?.latitude ?? country?.lat ?? 51.9194;
+  const longitude = route?.params?.longitude ?? country?.lng ?? 19.1451;
+  const countryName =
+    route?.params?.countryName ?? country?.name ?? fallbackName;
 
   return {
     country,
@@ -57,15 +58,15 @@ const getInitialRouteData = (route, fallbackName) => {
 };
 
 const MapTooltip = ({ country, countryName, theme, styles, t }) => {
-  const meta = [
-    country?.capital?.[0],
-    country?.region,
-  ].filter(Boolean);
+  const meta = [country?.capital, country?.region].filter(Boolean);
 
   return (
     <View style={styles.mapTooltip}>
-      {country?.flags?.png ? (
-        <Image source={{ uri: country.flags.png }} style={styles.mapTooltipFlag} />
+      {country?.flagPng ? (
+        <Image
+          source={{ uri: country.flagPng }}
+          style={styles.mapTooltipFlag}
+        />
       ) : null}
       <View style={styles.mapTooltipText}>
         <Text style={styles.mapTooltipName}>{countryName}</Text>
@@ -96,7 +97,7 @@ const MapScreen = ({ route, navigation }) => {
   const mapRef = React.useRef(null);
   const { country, latitude, longitude, countryName } = getInitialRouteData(
     route,
-    t("worldMap")
+    t("worldMap"),
   );
   const initialRegion = React.useMemo(
     () => ({
@@ -105,7 +106,7 @@ const MapScreen = ({ route, navigation }) => {
       latitudeDelta: country ? 14 : 30,
       longitudeDelta: country ? 14 : 30,
     }),
-    [country, latitude, longitude]
+    [country, latitude, longitude],
   );
   const [region, setRegion] = React.useState(initialRegion);
   const regionRef = React.useRef(initialRegion);
@@ -122,13 +123,19 @@ const MapScreen = ({ route, navigation }) => {
       const factor = direction === "in" ? 0.62 : 1.38;
       const nextRegion = {
         ...currentRegion,
-        latitudeDelta: Math.min(Math.max(currentRegion.latitudeDelta * factor, 2), 80),
-        longitudeDelta: Math.min(Math.max(currentRegion.longitudeDelta * factor, 2), 80),
+        latitudeDelta: Math.min(
+          Math.max(currentRegion.latitudeDelta * factor, 2),
+          80,
+        ),
+        longitudeDelta: Math.min(
+          Math.max(currentRegion.longitudeDelta * factor, 2),
+          80,
+        ),
       };
 
       animateToRegion(nextRegion);
     },
-    [animateToRegion]
+    [animateToRegion],
   );
 
   const handleResetMap = React.useCallback(() => {
@@ -230,12 +237,12 @@ const MapScreen = ({ route, navigation }) => {
             label={t("selectedCountry")}
             styles={styles}
           />
-          <LegendItem color="#14B8A6" label={t("visitedCountry")} styles={styles} />
           <LegendItem
-            label={t("unvisitedCountry")}
-            outline
+            color="#14B8A6"
+            label={t("visitedCountry")}
             styles={styles}
           />
+          <LegendItem label={t("unvisitedCountry")} outline styles={styles} />
         </View>
       </View>
       <AdBanner />

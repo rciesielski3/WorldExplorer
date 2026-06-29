@@ -46,29 +46,24 @@ const formatPopulation = (population) => {
 };
 
 const formatCurrencies = (currencies) => {
-  if (!currencies) {
+  if (!currencies?.length) {
     return null;
   }
 
-  return Object.values(currencies)
-    .map((currency) =>
-      [currency?.name, currency?.symbol].filter(Boolean).join(" ")
-    )
-    .filter(Boolean)
-    .join(", ");
+  return currencies.join(", ");
 };
 
 const formatLanguages = (languages) => {
-  if (!languages) {
+  if (!languages?.length) {
     return null;
   }
 
-  return Object.values(languages).filter(Boolean).join(", ");
+  return languages.join(", ");
 };
 
 const getCoordinates = (country) => ({
-  latitude: country?.latlng?.[0] ?? 0,
-  longitude: country?.latlng?.[1] ?? 0,
+  latitude: country?.lat ?? 0,
+  longitude: country?.lng ?? 0,
 });
 
 const CountryDetailsScreen = ({ route, navigation }) => {
@@ -79,12 +74,14 @@ const CountryDetailsScreen = ({ route, navigation }) => {
 
   const { country } = route.params;
   const coordinates = getCoordinates(country);
-  const countryName = country.name?.common ?? t("countryDetails");
-  const capital = country.capital?.[0] ?? t("noData");
+  const countryName = country.translations?.en?.name ?? t("countryDetails");
+  const capital = country.capital ?? t("noData");
   const population = formatPopulation(country.population) ?? t("noData");
   const currencies = formatCurrencies(country.currencies) ?? t("noData");
   const languages = formatLanguages(country.languages) ?? t("noData");
-  const regionLine = [country.region, country.subregion].filter(Boolean).join(" · ");
+  const regionLine = [country.region, country.subregion]
+    .filter(Boolean)
+    .join(" · ");
 
   const infoStats = [
     { label: t("capital"), value: capital },
@@ -103,10 +100,6 @@ const CountryDetailsScreen = ({ route, navigation }) => {
     {
       label: t("timezones"),
       value: country.timezones?.join(", ") ?? t("noData"),
-    },
-    {
-      label: t("topLevelDomain"),
-      value: country.tld?.join(", ") ?? t("noData"),
     },
     {
       label: t("borders"),
@@ -159,7 +152,7 @@ const CountryDetailsScreen = ({ route, navigation }) => {
 
         <View style={styles.countryHeroCard}>
           <Image
-            source={{ uri: country.flags?.png }}
+            source={{ uri: country.flagPng }}
             style={styles.countryHeroFlag}
             resizeMode="cover"
           />
@@ -179,10 +172,7 @@ const CountryDetailsScreen = ({ route, navigation }) => {
             return (
               <TouchableOpacity
                 key={tab.key}
-                style={[
-                  styles.countryTab,
-                  isActive && styles.countryTabActive,
-                ]}
+                style={[styles.countryTab, isActive && styles.countryTabActive]}
                 onPress={() => setActiveTab(tab.key)}
                 activeOpacity={0.78}
               >

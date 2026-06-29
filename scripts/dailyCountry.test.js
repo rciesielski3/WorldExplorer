@@ -3,14 +3,29 @@ const assert = require("node:assert/strict");
 
 const { getDailyCountry, hasCountryDetails } = require("../utils/dailyCountry");
 
-const makeCountry = (cca3, name) => ({
-  cca3,
-  name: { common: name },
-  flags: { png: `https://example.com/${cca3}.png` },
-  capital: [`Capital ${name}`],
-  latlng: [10, 20],
-  languages: { eng: "English" },
-  currencies: { USD: { name: "US dollar" } },
+const makeCountry = (code3, name) => ({
+  code: code3.toLowerCase(),
+  code3,
+  region: "Test",
+  subregion: "Test Region",
+  population: 1000000,
+  area: 100000,
+  capital: `Capital ${name}`,
+  lat: 10,
+  lng: 20,
+  flag: "🚩",
+  flagPng: `https://example.com/${code3}.png`,
+  flagSvg: `https://example.com/${code3}.svg`,
+  languages: ["English"],
+  currencies: ["USD"],
+  timezones: ["UTC"],
+  borders: [],
+  translations: {
+    en: { name, officialName: `The ${name}`, description: "" },
+    pl: { name, officialName: `The ${name}`, description: "" },
+    de: { name, officialName: `The ${name}`, description: "" },
+    es: { name, officialName: `The ${name}`, description: "" },
+  },
 });
 
 test("daily country is stable for the same UTC day", () => {

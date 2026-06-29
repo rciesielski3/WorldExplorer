@@ -1,7 +1,5 @@
 <resources>
   <string name="app_name">WorldExplorer</string>
-  <string name="admob_app_id" translatable="false">ca-app-pub-4185040274135926~2042240790</string>
   <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
   <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
-  <string name="google_maps_api_key">${GOOGLE_MAPS_API_KEY}</string>
 </resources>

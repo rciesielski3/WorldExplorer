@@ -14,11 +14,11 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import { getDailyCountry } from "../utils/dailyCountry";
-import { fetchCountries } from "../utils/restCountriesApi";
+import { fetchCountries, getLocalizedCountryName } from "../utils/countries";
 import LottieView from "lottie-react-native";
 
 const HomeScreen = ({ navigation }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [dailyCountry, setDailyCountry] = React.useState(null);
   const [isDailyCountryLoading, setIsDailyCountryLoading] =
     React.useState(true);
@@ -120,51 +120,51 @@ const HomeScreen = ({ navigation }) => {
               color={theme.colors.button}
             />
           </View>
-            {isDailyCountryLoading ? (
-              <ActivityIndicator
-                color={theme.colors.button}
-                style={styles.dailyCountryLoader}
-              />
-            ) : dailyCountry ? (
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("CountryDetails", {
-                    country: dailyCountry,
-                  })
-                }
-              >
-                <View style={styles.dailyCountryContent}>
-                  <Image
-                    source={{ uri: dailyCountry.flags?.png }}
-                    style={styles.dailyCountryFlag}
-                  />
-                  <View style={styles.dailyCountryText}>
-                    <Text style={styles.countryName}>
-                      {dailyCountry.name?.common}
+          {isDailyCountryLoading ? (
+            <ActivityIndicator
+              color={theme.colors.button}
+              style={styles.dailyCountryLoader}
+            />
+          ) : dailyCountry ? (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("CountryDetails", {
+                  country: dailyCountry,
+                })
+              }
+            >
+              <View style={styles.dailyCountryContent}>
+                <Image
+                  source={{ uri: dailyCountry.flagPng }}
+                  style={styles.dailyCountryFlag}
+                />
+                <View style={styles.dailyCountryText}>
+                  <Text style={styles.countryName}>
+                    {getLocalizedCountryName(dailyCountry, i18n.language)}
+                  </Text>
+                  <Text style={styles.settingDescription}>
+                    {t("dailyCountrySubtitle", {
+                      capital: dailyCountry.capital,
+                    })}
+                  </Text>
+                  <View style={styles.dailyCountryActionRow}>
+                    <Text style={styles.dailyCountryAction}>
+                      {t("viewCountry")}
                     </Text>
-                    <Text style={styles.settingDescription}>
-                      {t("dailyCountrySubtitle", {
-                        capital: dailyCountry.capital?.[0],
-                      })}
-                    </Text>
-                    <View style={styles.dailyCountryActionRow}>
-                      <Text style={styles.dailyCountryAction}>
-                        {t("viewCountry")}
-                      </Text>
-                      <MaterialCommunityIcons
-                        name="arrow-right"
-                        size={16}
-                        color={theme.colors.button}
-                      />
-                    </View>
+                    <MaterialCommunityIcons
+                      name="arrow-right"
+                      size={16}
+                      color={theme.colors.button}
+                    />
                   </View>
                 </View>
-              </TouchableOpacity>
-            ) : (
-              <Text style={styles.settingDescription}>
-                {t("dailyCountryUnavailable")}
-              </Text>
-            )}
+              </View>
+            </TouchableOpacity>
+          ) : (
+            <Text style={styles.settingDescription}>
+              {t("dailyCountryUnavailable")}
+            </Text>
+          )}
         </View>
       </ScrollView>
     </ImageBackground>
