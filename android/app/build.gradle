@@ -102,15 +102,23 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            if (project.hasProperty('WORLDEXPLORER_UPLOAD_STORE_FILE')) {
+                storeFile file(WORLDEXPLORER_UPLOAD_STORE_FILE)
+                storePassword WORLDEXPLORER_UPLOAD_STORE_PASSWORD
+                keyAlias WORLDEXPLORER_UPLOAD_KEY_ALIAS
+                keyPassword WORLDEXPLORER_UPLOAD_KEY_PASSWORD
+            }
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            // Use the production upload keystore when its credentials are provided
+            // (via gradle properties), otherwise fall back to debug signing.
+            signingConfig project.hasProperty('WORLDEXPLORER_UPLOAD_STORE_FILE') ? signingConfigs.release : signingConfigs.debug
             shrinkResources (findProperty('android.enableShrinkResourcesInReleaseBuilds')?.toBoolean() ?: false)
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
