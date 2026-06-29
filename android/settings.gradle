@@ -23,7 +23,6 @@ plugins {
 }
 
 apply from: file("../node_modules/expo/scripts/autolinking.gradle")
-applyExpoModulesSettingsGradle()
 
 extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   if (System.getenv('EXPO_USE_COMMUNITY_AUTOLINKING') == '1') {
