@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 import { ThemeContext } from "../../context/ThemeContext";
 import { getStyles } from "../../styles";
 import AdBanner from "../../components/AdBanner";
-import { fetchCountries } from "../../utils/countries";
+import { fetchCountries, getLocalizedCountryName } from "../../utils/countries";
 import { FLAG_ASSETS } from "../../utils/flagAssets";
 
 const {
