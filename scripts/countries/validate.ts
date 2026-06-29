@@ -87,12 +87,8 @@ for (const country of countries) {
     fail(`${country.code}: missing emoji flag`);
   }
 
-  if (!country.flagSvg) {
-    warn(`${country.code}: missing flagSvg`);
-  }
-
-  if (!country.flagPng) {
-    warn(`${country.code}: missing flagPng`);
+  if (!country.flagPath) {
+    warn(`${country.code}: missing flagPath`);
   }
 
   for (const lang of ["en", "pl", "de", "es"] as const) {
