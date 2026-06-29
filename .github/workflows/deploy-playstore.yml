@@ -3,13 +3,24 @@ name: Deploy to Play Store
 on:
   workflow_dispatch:
     inputs:
+      version:
+        description: 'Version to release (e.g., 1.3.0)'
+        required: false
+        type: string
       track:
-        description: 'Release track (internal, alpha, beta, production)'
+        description: 'Play Store release track'
         required: true
-        default: 'internal'
+        type: choice
+        options:
+          - internal
+          - alpha
+          - beta
+          - production
+        default: internal
       release_notes:
         description: 'Release notes for Play Store'
         required: false
+        type: string
 
 jobs:
   build:
@@ -18,9 +29,21 @@ jobs:
       contents: write
     outputs:
       aab-path: ${{ steps.build.outputs.aab-path }}
+      version: ${{ steps.version.outputs.version }}
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Determine Version
+        id: version
+        run: |
+          if [ -z "${{ github.event.inputs.version }}" ]; then
+            VERSION=$(grep 'versionName' android/app/build.gradle | sed -n 's/.*versionName "\(.*\)".*/\1/p')
+          else
+            VERSION="${{ github.event.inputs.version }}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -60,25 +83,35 @@ jobs:
           releaseNotes: ${{ github.event.inputs.release_notes }}
           status: completed
 
-      - name: Create Release
+      - name: Create GitHub Release
         if: github.event.inputs.track == 'production'
         uses: softprops/action-gh-release@v1
         with:
           files: android/app/build/outputs/bundle/release/app-release.aab
-          tag_name: v1.3.0
+          tag_name: v${{ steps.version.outputs.version }}
           body: |
-            WorldExplorer v1.3.0 - Release
+            # WorldExplorer v${{ steps.version.outputs.version }}
 
-            ## Changes
-            - Fixed Gradle nested dependencies (expo-json-utils)
-            - Implemented secure API key handling
-            - GitHub Actions CI/CD infrastructure
-            - EAS CLI local build support
+            ## Release Track
+            **${{ github.event.inputs.track }}** track deployment
+
+            ## Release Notes
+            ${{ github.event.inputs.release_notes || 'No additional notes provided' }}
 
             ## Build Details
-            - versionCode: 136
-            - versionName: 1.3.0
-            - buildType: release
-            - signingConfig: production
+            - Platform: Android
+            - Build Type: release
+            - Signing: production keystore
+            - Date: ${{ github.event.repository }} at ${{ github.event.head_commit.timestamp }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deployment Summary
+        run: |
+          echo "✅ Deployment completed"
+          echo "📦 Version: v${{ steps.version.outputs.version }}"
+          echo "📍 Track: ${{ github.event.inputs.track }}"
+          echo "🏪 Play Store: app-release.aab uploaded"
+          if [ "${{ github.event.inputs.track }}" == "production" ]; then
+            echo "🏷️ GitHub Release: v${{ steps.version.outputs.version }} created"
+          fi
