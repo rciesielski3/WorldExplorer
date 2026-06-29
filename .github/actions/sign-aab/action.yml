@@ -23,17 +23,30 @@ runs:
         EXPECTED_SHA1="${{ inputs.expected-sha1 }}"
 
         echo "Verifying AAB signing certificate..."
-        jarsigner -verify -verbose -certs "$AAB_FILE" > /tmp/signing-check.txt 2>&1
 
-        if grep -q "jar verified" /tmp/signing-check.txt; then
-          echo "✅ AAB signature verified"
-          grep -A 5 "CN=" /tmp/signing-check.txt || true
-        else
-          echo "❌ AAB signature verification failed"
-          cat /tmp/signing-check.txt
+        # Extract certificate from AAB and get SHA1
+        unzip -q "$AAB_FILE" -d /tmp/aab_extract
+        CERT_FILE="/tmp/aab_extract/META-INF/CERT.RSA"
+
+        if [ ! -f "$CERT_FILE" ]; then
+          echo "❌ Certificate not found in AAB"
           exit 1
         fi
 
-        # Note: Full SHA1 verification would require keystore access
-        # This basic verification ensures AAB is properly signed
-        echo "✅ AAB signing check passed"
+        # Get SHA1 fingerprint of certificate
+        ACTUAL_SHA1=$(keytool -printcert -file "$CERT_FILE" | grep "SHA1:" | awk '{print $NF}')
+
+        if [ -z "$ACTUAL_SHA1" ]; then
+          echo "❌ Could not extract certificate SHA1"
+          exit 1
+        fi
+
+        echo "Expected SHA1: $EXPECTED_SHA1"
+        echo "Actual SHA1:   $ACTUAL_SHA1"
+
+        if [ "$ACTUAL_SHA1" = "$EXPECTED_SHA1" ]; then
+          echo "✅ AAB signed with correct production certificate"
+        else
+          echo "❌ Certificate mismatch! AAB is NOT signed with production key"
+          exit 1
+        fi
