@@ -1,3 +1,6 @@
+apply from: file("../node_modules/expo-modules-core/android/autolinking.gradle")
+applyExpoModulesSettingsGradle()
+
 pluginManagement {
   def reactNativeGradlePlugin = new File(
     providers.exec {
