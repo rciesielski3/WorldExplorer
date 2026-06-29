@@ -22,7 +22,7 @@ plugins {
   id("expo-autolinking-settings")
 }
 
-apply from: file("../node_modules/expo-modules-core/android/autolinking.gradle")
+apply from: file("../node_modules/expo/scripts/autolinking.gradle")
 applyExpoModulesSettingsGradle()
 
 extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
