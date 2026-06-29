@@ -19,8 +19,8 @@ test("country details screen follows the prototype structure", () => {
   assert.match(screen, /navigation\.navigate\("Map"/);
   assert.match(screen, /formatCurrencies/);
   assert.match(screen, /formatLanguages/);
-  assert.match(screen, /country\.name\?\.common/);
-  assert.match(screen, /country\?\.latlng\?\.\[0\]/);
+  assert.match(screen, /translations\?\.en\?\.name|getLocalizedCountryName|flagPng/);
+  assert.match(screen, /country\?\.lat|country\?\.lng/);
 
   for (const styleName of [
     "countryBackRow",

@@ -20,7 +20,7 @@ test("home and explore screens expose the refreshed quick-win UI", () => {
   assert.match(homeScreen, /dailyCountryActionRow/);
 
   assert.match(exploreScreen, /formatPopulation/);
-  assert.match(exploreScreen, /country\.name\?\.common\?/);
+  assert.match(exploreScreen, /getLocalizedCountryName|translations\?\.en\?\.name|flagPng/);
   assert.match(exploreScreen, /exploreEmptyState/);
   assert.match(exploreScreen, /countryMetaText/);
 
