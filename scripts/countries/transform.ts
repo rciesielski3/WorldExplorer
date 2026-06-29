@@ -69,8 +69,7 @@ export const transformCountries = (
 
         flag: country.flag ?? "",
 
-        flagSvg: country.flags?.svg,
-        flagPng: country.flags?.png,
+        flagPath: `${(country.alpha2Code ?? "").toLowerCase()}.png`,
 
         translations: {
           en: {

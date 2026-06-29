@@ -28,9 +28,8 @@ export interface Country {
 
   borders: string[];
 
-  flag: string;
-  flagSvg?: string;
-  flagPng?: string;
+  flag: string;        // emoji flag (kept for display fallback)
+  flagPath: string;    // local path: "ad.png"
 
   translations: {
     en: CountryTranslation;

@@ -15,6 +15,7 @@ import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import { getDailyCountry } from "../utils/dailyCountry";
 import { fetchCountries, getLocalizedCountryName } from "../utils/countries";
+import { FLAG_ASSETS } from "../utils/flagAssets";
 import LottieView from "lottie-react-native";
 
 const HomeScreen = ({ navigation }) => {
@@ -135,7 +136,7 @@ const HomeScreen = ({ navigation }) => {
             >
               <View style={styles.dailyCountryContent}>
                 <Image
-                  source={{ uri: dailyCountry.flagPng }}
+                  source={FLAG_ASSETS[dailyCountry.flagPath]}
                   style={styles.dailyCountryFlag}
                 />
                 <View style={styles.dailyCountryText}>

@@ -4,7 +4,7 @@ const hasCountryDetails = (country) =>
   Boolean(
     country?.code3 &&
     country?.translations?.en?.name &&
-    country?.flagPng &&
+    country?.flagPath &&
     country?.capital &&
     typeof country?.lat === "number" &&
     typeof country?.lng === "number" &&

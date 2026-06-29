@@ -15,7 +15,8 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import AdBanner from "../components/AdBanner";
-import { fetchCountries } from "../utils/countries";
+import { fetchCountries, getLocalizedCountryName, getSearchableCountryText } from "../utils/countries";
+import { FLAG_ASSETS } from "../utils/flagAssets";
 
 const REGION_FILTERS = [
   { key: "all", labelKey: "allCountries", value: null },
@@ -101,7 +102,7 @@ const ExploreScreen = ({ navigation }) => {
       >
         <View style={styles.countryCard}>
           <Image
-            source={{ uri: item.flagPng }}
+            source={FLAG_ASSETS[item.flagPath]}
             style={styles.countryCardFlag}
           />
           <View style={styles.cardContent}>

@@ -4,6 +4,7 @@ import path from "path";
 import { CountriesDataset } from "./types";
 
 const DATASET_PATH = path.join(process.cwd(), "data", "countries.json");
+const FLAGS_DIR = path.join(process.cwd(), "assets", "flags");
 
 const errors: string[] = [];
 const warnings: string[] = [];
@@ -87,12 +88,8 @@ for (const country of countries) {
     fail(`${country.code}: missing emoji flag`);
   }
 
-  if (!country.flagSvg) {
-    warn(`${country.code}: missing flagSvg`);
-  }
-
-  if (!country.flagPng) {
-    warn(`${country.code}: missing flagPng`);
+  if (!country.flagPath) {
+    warn(`${country.code}: missing flagPath`);
   }
 
   for (const lang of ["en", "pl", "de", "es"] as const) {
@@ -114,6 +111,18 @@ for (const country of countries) {
     // if (!translation.description) {
     //   warn(`${country.code}: missing ${lang}.description`);
     // }
+  }
+}
+
+// Verify flag files exist
+let missingFlagCount = 0;
+for (const country of countries) {
+  if (country.flagPath) {
+    const flagFile = path.join(FLAGS_DIR, country.flagPath);
+    if (!fs.existsSync(flagFile)) {
+      warn(`${country.code}: flag file missing (${country.flagPath})`);
+      missingFlagCount++;
+    }
   }
 }
 

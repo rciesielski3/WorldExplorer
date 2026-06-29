@@ -13,6 +13,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import AdBanner from "../components/AdBanner";
+import { FLAG_ASSETS } from "../utils/flagAssets";
 
 const DARK_MAP_STYLE = [
   { elementType: "geometry", stylers: [{ color: "#1d2c4d" }] },
@@ -62,9 +63,9 @@ const MapTooltip = ({ country, countryName, theme, styles, t }) => {
 
   return (
     <View style={styles.mapTooltip}>
-      {country?.flagPng ? (
+      {country?.flagPath ? (
         <Image
-          source={{ uri: country.flagPng }}
+          source={FLAG_ASSETS[country.flagPath]}
           style={styles.mapTooltipFlag}
         />
       ) : null}

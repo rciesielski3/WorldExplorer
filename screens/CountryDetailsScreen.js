@@ -14,6 +14,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import AdBanner from "../components/AdBanner";
+import { FLAG_ASSETS } from "../utils/flagAssets";
 
 const DETAIL_TABS = [
   { key: "info", labelKey: "countryInfo" },
@@ -152,7 +153,7 @@ const CountryDetailsScreen = ({ route, navigation }) => {
 
         <View style={styles.countryHeroCard}>
           <Image
-            source={{ uri: country.flagPng }}
+            source={FLAG_ASSETS[country.flagPath]}
             style={styles.countryHeroFlag}
             resizeMode="cover"
           />
