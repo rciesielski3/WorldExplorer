@@ -10,12 +10,14 @@
 
    - Browse a list of all countries.
    - View detailed information about each country, including:
-     - Flag
+     - Flag (bundled locally, no CDN)
      - Capital
      - Population
      - Official language(s)
      - Currency
      - Interesting facts
+   - ✅ All 250 country flags included locally
+   - ✅ Completely offline flag loading
 
 2. **Map**:
 
