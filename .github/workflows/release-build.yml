@@ -1,0 +1,71 @@
+name: Build & Release AAB
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_notes:
+        description: 'Release notes for Play Store'
+        required: false
+
+jobs:
+  build:
+    runs-on: macos-latest
+    outputs:
+      aab-path: ${{ steps.build.outputs.aab-path }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Android
+        uses: ./.github/actions/setup-android
+
+      - name: Build AAB
+        id: build
+        uses: ./.github/actions/build-aab
+        with:
+          java-home: ${{ env.JAVA_HOME }}
+          android-home: ${{ env.ANDROID_HOME }}
+
+      - name: Verify Signing
+        uses: ./.github/actions/sign-aab
+        with:
+          expected-sha1: '34:C6:3A:57:7B:3C:06:5F:B3:5D:18:C6:65:E3:B6:6B:3A:29:F9:5F'
+
+      - name: Upload AAB to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./android/app/build/outputs/bundle/release/app-release.aab
+          tag_name: v1.2.9
+          body: |
+            WorldExplorer v1.2.9 - Local Flag Storage Release
+
+            ## Changes
+            - 250 country flags bundled locally
+            - Complete offline-first architecture
+            - No external API dependencies
+
+            ## Testing
+            - Tested on Android 9+ (API 24-35)
+            - Verified offline functionality
+            - All 250 flags loading correctly
+
+            Build Details:
+            - versionCode: 135
+            - versionName: 1.2.9
+            - Size: ~22-24MB
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Save AAB Path
+        id: output
+        run: |
+          echo "aab-path=./android/app/build/outputs/bundle/release/app-release.aab" >> $GITHUB_OUTPUT
