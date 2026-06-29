@@ -62,9 +62,9 @@ const MapTooltip = ({ country, countryName, theme, styles, t }) => {
 
   return (
     <View style={styles.mapTooltip}>
-      {country?.flagPng ? (
+      {country?.flagPath ? (
         <Image
-          source={{ uri: country.flagPng }}
+          source={require(`../assets/flags/${country.flagPath}`)}
           style={styles.mapTooltipFlag}
         />
       ) : null}

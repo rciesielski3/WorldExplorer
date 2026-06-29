@@ -101,7 +101,7 @@ const ExploreScreen = ({ navigation }) => {
       >
         <View style={styles.countryCard}>
           <Image
-            source={{ uri: item.flagPng }}
+            source={require(`../assets/flags/${item.flagPath}`)}
             style={styles.countryCardFlag}
           />
           <View style={styles.cardContent}>

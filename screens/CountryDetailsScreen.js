@@ -152,7 +152,7 @@ const CountryDetailsScreen = ({ route, navigation }) => {
 
         <View style={styles.countryHeroCard}>
           <Image
-            source={{ uri: country.flagPng }}
+            source={require(`../assets/flags/${country.flagPath}`)}
             style={styles.countryHeroFlag}
             resizeMode="cover"
           />

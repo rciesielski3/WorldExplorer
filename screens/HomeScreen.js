@@ -135,7 +135,7 @@ const HomeScreen = ({ navigation }) => {
             >
               <View style={styles.dailyCountryContent}>
                 <Image
-                  source={{ uri: dailyCountry.flagPng }}
+                  source={require(`../assets/flags/${dailyCountry.flagPath}`)}
                   style={styles.dailyCountryFlag}
                 />
                 <View style={styles.dailyCountryText}>
