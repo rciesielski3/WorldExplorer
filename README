@@ -125,6 +125,24 @@ Maps: React Native Maps
 
 Styling: React Native Stylesheet
 
+## Continuous Integration
+
+### Automated Validation
+All pull requests automatically run:
+- TypeScript compilation check
+- Countries data validation
+- Flag asset verification
+
+See `.github/workflows/pr-validate.yml` for details.
+
+### Release Builds
+Production AAB builds are triggered manually via GitHub Actions:
+- Build & Release AAB workflow
+- Builds signed AAB (~22-24MB)
+- Creates GitHub release with artifacts
+
+See `docs/CI_CD_WORKFLOW.md` for release procedures.
+
 ## Contributing
 
 Contributions are welcome! Follow these steps:
