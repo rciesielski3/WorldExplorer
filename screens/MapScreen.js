@@ -47,7 +47,7 @@ const getInitialRouteData = (route, fallbackName) => {
   const latitude = route?.params?.latitude ?? country?.lat ?? 51.9194;
   const longitude = route?.params?.longitude ?? country?.lng ?? 19.1451;
   const countryName =
-    route?.params?.countryName ?? country?.name?.common ?? fallbackName;
+    route?.params?.countryName ?? country?.name ?? fallbackName;
 
   return {
     country,
@@ -62,7 +62,7 @@ const MapTooltip = ({ country, countryName, theme, styles, t }) => {
 
   return (
     <View style={styles.mapTooltip}>
-      {country?.flags?.png ? (
+      {country?.flagPng ? (
         <Image
           source={{ uri: country.flagPng }}
           style={styles.mapTooltipFlag}

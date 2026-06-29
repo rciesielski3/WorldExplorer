@@ -27,10 +27,10 @@ export const getLocalizedCountryName = (country: Country, language: string) => {
 
 export const getSearchableCountryText = (country: Country) =>
   [
-    country.translations.en.name,
-    country.translations.pl.name,
-    country.translations.de.name,
-    country.translations.es.name,
+    country.translations?.en?.name,
+    country.translations?.pl?.name,
+    country.translations?.de?.name,
+    country.translations?.es?.name,
     country.capital,
   ]
     .filter(Boolean)

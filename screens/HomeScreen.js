@@ -14,11 +14,11 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import { getDailyCountry } from "../utils/dailyCountry";
-import { fetchCountries } from "../utils/countries";
+import { fetchCountries, getLocalizedCountryName } from "../utils/countries";
 import LottieView from "lottie-react-native";
 
 const HomeScreen = ({ navigation }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [dailyCountry, setDailyCountry] = React.useState(null);
   const [isDailyCountryLoading, setIsDailyCountryLoading] =
     React.useState(true);
@@ -135,12 +135,12 @@ const HomeScreen = ({ navigation }) => {
             >
               <View style={styles.dailyCountryContent}>
                 <Image
-                  source={{ uri: dailyCountry.flags?.png }}
+                  source={{ uri: dailyCountry.flagPng }}
                   style={styles.dailyCountryFlag}
                 />
                 <View style={styles.dailyCountryText}>
                   <Text style={styles.countryName}>
-                    {dailyCountry.name?.common}
+                    {getLocalizedCountryName(dailyCountry, i18n.language)}
                   </Text>
                   <Text style={styles.settingDescription}>
                     {t("dailyCountrySubtitle", {
