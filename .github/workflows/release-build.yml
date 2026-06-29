@@ -34,6 +34,10 @@ jobs:
         with:
           java-home: ${{ env.JAVA_HOME }}
           android-home: ${{ env.ANDROID_HOME }}
+          keystore-base64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          keystore-password: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          key-alias: ${{ secrets.ANDROID_KEY_ALIAS }}
+          key-password: ${{ secrets.ANDROID_KEY_PASSWORD }}
 
       - name: Verify Signing
         uses: ./.github/actions/sign-aab

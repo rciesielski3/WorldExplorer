@@ -8,6 +8,18 @@ inputs:
   android-home:
     description: Android SDK home directory
     required: true
+  keystore-base64:
+    description: Base64-encoded production keystore
+    required: true
+  keystore-password:
+    description: Keystore password
+    required: true
+  key-alias:
+    description: Key alias
+    required: true
+  key-password:
+    description: Key password
+    required: true
 
 runs:
   using: composite
@@ -18,12 +30,14 @@ runs:
     - name: Decode Production Keystore
       id: keystore
       shell: bash
+      env:
+        KEYSTORE_BASE64: ${{ inputs.keystore-base64 }}
       run: |
-        if [ -n "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ]; then
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > /tmp/worldexplorer.keystore
+        if [ -n "$KEYSTORE_BASE64" ]; then
+          echo "$KEYSTORE_BASE64" | base64 -d > /tmp/worldexplorer.keystore
           echo "path=/tmp/worldexplorer.keystore" >> $GITHUB_OUTPUT
         else
-          echo "ERROR: ANDROID_KEYSTORE_BASE64 secret not found"
+          echo "ERROR: keystore-base64 input not provided"
           exit 1
         fi
 
@@ -34,9 +48,9 @@ runs:
         JAVA_HOME: ${{ inputs.java-home }}
         ANDROID_HOME: ${{ inputs.android-home }}
         ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_STORE_FILE: ${{ steps.keystore.outputs.path }}
-        ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-        ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-        ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_STORE_PASSWORD: ${{ inputs.keystore-password }}
+        ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_KEY_ALIAS: ${{ inputs.key-alias }}
+        ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_KEY_PASSWORD: ${{ inputs.key-password }}
       run: |
         chmod +x gradlew
         ./gradlew bundleRelease --no-daemon --no-build-cache -x lint

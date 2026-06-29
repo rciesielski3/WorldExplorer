@@ -26,9 +26,11 @@ runs:
 
         # Extract certificate from AAB and get SHA1
         unzip -q "$AAB_FILE" -d /tmp/aab_extract
-        CERT_FILE="/tmp/aab_extract/META-INF/CERT.RSA"
 
-        if [ ! -f "$CERT_FILE" ]; then
+        # Find the certificate file (works for CERT.RSA, CERT.DSA, etc.)
+        CERT_FILE=$(find /tmp/aab_extract/META-INF -name "CERT.*" -type f | head -1)
+
+        if [ -z "$CERT_FILE" ]; then
           echo "❌ Certificate not found in AAB"
           exit 1
         fi
