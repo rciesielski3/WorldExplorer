@@ -25,21 +25,42 @@ runs:
         echo "Verifying AAB signing certificate..."
 
         # Extract certificate from AAB and get SHA1
+        mkdir -p /tmp/aab_extract
         unzip -q "$AAB_FILE" -d /tmp/aab_extract
 
-        # Find the certificate file (works for CERT.RSA, CERT.DSA, etc.)
-        CERT_FILE=$(find /tmp/aab_extract/META-INF -name "CERT.*" -type f | head -1)
+        # Debug: Show META-INF contents
+        echo "META-INF directory contents:"
+        ls -la /tmp/aab_extract/META-INF/ || echo "META-INF not found"
+
+        # Find the certificate file with multiple patterns
+        CERT_FILE=""
+
+        # Try standard locations
+        if [ -f "/tmp/aab_extract/META-INF/CERT.RSA" ]; then
+          CERT_FILE="/tmp/aab_extract/META-INF/CERT.RSA"
+        elif [ -f "/tmp/aab_extract/META-INF/CERT.DSA" ]; then
+          CERT_FILE="/tmp/aab_extract/META-INF/CERT.DSA"
+        else
+          # Search for any certificate file
+          CERT_FILE=$(find /tmp/aab_extract/META-INF -type f \( -name "*.RSA" -o -name "*.DSA" -o -name "*.EC" \) 2>/dev/null | head -1)
+        fi
 
         if [ -z "$CERT_FILE" ]; then
-          echo "❌ Certificate not found in AAB"
+          echo "❌ Certificate not found in AAB META-INF"
+          echo "Files in META-INF:"
+          find /tmp/aab_extract/META-INF -type f 2>/dev/null | head -20
           exit 1
         fi
+
+        echo "✓ Found certificate: $CERT_FILE"
 
         # Get SHA1 fingerprint of certificate
         ACTUAL_SHA1=$(keytool -printcert -file "$CERT_FILE" | grep "SHA1:" | awk '{print $NF}')
 
         if [ -z "$ACTUAL_SHA1" ]; then
           echo "❌ Could not extract certificate SHA1"
+          echo "Certificate details:"
+          keytool -printcert -file "$CERT_FILE" | head -20
           exit 1
         fi
 
