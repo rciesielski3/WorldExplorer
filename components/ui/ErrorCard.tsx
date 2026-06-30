@@ -5,7 +5,7 @@ import * as Haptics from 'expo-haptics';
 
 import { ThemeContext } from '../../context/ThemeContext';
 import type { ApiError } from '../../types/errors';
-import { spacing, radius, typography, darkTheme, lightTheme } from '../../theme/tokens';
+import { spacing, radius, typography, darkTheme, lightTheme, type ThemeColors } from '../../theme/tokens';
 
 interface ErrorCardProps {
   error: ApiError;
@@ -71,7 +71,7 @@ const ErrorCard: React.FC<ErrorCardProps> = ({
     }
   };
 
-  const styles = createStyles(colors, theme.isDarkMode);
+  const styles = theme.isDarkMode ? _darkStyles : _lightStyles;
   const errorIcon = getErrorIcon(error.type);
 
   return (
@@ -107,45 +107,47 @@ const ErrorCard: React.FC<ErrorCardProps> = ({
         </View>
       </View>
 
-      <View style={styles.actionRow}>
-        {isRetryable && (
-          <TouchableOpacity
-            style={[styles.button, styles.retryButton]}
-            onPress={handleRetryPress}
-            activeOpacity={0.75}
-            accessible
-            accessibilityRole="button"
-            accessibilityLabel="Retry"
-          >
-            <MaterialCommunityIcons
-              name="reload"
-              size={16}
-              color={colors.error}
-              style={styles.buttonIcon}
-            />
-            <Text style={styles.retryButtonText}>Retry</Text>
-          </TouchableOpacity>
-        )}
+      {(isRetryable || showDismissButton) && (
+        <View style={styles.actionRow}>
+          {isRetryable && (
+            <TouchableOpacity
+              style={[styles.button, styles.retryButton]}
+              onPress={handleRetryPress}
+              activeOpacity={0.75}
+              accessible
+              accessibilityRole="button"
+              accessibilityLabel="Retry"
+            >
+              <MaterialCommunityIcons
+                name="reload"
+                size={16}
+                color={colors.error}
+                style={styles.buttonIcon}
+              />
+              <Text style={styles.retryButtonText}>Retry</Text>
+            </TouchableOpacity>
+          )}
 
-        {showDismissButton && (
-          <TouchableOpacity
-            style={[styles.button, styles.dismissButton]}
-            onPress={handleDismissPress}
-            activeOpacity={0.75}
-            accessible
-            accessibilityRole="button"
-            accessibilityLabel="Dismiss"
-          >
-            <MaterialCommunityIcons
-              name="close"
-              size={16}
-              color={colors.textSecondary}
-              style={styles.buttonIcon}
-            />
-            <Text style={styles.dismissButtonText}>Dismiss</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+          {showDismissButton && (
+            <TouchableOpacity
+              style={[styles.button, styles.dismissButton]}
+              onPress={handleDismissPress}
+              activeOpacity={0.75}
+              accessible
+              accessibilityRole="button"
+              accessibilityLabel="Dismiss"
+            >
+              <MaterialCommunityIcons
+                name="close"
+                size={16}
+                color={colors.textSecondary}
+                style={styles.buttonIcon}
+              />
+              <Text style={styles.dismissButtonText}>Dismiss</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
     </View>
   );
 };
@@ -169,7 +171,7 @@ function getErrorIcon(
   }
 }
 
-function createStyles(colors: any, isDarkMode: boolean) {
+function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
     container: {
       backgroundColor: colors.errorBg,
@@ -187,7 +189,7 @@ function createStyles(colors: any, isDarkMode: boolean) {
       width: 32,
       height: 32,
       borderRadius: radius.sm,
-      backgroundColor: isDarkMode ? 'rgba(248,113,113,0.15)' : 'rgba(220,38,38,0.1)',
+      backgroundColor: colors.errorIconBg,
       justifyContent: 'center',
       alignItems: 'center',
       marginRight: spacing.md,
@@ -224,14 +226,14 @@ function createStyles(colors: any, isDarkMode: boolean) {
       borderRadius: radius.sm,
     },
     retryButton: {
-      backgroundColor: isDarkMode ? 'rgba(248,113,113,0.1)' : 'rgba(220,38,38,0.08)',
+      backgroundColor: colors.errorBg,
       borderWidth: 1,
-      borderColor: isDarkMode ? 'rgba(248,113,113,0.3)' : 'rgba(220,38,38,0.2)',
+      borderColor: colors.errorBorder,
     },
     dismissButton: {
-      backgroundColor: isDarkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
+      backgroundColor: colors.surfaceSubtle,
       borderWidth: 1,
-      borderColor: isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
+      borderColor: colors.border,
     },
     buttonIcon: {
       marginRight: spacing.xs,
@@ -248,5 +250,9 @@ function createStyles(colors: any, isDarkMode: boolean) {
     },
   });
 }
+
+// Pre-compute style sheets once per theme to avoid StyleSheet.create on every render
+const _darkStyles = createStyles(darkTheme.colors);
+const _lightStyles = createStyles(lightTheme.colors);
 
 export default ErrorCard;

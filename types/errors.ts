@@ -83,43 +83,67 @@ export function createApiError(
  * Classify an error from a network request
  * Used in catch blocks to standardize error handling
  */
-export function classifyError(error: any): ApiError {
+export function classifyError(error: unknown): ApiError {
   if (!error) {
     return createApiError('UNKNOWN');
   }
 
+  // Helper: normalise unknown to the shape createApiError expects
+  const toErrorOrString = (e: unknown): Error | string =>
+    e instanceof Error ? e : String(e);
+
+  // Primitive (non-object) error value
+  if (typeof error !== 'object') {
+    return createApiError('UNKNOWN', String(error));
+  }
+
+  const errorObj = error as Record<string, unknown>;
+
   // Network errors
-  if (error.code === 'ECONNABORTED' || error.message?.includes('Network')) {
-    return createApiError('NETWORK', undefined, error);
+  if (
+    errorObj['code'] === 'ECONNABORTED' ||
+    (typeof errorObj['message'] === 'string' && errorObj['message'].includes('Network'))
+  ) {
+    return createApiError('NETWORK', undefined, toErrorOrString(error));
   }
 
   // HTTP status code errors
-  if (error.response?.status) {
-    const status = error.response.status;
-    const message = error.response.data?.message;
+  if (typeof errorObj['response'] === 'object' && errorObj['response'] !== null) {
+    const response = errorObj['response'] as Record<string, unknown>;
+    if (typeof response['status'] === 'number') {
+      const status = response['status'];
+      const data =
+        typeof response['data'] === 'object' && response['data'] !== null
+          ? (response['data'] as Record<string, unknown>)
+          : null;
+      const message =
+        data && typeof data['message'] === 'string' ? data['message'] : undefined;
 
-    if (status === 404) {
-      return createApiError('NOT_FOUND', message, error, status);
-    }
-
-    if (status === 401 || status === 403) {
-      return createApiError('UNAUTHORIZED', message, error, status);
-    }
-
-    if (status >= 500) {
-      return createApiError('SERVER_ERROR', message, error, status);
-    }
-
-    if (status >= 400) {
-      return createApiError('INVALID_DATA', message, error, status);
+      if (status === 404) {
+        return createApiError('NOT_FOUND', message, toErrorOrString(error), status);
+      }
+      if (status === 401 || status === 403) {
+        return createApiError('UNAUTHORIZED', message, toErrorOrString(error), status);
+      }
+      if (status >= 500) {
+        return createApiError('SERVER_ERROR', message, toErrorOrString(error), status);
+      }
+      if (status >= 400) {
+        return createApiError('INVALID_DATA', message, toErrorOrString(error), status);
+      }
     }
   }
 
   // JSON parse errors or invalid data
-  if (error.message?.includes('JSON') || error instanceof SyntaxError) {
-    return createApiError('INVALID_DATA', undefined, error);
+  if (
+    (typeof errorObj['message'] === 'string' && errorObj['message'].includes('JSON')) ||
+    error instanceof SyntaxError
+  ) {
+    return createApiError('INVALID_DATA', undefined, toErrorOrString(error));
   }
 
   // Fallback
-  return createApiError('UNKNOWN', error.message, error);
+  const fallbackMessage =
+    typeof errorObj['message'] === 'string' ? errorObj['message'] : undefined;
+  return createApiError('UNKNOWN', fallbackMessage, toErrorOrString(error));
 }

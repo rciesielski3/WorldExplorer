@@ -4,7 +4,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import * as Haptics from 'expo-haptics';
 
 import { ThemeContext } from '../../context/ThemeContext';
-import { spacing, radius, typography, darkTheme, lightTheme } from '../../theme/tokens';
+import { spacing, radius, typography, darkTheme, lightTheme, type ThemeColors } from '../../theme/tokens';
 
 interface EmptyStateCardProps {
   icon?: string;
@@ -62,7 +62,7 @@ const EmptyStateCard: React.FC<EmptyStateCardProps> = ({
     }
   };
 
-  const styles = createStyles(colors, theme.isDarkMode);
+  const styles = theme.isDarkMode ? _darkStyles : _lightStyles;
   const shouldShowAction = actionLabel && onAction && showAction;
 
   return (
@@ -70,7 +70,7 @@ const EmptyStateCard: React.FC<EmptyStateCardProps> = ({
       style={styles.container}
       testID={testID}
       accessible
-      accessibilityRole="list"
+      accessibilityRole="none"
       accessibilityLabel={`Empty state: ${title}`}
     >
       <View style={styles.iconContainer}>
@@ -120,7 +120,7 @@ const EmptyStateCard: React.FC<EmptyStateCardProps> = ({
   );
 };
 
-function createStyles(colors: any, isDarkMode: boolean) {
+function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
     container: {
       alignItems: 'center',
@@ -128,9 +128,9 @@ function createStyles(colors: any, isDarkMode: boolean) {
       paddingVertical: spacing.xxl,
       paddingHorizontal: spacing.lg,
       borderRadius: radius.lg,
-      backgroundColor: isDarkMode ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)',
+      backgroundColor: colors.surfaceSubtle,
       borderWidth: 1,
-      borderColor: isDarkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+      borderColor: colors.border,
     },
     iconContainer: {
       marginBottom: spacing.lg,
@@ -155,9 +155,9 @@ function createStyles(colors: any, isDarkMode: boolean) {
       paddingVertical: spacing.sm,
       paddingHorizontal: spacing.lg,
       borderRadius: radius.md,
-      backgroundColor: isDarkMode ? 'rgba(99,102,241,0.1)' : 'rgba(99,102,241,0.08)',
+      backgroundColor: colors.primaryLight,
       borderWidth: 1,
-      borderColor: isDarkMode ? 'rgba(99,102,241,0.25)' : 'rgba(99,102,241,0.2)',
+      borderColor: colors.primaryBorder,
     },
     actionIcon: {
       marginRight: spacing.xs,
@@ -169,5 +169,9 @@ function createStyles(colors: any, isDarkMode: boolean) {
     },
   });
 }
+
+// Pre-compute style sheets once per theme to avoid StyleSheet.create on every render
+const _darkStyles = createStyles(darkTheme.colors);
+const _lightStyles = createStyles(lightTheme.colors);
 
 export default EmptyStateCard;

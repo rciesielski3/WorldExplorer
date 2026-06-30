@@ -34,7 +34,7 @@ This document defines the layout and positioning of the navigation components in
 ### iPhone SE Layout (No Notch, Small Safe Areas)
 
 ```
-Portrait (SE: 375x812):
+Portrait (SE: 375x667):
 ┌──────────────────────────┐
 │ Status (20dp)            │
 ├──────────────────────────┤
@@ -42,7 +42,7 @@ Portrait (SE: 375x812):
 ├──────────────────────────┤
 │                          │
 │ Content Area             │ <- Full width, 375dp
-│ (375dp × ~620dp)         │
+│ (375dp × ~519dp)         │
 │                          │
 ├──────────────────────────┤
 │ FloatingNav (56dp)       │ <- 16dp margin to bottom
@@ -244,7 +244,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 <View style={{
   paddingTop: insets.top,  // Respect status bar
-  height: 56,
+  height: 56 + insets.top,
   backgroundColor: theme.colors.topBar,
   borderBottomWidth: 1,
   borderBottomColor: theme.colors.border,
@@ -306,85 +306,85 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 ## Validation Checklist
 
 ### Visual Checks
-- [ ] TopBar visible and readable on all devices
-- [ ] TopBar doesn't overlap with status bar
-- [ ] FloatingNav visible at bottom of all devices
-- [ ] No visual overlap between TopBar and FloatingNav
-- [ ] Content doesn't get cut off by either bar
-- [ ] Content scrolls smoothly behind FloatingNav
-- [ ] No jarring layout shifts when scrolling
+- [x] TopBar visible and readable on all devices
+- [x] TopBar doesn't overlap with status bar
+- [x] FloatingNav visible at bottom of all devices
+- [x] No visual overlap between TopBar and FloatingNav
+- [x] Content doesn't get cut off by either bar
+- [x] Content scrolls smoothly behind FloatingNav
+- [x] No jarring layout shifts when scrolling
 
 ### Device/Simulator Testing
-- [ ] iPhone SE (375×667, no notch)
-  - [ ] TopBar positioning correct
-  - [ ] FloatingNav positioning correct
-  - [ ] Content scrolling works
-  - [ ] All buttons reachable
-- [ ] iPhone 14 Pro (393×852, Dynamic Island + home indicator)
-  - [ ] TopBar respects Dynamic Island
-  - [ ] FloatingNav respects home indicator spacing
-  - [ ] Content scrolling works
-  - [ ] All buttons reachable
-  - [ ] Dynamic Island doesn't obscure content
-- [ ] iPad (1194×834, large safe area)
-  - [ ] Both orientations tested
-  - [ ] Layout adapts to landscape
-  - [ ] Content properly positioned
-  - [ ] All buttons reachable
+- [x] iPhone SE (375×667, no notch)
+  - [x] TopBar positioning correct
+  - [x] FloatingNav positioning correct
+  - [x] Content scrolling works
+  - [x] All buttons reachable
+- [x] iPhone 14 Pro (393×852, Dynamic Island + home indicator)
+  - [x] TopBar respects Dynamic Island
+  - [x] FloatingNav respects home indicator spacing
+  - [x] Content scrolling works
+  - [x] All buttons reachable
+  - [x] Dynamic Island doesn't obscure content
+- [x] iPad (1194×834, large safe area)
+  - [x] Both orientations tested
+  - [x] Layout adapts to landscape
+  - [x] Content properly positioned
+  - [x] All buttons reachable
 
 ### Screen-Specific Testing
-- [ ] HomeScreen
-  - [ ] All 4 action cards visible without scrolling
-  - [ ] Daily country card doesn't get cut off
-  - [ ] FloatingNav navigation works
-  - [ ] Scroll continues smoothly
-- [ ] MapScreen
-  - [ ] Map is fully interactive above FloatingNav
-  - [ ] Zoom controls accessible
-  - [ ] Legend visible below map
-  - [ ] No content obscured by nav
-  - [ ] Pan/zoom gestures work smoothly
-- [ ] ExploreScreen
-  - [ ] Search bar remains functional
-  - [ ] Country list scrolls smoothly
-  - [ ] All country items clickable
-  - [ ] Scroll reaches bottom
-- [ ] QuizScreen
-  - [ ] All 4 answer options visible
-  - [ ] Bottom answer button not cut off
-  - [ ] Submit/next button accessible
-  - [ ] Question centered properly
-- [ ] SettingsScreen
-  - [ ] All settings visible
-  - [ ] Toggle switches accessible
-  - [ ] Scroll reaches bottom
-  - [ ] All buttons reachable
-- [ ] CountryDetailsScreen
-  - [ ] Header image not cut off
-  - [ ] All details visible
-  - [ ] Embedded map interactive
-  - [ ] Scroll reaches bottom
+- [x] HomeScreen
+  - [x] All 4 action cards visible without scrolling
+  - [x] Daily country card doesn't get cut off
+  - [x] FloatingNav navigation works
+  - [x] Scroll continues smoothly
+- [x] MapScreen
+  - [x] Map is fully interactive above FloatingNav
+  - [x] Zoom controls accessible
+  - [x] Legend visible below map
+  - [x] No content obscured by nav
+  - [x] Pan/zoom gestures work smoothly
+- [x] ExploreScreen
+  - [x] Search bar remains functional
+  - [x] Country list scrolls smoothly
+  - [x] All country items clickable
+  - [x] Scroll reaches bottom
+- [x] QuizScreen
+  - [x] All 4 answer options visible
+  - [x] Bottom answer button not cut off
+  - [x] Submit/next button accessible
+  - [x] Question centered properly
+- [x] SettingsScreen
+  - [x] All settings visible
+  - [x] Toggle switches accessible
+  - [x] Scroll reaches bottom
+  - [x] All buttons reachable
+- [x] CountryDetailsScreen
+  - [x] Header image not cut off
+  - [x] All details visible
+  - [x] Embedded map interactive
+  - [x] Scroll reaches bottom
 
 ### Interaction Testing
-- [ ] FloatingNav icons respond to touch immediately
-- [ ] Navigation transitions are smooth
-- [ ] No lag when scrolling content
-- [ ] Touch targets are at least 48×48dp
-- [ ] Scroll bounce (iOS) works correctly
-- [ ] Scroll continues smoothly behind nav
+- [x] FloatingNav icons respond to touch immediately
+- [x] Navigation transitions are smooth
+- [x] No lag when scrolling content
+- [x] Touch targets are at least 48×48dp
+- [x] Scroll bounce (iOS) works correctly
+- [x] Scroll continues smoothly behind nav
 
 ### Edge Cases
-- [ ] Large text size setting (accessibility)
-  - [ ] Content still fits properly
-  - [ ] No text truncation
-  - [ ] TopBar/FloatingNav scale appropriately
-- [ ] Landscape orientation
-  - [ ] Layout adapts correctly
-  - [ ] Content repositions properly
-  - [ ] No overlaps
-- [ ] Split-screen (iPad)
-  - [ ] Layout adapts to smaller area
-  - [ ] All elements remain accessible
+- [x] Large text size setting (accessibility)
+  - [x] Content still fits properly
+  - [x] No text truncation
+  - [x] TopBar/FloatingNav scale appropriately
+- [x] Landscape orientation
+  - [x] Layout adapts correctly
+  - [x] Content repositions properly
+  - [x] No overlaps
+- [x] Split-screen (iPad)
+  - [x] Layout adapts to smaller area
+  - [x] All elements remain accessible
 
 ## Known Issues & Resolutions
 
@@ -402,16 +402,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 ## Implementation Checklist
 
-- [ ] Create `components/TopBar.tsx` with safe area handling
-- [ ] Create `components/FloatingNavBar.tsx` with proper positioning
-- [ ] Update `App.tsx` to include both bars on all screens
-- [ ] Update all screen components to use safe area padding
-- [ ] Test on iPhone SE simulator
-- [ ] Test on iPhone 14 Pro simulator
-- [ ] Test on iPad simulator (both orientations)
-- [ ] Verify no console warnings
-- [ ] Check accessibility with screen readers
-- [ ] Performance test (no frame drops during scroll)
+- [x] Create `components/TopBar.tsx` with safe area handling
+- [x] Create `components/FloatingNavBar.tsx` with proper positioning
+- [x] Update `App.tsx` to include both bars on all screens
+- [x] Update all screen components to use safe area padding
+- [x] Test on iPhone SE simulator
+- [x] Test on iPhone 14 Pro simulator
+- [x] Test on iPad simulator (both orientations)
+- [x] Verify no console warnings
+- [x] Check accessibility with screen readers
+- [x] Performance test (no frame drops during scroll)
 
 ## References
 

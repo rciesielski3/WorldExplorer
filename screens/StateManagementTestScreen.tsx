@@ -28,7 +28,7 @@ import ErrorCard from '../components/ui/ErrorCard';
 import EmptyStateCard from '../components/ui/EmptyStateCard';
 import type { ApiError } from '../types/errors';
 import { createApiError, ERRORS } from '../types/errors';
-import { spacing, radius, typography, darkTheme, lightTheme } from '../theme/tokens';
+import { spacing, radius, typography, darkTheme, lightTheme, type ThemeColors } from '../theme/tokens';
 
 interface TestState {
   displayedError: ApiError | null;
@@ -42,6 +42,7 @@ type TestAction =
   | { type: 'SHOW_SERVER_ERROR' }
   | { type: 'SHOW_INVALID_DATA_ERROR' }
   | { type: 'CLEAR_ERROR' }
+  | { type: 'CLEAR_LOG' }
   | { type: 'TOGGLE_EMPTY_STATE' }
   | { type: 'ADD_LOG'; payload: string };
 
@@ -96,6 +97,11 @@ function testReducer(state: TestState, action: TestAction): TestState {
         displayedError: null,
         testLog: [...state.testLog, '✓ Error cleared'],
       };
+    case 'CLEAR_LOG':
+      return {
+        ...state,
+        testLog: ['Test log cleared'],
+      };
     case 'TOGGLE_EMPTY_STATE':
       return {
         ...state,
@@ -146,7 +152,7 @@ const StateManagementTestScreen: React.FC = () => {
     dispatch({ type: 'TOGGLE_EMPTY_STATE' });
   };
 
-  const styles = createStyles(colors, theme.isDarkMode);
+  const styles = theme.isDarkMode ? _darkStyles : _lightStyles;
 
   return (
     <ScrollView
@@ -292,7 +298,7 @@ const StateManagementTestScreen: React.FC = () => {
         <View style={styles.logHeader}>
           <Text style={styles.sectionTitle}>Test Log</Text>
           <TouchableOpacity
-            onPress={() => dispatch({ type: 'CLEAR_ERROR' })}
+            onPress={() => dispatch({ type: 'CLEAR_LOG' })}
             style={styles.clearLogButton}
           >
             <MaterialCommunityIcons name="trash-can-outline" size={16} color={colors.textSecondary} />
@@ -339,7 +345,7 @@ const StateManagementTestScreen: React.FC = () => {
   );
 };
 
-function createStyles(colors: any, isDarkMode: boolean) {
+function createStyles(colors: ThemeColors, isDarkMode: boolean) {
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -461,5 +467,9 @@ function createStyles(colors: any, isDarkMode: boolean) {
     },
   });
 }
+
+// Pre-compute style sheets once per theme to avoid StyleSheet.create on every render
+const _darkStyles = createStyles(darkTheme.colors, true);
+const _lightStyles = createStyles(lightTheme.colors, false);
 
 export default StateManagementTestScreen;
