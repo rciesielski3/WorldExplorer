@@ -4,6 +4,7 @@ import MaterialCommunityIcons from '@react-native-vector-icons/material-communit
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../context/ThemeContext';
+import { commonTokens } from '../../theme/tokens';
 
 interface TopBarProps {
   title?: string;
@@ -39,8 +40,8 @@ export function TopBar({
     <View
       style={{
         paddingTop: insets.top,
-        paddingHorizontal: theme.spacing.md,
-        paddingVertical: theme.spacing.md,
+        paddingHorizontal: commonTokens.spacing.md,
+        paddingVertical: commonTokens.spacing.md,
         height: 56 + insets.top,
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -51,7 +52,7 @@ export function TopBar({
       {/* Left Content */}
       <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
         {showBack && (
-          <Pressable onPress={handleBackPress} style={{ marginRight: theme.spacing.md }}>
+          <Pressable onPress={handleBackPress} style={{ marginRight: commonTokens.spacing.md }}>
             <MaterialCommunityIcons
               name="arrow-left"
               size={24}
@@ -61,9 +62,9 @@ export function TopBar({
         )}
         <Text
           style={{
-            fontSize: showAppName ? theme.typography.sizes.title.fontSize : theme.typography.sizes.subtitle.fontSize,
+            fontSize: showAppName ? commonTokens.typography.display.fontSize : commonTokens.typography.titleLg.fontSize,
             fontWeight: showAppName ? 'bold' : '600',
-            fontFamily: showAppName ? theme.typography.weights.bold : theme.typography.weights.medium,
+            fontFamily: showAppName ? commonTokens.typography.display.fontFamily : commonTokens.typography.titleLg.fontFamily,
             color: showAppName ? theme.colors.primary : theme.colors.text,
           }}
         >

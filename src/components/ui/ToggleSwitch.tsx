@@ -4,14 +4,16 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-na
 import MaterialCommunityIcons from '@react-native-vector-icons/material-community-icons';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../../context/ThemeContext';
+import { commonTokens } from '../../../theme/tokens';
 
 interface ToggleSwitchProps {
   value: boolean;
   onToggle: (value: boolean) => void;
   label?: string;
+  accessibilityLabel?: string;
 }
 
-export function ToggleSwitch({ value, onToggle, label }: ToggleSwitchProps) {
+export function ToggleSwitch({ value, onToggle, label, accessibilityLabel }: ToggleSwitchProps) {
   const { theme } = useTheme();
   const translateX = useSharedValue(value ? 24 : 0);
 
@@ -27,9 +29,9 @@ export function ToggleSwitch({ value, onToggle, label }: ToggleSwitchProps) {
   }));
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.md }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: commonTokens.spacing.md }}>
       {label && (
-        <Text style={{ color: theme.colors.text, fontSize: theme.typography.sizes.body }}>
+        <Text style={{ color: theme.colors.text, fontSize: commonTokens.typography.bodyMd.fontSize }}>
           {label}
         </Text>
       )}
@@ -37,13 +39,14 @@ export function ToggleSwitch({ value, onToggle, label }: ToggleSwitchProps) {
         onPress={handleToggle}
         accessibilityRole="switch"
         accessibilityState={{ checked: value }}
+        accessibilityLabel={accessibilityLabel || label}
         style={{
           width: 56,
           height: 32,
           borderRadius: 16,
           backgroundColor: value ? theme.colors.primary : theme.colors.surfaceVariant,
           justifyContent: 'center',
-          paddingLeft: theme.spacing.xs,
+          paddingLeft: commonTokens.spacing.xs,
           ...theme.shadows.sm,
         }}
       >

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useTheme } from '../../../context/ThemeContext';
+import { commonTokens } from '../../../theme/tokens';
 
 interface ProgressBarProps {
   progress: number;
@@ -26,7 +27,7 @@ export function ProgressBar({ progress, color }: ProgressBarProps) {
         width: '100%',
         height: 4,
         backgroundColor: theme.colors.surfaceVariant,
-        borderRadius: theme.borderRadius.sm,
+        borderRadius: commonTokens.borderRadius.sm,
         overflow: 'hidden',
       }}
     >
@@ -35,7 +36,7 @@ export function ProgressBar({ progress, color }: ProgressBarProps) {
           {
             height: '100%',
             backgroundColor: color || theme.colors.primary,
-            borderRadius: theme.borderRadius.sm,
+            borderRadius: commonTokens.borderRadius.sm,
           },
           animatedStyle,
         ]}

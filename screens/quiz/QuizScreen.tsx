@@ -245,7 +245,7 @@ const QuizScreen = ({ route, navigation }: any) => {
 
         {/* Progress Bar */}
         <View style={{ paddingHorizontal: commonTokens.spacing.lg }}>
-          <ProgressBar progress={progress} duration={300} />
+          <ProgressBar progress={progress} />
         </View>
 
         {/* Content */}

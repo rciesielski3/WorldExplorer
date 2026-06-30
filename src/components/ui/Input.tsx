@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TextInput, View, KeyboardAvoidingView, Platform } from 'react-native';
 import MaterialCommunityIcons from '@react-native-vector-icons/material-community-icons';
 import { useTheme } from '../../../context/ThemeContext';
+import { commonTokens } from '../../../theme/tokens';
 
 interface InputProps {
   placeholder: string;
@@ -33,9 +34,9 @@ export function Input({
           alignItems: 'center',
           height: 48,
           minHeight: 48,
-          borderRadius: theme.borderRadius.md,
+          borderRadius: commonTokens.borderRadius.md,
           backgroundColor: theme.colors.surfaceVariant,
-          paddingHorizontal: theme.spacing.md,
+          paddingHorizontal: commonTokens.spacing.md,
           borderWidth: isFocused ? 2 : 1,
           borderColor: isFocused ? theme.colors.primary : theme.colors.border,
         }}
@@ -45,7 +46,7 @@ export function Input({
             name={icon}
             size={20}
             color={isFocused ? theme.colors.primary : theme.colors.textSecondary}
-            style={{ marginRight: theme.spacing.sm }}
+            style={{ marginRight: commonTokens.spacing.sm }}
           />
         )}
         <TextInput
@@ -61,8 +62,8 @@ export function Input({
           style={{
             flex: 1,
             color: theme.colors.text,
-            fontSize: theme.typography.sizes.body,
-            fontFamily: theme.typography.fontFamily,
+            fontSize: commonTokens.typography.bodyMd.fontSize,
+            fontFamily: commonTokens.typography.bodyMd.fontFamily,
             minHeight: 48,
           }}
         />

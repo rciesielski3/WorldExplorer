@@ -3,6 +3,7 @@ import { Pressable } from 'react-native';
 import MaterialCommunityIcons from '@react-native-vector-icons/material-community-icons';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../context/ThemeContext';
+import { commonTokens } from '../../theme/tokens';
 
 interface NavBarIconProps {
   name: string;
@@ -22,7 +23,7 @@ export function NavBarIcon({ name, isActive, onPress, color }: NavBarIconProps) 
   return (
     <Pressable
       onPress={handlePress}
-      style={{ flex: 1, alignItems: 'center', padding: theme.spacing.sm }}
+      style={{ flex: 1, alignItems: 'center', padding: commonTokens.spacing.sm }}
     >
       <MaterialCommunityIcons
         name={name}

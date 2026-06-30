@@ -166,6 +166,8 @@ export type ThemeColors = {
   errorIconBg: string;
   /** Subtle elevated surface for secondary buttons and card containers */
   surfaceSubtle: string;
+  /** Surface variant for input backgrounds and inactive states */
+  surfaceVariant: string;
   text: string;
   textSecondary: string;
   textTertiary: string;
@@ -248,6 +250,7 @@ export const lightTheme = {
     errorBorder:   palette.errorBorderLight,
     errorIconBg:   'rgba(229,57,53,0.15)',
     surfaceSubtle: 'rgba(0,0,0,0.03)',
+    surfaceVariant: 'rgba(0,0,0,0.05)',
     text:          palette.lightText,
     textSecondary: palette.lightTextSecondary,
     textTertiary:  palette.lightTextTertiary,
@@ -297,6 +300,7 @@ export const darkTheme = {
     errorBorder:   palette.errorBorderDark,
     errorIconBg:   'rgba(239,154,154,0.18)',
     surfaceSubtle: 'rgba(255,255,255,0.05)',
+    surfaceVariant: 'rgba(255,255,255,0.08)',
     text:          palette.textDark,
     textSecondary: palette.textSecondaryDark,
     textTertiary:  palette.textTertiaryDark,

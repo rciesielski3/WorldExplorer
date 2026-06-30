@@ -169,9 +169,8 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
             </View>
             <ToggleSwitch
               value={theme.isDarkMode}
-              onValueChange={handleThemeToggle}
-              enabledIcon="moon"
-              disabledIcon="sun"
+              onToggle={handleThemeToggle}
+              label={t('darkMode')}
               accessibilityLabel={t('darkMode')}
             />
           </View>
@@ -290,9 +289,8 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
             </View>
             <ToggleSwitch
               value={soundEnabled}
-              onValueChange={handleSoundToggle}
-              enabledIcon="volume-high"
-              disabledIcon="volume-mute"
+              onToggle={handleSoundToggle}
+              label={t('sound')}
               accessibilityLabel={t('sound')}
             />
           </View>
@@ -329,9 +327,8 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
             </View>
             <ToggleSwitch
               value={hapticsEnabled}
-              onValueChange={handleHapticsToggle}
-              enabledIcon="vibrate"
-              disabledIcon="vibrate-off"
+              onToggle={handleHapticsToggle}
+              label={t('hapticFeedback')}
               accessibilityLabel={t('hapticFeedback')}
             />
           </View>

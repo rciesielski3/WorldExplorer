@@ -30,7 +30,9 @@ export function FloatingNavBar({ currentRoute, onNavigate, items }: FloatingNavB
         right: 24,
         height: 56,
         borderRadius: 28,
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        backgroundColor: theme.isDarkMode
+          ? 'rgba(13, 11, 22, 0.95)'
+          : 'rgba(255, 255, 255, 0.95)',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-around',

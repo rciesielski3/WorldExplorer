@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback, useMemo, useContext } from "react";
+import React, { useRef, useState, useCallback, useMemo } from "react";
 import {
   View,
   Text,
@@ -14,7 +14,7 @@ import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-import { ThemeContext } from "../context/ThemeContext";
+import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import { FLAG_ASSETS } from "../utils/flagAssets";
 
@@ -229,7 +229,7 @@ const TopBar = ({
 );
 
 const MapScreen: React.FC<MapScreenProps> = ({ route, navigation }) => {
-  const { theme } = useContext(ThemeContext);
+  const { theme } = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const mapRef = useRef<MapView>(null);
