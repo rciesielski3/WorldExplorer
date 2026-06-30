@@ -2,8 +2,8 @@ import React from 'react';
 import { Pressable } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Haptics from 'expo-haptics';
-import { useTheme } from '../../context/ThemeContext';
-import { commonTokens } from '../../theme/tokens';
+import { useTheme } from '../../../context/ThemeContext';
+import { commonTokens } from '../../../theme/tokens';
 
 interface NavBarIconProps {
   name: string;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { TextInput, View } from 'react-native';
-import MaterialCommunityIcons from '@react-native-vector-icons/material-community-icons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from '../../../context/ThemeContext';
 import { commonTokens } from '../../../theme/tokens';
 

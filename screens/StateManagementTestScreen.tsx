@@ -24,8 +24,8 @@ import {
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { ThemeContext } from '../context/ThemeContext';
-import ErrorCard from '../components/ui/ErrorCard';
-import EmptyStateCard from '../components/ui/EmptyStateCard';
+import ErrorCard from '../src/components/ui/ErrorCard';
+import EmptyStateCard from '../src/components/ui/EmptyStateCard';
 import type { ApiError } from '../types/errors';
 import { createApiError, ERRORS } from '../types/errors';
 import { spacing, radius, typography, darkTheme, lightTheme, type ThemeColors } from '../theme/tokens';

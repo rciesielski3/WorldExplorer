@@ -46,7 +46,7 @@ describe('ToggleSwitch Component', () => {
     });
 
     it('should work without label prop', () => {
-      const props = {
+      const props: { value: boolean; onToggle: jest.Mock; label?: string } = {
         value: false,
         onToggle: jest.fn(),
       };
@@ -247,7 +247,7 @@ describe('ToggleSwitch Component', () => {
     });
 
     it('should not render label when not provided', () => {
-      const props = {
+      const props: { value: boolean; onToggle: jest.Mock; label?: string } = {
         value: false,
         onToggle: jest.fn(),
       };

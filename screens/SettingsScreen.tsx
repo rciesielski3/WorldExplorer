@@ -15,10 +15,10 @@ import packageJson from '../package.json';
 
 import { useTheme } from '../context/ThemeContext';
 import { usePremium } from '../context/PremiumContext';
-import { Card } from '../components/ui/Card';
-import { ToggleSwitch } from '../components/ui/ToggleSwitch';
-import { TopBar } from '../components/ui/TopBar';
-import { FloatingNavBar } from '../components/Navigation/FloatingNavBar';
+import { Card } from '../src/components/ui/Card';
+import { ToggleSwitch } from '../src/components/ui/ToggleSwitch';
+import { TopBar } from '../src/components/Navigation/TopBar';
+import { FloatingNavBar } from '../src/components/Navigation/FloatingNavBar';
 import { commonTokens } from '../theme/tokens';
 import { Picker } from '@react-native-picker/picker';
 
@@ -95,7 +95,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <TopBar appName={t('settings')} />
+      <TopBar title={t('settings')} />
 
       <ScrollView
         style={{ flex: 1 }}
@@ -632,7 +632,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
       {/* Floating Navigation Bar */}
       <FloatingNavBar
         currentRoute="Settings"
-        onNavigate={(routeName) => navigation.navigate(routeName)}
+        onNavigate={(routeName: string) => navigation.navigate(routeName)}
         items={navItems}
       />
     </View>

@@ -177,9 +177,9 @@ export type ThemeColors = {
 };
 
 type ThemeGradients = {
-  home: string[];
-  explore: string[];
-  map: string[];
+  home: readonly [string, string, ...string[]];
+  explore: readonly [string, string, ...string[]];
+  map: readonly [string, string, ...string[]];
 };
 
 export type TypographyStyles = typeof commonTokens.typography;
@@ -265,9 +265,9 @@ export const lightTheme = {
   },
   shadows: commonTokens.shadows,
   gradients: {
-    home:    [palette.skyBlue500, palette.oceanBlue500],
-    explore: [palette.earthGreen500, palette.skyBlue500],
-    map:     [palette.oceanBlue500, palette.earthGreen500],
+    home:    [palette.skyBlue500, palette.oceanBlue500] as const,
+    explore: [palette.earthGreen500, palette.skyBlue500] as const,
+    map:     [palette.oceanBlue500, palette.earthGreen500] as const,
   } satisfies ThemeGradients,
 };
 
@@ -315,8 +315,8 @@ export const darkTheme = {
   },
   shadows: commonTokens.shadows,
   gradients: {
-    home:    [palette.skyBlue300, palette.oceanBlue300],
-    explore: [palette.earthGreen300, palette.skyBlue300],
-    map:     [palette.oceanBlue300, palette.earthGreen300],
+    home:    [palette.skyBlue300, palette.oceanBlue300] as const,
+    explore: [palette.earthGreen300, palette.skyBlue300] as const,
+    map:     [palette.oceanBlue300, palette.earthGreen300] as const,
   } satisfies ThemeGradients,
 };

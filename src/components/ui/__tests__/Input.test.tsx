@@ -58,7 +58,7 @@ describe('Input Component', () => {
     });
 
     it('should work without icon prop', () => {
-      const props = {
+      const props: { placeholder: string; value: string; onChangeText: jest.Mock; icon?: string } = {
         placeholder: 'Input',
         value: '',
         onChangeText: jest.fn(),
@@ -163,7 +163,7 @@ describe('Input Component', () => {
 
   describe('Disabled State', () => {
     it('should default to enabled', () => {
-      const props = {
+      const props: { placeholder: string; value: string; onChangeText: jest.Mock; disabled?: boolean } = {
         placeholder: 'Input',
         value: '',
         onChangeText: jest.fn(),

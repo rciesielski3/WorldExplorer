@@ -18,8 +18,8 @@ import Animated, { FadeIn, SlideInUp } from 'react-native-reanimated';
 
 import { useTheme } from '../../context/ThemeContext';
 import { commonTokens } from '../../theme/tokens';
-import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
+import { Card } from '../components/ui/Card';
+import { Badge } from '../components/ui/Badge';
 import {
   Country,
   fetchCountries,

@@ -15,10 +15,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 import { useTheme } from '../context/ThemeContext';
 import { commonTokens } from '../theme/tokens';
-import { TopBar } from '../components/ui/TopBar';
-import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { FloatingNavBar } from '../components/Navigation/FloatingNavBar';
+import { TopBar } from '../src/components/Navigation/TopBar';
+import { Card } from '../src/components/ui/Card';
+import { Button } from '../src/components/ui/Button';
+import { FloatingNavBar } from '../src/components/Navigation/FloatingNavBar';
 import { fetchCountries, getLocalizedCountryName } from '../utils/countries';
 import { getDailyCountry } from '../utils/dailyCountry';
 import { FLAG_ASSETS } from '../utils/flagAssets';
@@ -95,7 +95,7 @@ const HomeScreen = ({ navigation }: any) => {
       }}
     >
       <TopBar
-        appName="WorldExplorer"
+        title="WorldExplorer"
         onSettingsPress={handleSettingsPress}
       />
 
@@ -441,7 +441,7 @@ const HomeScreen = ({ navigation }: any) => {
       {/* Floating Navigation Bar */}
       <FloatingNavBar
         currentRoute="Home"
-        onNavigate={(routeName) => navigation.navigate(routeName)}
+        onNavigate={(routeName: string) => navigation.navigate(routeName)}
         items={navItems}
       />
     </View>

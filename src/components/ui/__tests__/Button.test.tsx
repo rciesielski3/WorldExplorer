@@ -110,7 +110,7 @@ describe('Button Component', () => {
     });
 
     it('should default to filled variant', () => {
-      const props = {
+      const props: { label: string; onPress: jest.Mock; variant?: 'filled' | 'outlined' | 'text' } = {
         label: 'Default',
         onPress: jest.fn(),
         // No variant specified
@@ -122,7 +122,7 @@ describe('Button Component', () => {
 
   describe('Disabled State', () => {
     it('should default to enabled', () => {
-      const props = {
+      const props: { label: string; onPress: jest.Mock; disabled?: boolean } = {
         label: 'Enabled',
         onPress: jest.fn(),
       };

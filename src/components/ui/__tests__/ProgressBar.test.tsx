@@ -49,14 +49,14 @@ describe('ProgressBar Component', () => {
     });
 
     it('should work without color prop', () => {
-      const props = {
+      const props: { progress: number; color?: string } = {
         progress: 0.5,
       };
       expect(props.color).toBeUndefined();
     });
 
     it('should use theme primary color by default', () => {
-      const props = {
+      const props: { progress: number; color?: string } = {
         progress: 0.5,
       };
       // When no color provided, component uses theme.colors.primary
@@ -151,7 +151,7 @@ describe('ProgressBar Component', () => {
 
   describe('Color Support', () => {
     it('should use theme primary color by default', () => {
-      const props = {
+      const props: { progress: number; color?: string } = {
         progress: 0.5,
       };
       // Default: color || theme.colors.primary
@@ -175,13 +175,13 @@ describe('ProgressBar Component', () => {
       ];
 
       themeColors.forEach(color => {
-        const props = { progress: 0.5, color };
+        const props: { progress: number; color: string } = { progress: 0.5, color };
         expect(props.color).toBe(color);
       });
     });
 
     it('should support rgba colors', () => {
-      const props = {
+      const props: { progress: number; color: string } = {
         progress: 0.5,
         color: 'rgba(30,136,229,0.8)',
       };
@@ -218,8 +218,8 @@ describe('ProgressBar Component', () => {
     });
 
     it('should use theme primary or custom color for fill', () => {
-      const props1 = { progress: 0.5 };
-      const props2 = { progress: 0.5, color: '#FF0000' };
+      const props1: { progress: number; color?: string } = { progress: 0.5 };
+      const props2: { progress: number; color: string } = { progress: 0.5, color: '#FF0000' };
       // First uses theme.colors.primary, second uses custom color
       expect(props1.color).toBeUndefined();
       expect(props2.color).toBe('#FF0000');

@@ -9,6 +9,8 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useRoute, useNavigation, StackActions } from '@react-navigation/native';
+import type { StackNavigationProp } from '@react-navigation/stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Animated, {
   ZoomIn,
@@ -23,28 +25,25 @@ import * as Haptics from 'expo-haptics';
 
 import { useTheme } from '../../context/ThemeContext';
 import { commonTokens } from '../../theme/tokens';
-import { Button } from '../../components/ui/Button';
-import { Card } from '../../components/ui/Card';
+import { Button } from '../../src/components/ui/Button';
+import { Card } from '../../src/components/ui/Card';
 
-interface QuizResultsScreenProps {
-  route: {
-    params: {
-      score: number;
-      questions: Array<{
-        question: string;
-        answer: string;
-        selectedAnswer?: string;
-        type?: string;
-      }>;
-    };
-  };
-  navigation: any;
+interface QuizResultsRouteParams {
+  score: number;
+  questions: Array<{
+    question: string;
+    answer: string;
+    selectedAnswer?: string;
+    type?: string;
+  }>;
 }
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
-export function QuizResultsScreen({ route, navigation }: QuizResultsScreenProps) {
-  const { score, questions } = route.params;
+export function QuizResultsScreen() {
+  const route = useRoute();
+  const navigation = useNavigation<StackNavigationProp<any>>();
+  const { score, questions } = (route.params as QuizResultsRouteParams);
   const { t, i18n } = useTranslation();
   const { theme } = useTheme();
   const lottieRef = React.useRef<LottieView>(null);

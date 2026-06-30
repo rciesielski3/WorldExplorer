@@ -13,12 +13,12 @@ import * as Haptics from 'expo-haptics';
 
 import { useTheme } from '../../context/ThemeContext';
 import { commonTokens } from '../../theme/tokens';
-import { TopBar } from '../../components/ui/TopBar';
-import { ProgressBar } from '../../components/ui/ProgressBar';
-import { QuestionCard } from '../../components/ui/QuestionCard';
-import { Button } from '../../components/ui/Button';
-import { FloatingNavBar } from '../../components/Navigation/FloatingNavBar';
-import AdBanner from '../../components/AdBanner';
+import { TopBar } from '../../src/components/Navigation/TopBar';
+import { ProgressBar } from '../../src/components/ui/ProgressBar';
+import { QuestionCard } from '../../src/components/ui/QuestionCard';
+import { Button } from '../../src/components/ui/Button';
+import { FloatingNavBar } from '../../src/components/Navigation/FloatingNavBar';
+import AdBanner from '../../src/components/AdBanner';
 import { fetchCountries, getLocalizedCountryName } from '../../utils/countries';
 import { FLAG_ASSETS } from '../../utils/flagAssets';
 
@@ -245,7 +245,7 @@ const QuizScreen = ({ route, navigation }: any) => {
     >
       <View style={{ flex: 1, backgroundColor: `${theme.colors.background}00` }}>
         {/* Top Bar */}
-        <TopBar appName={t('quiz')} />
+        <TopBar title={t('quiz')} />
 
         {/* Progress Bar */}
         <View style={{ paddingHorizontal: commonTokens.spacing.lg }}>
