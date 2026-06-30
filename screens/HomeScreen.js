@@ -116,7 +116,7 @@ const HomeScreen = ({ navigation }) => {
           <View style={styles.dailyCountryHeader}>
             <Text style={styles.dailyCountryEyebrow}>{t("dailyCountry")}</Text>
             <MaterialCommunityIcons
-              name="sparkles"
+              name="star"
               size={18}
               color={theme.colors.button}
             />

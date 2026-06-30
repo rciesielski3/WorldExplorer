@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ImageBackground,
+  StyleSheet,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { useTranslation } from "react-i18next";
@@ -118,15 +119,46 @@ const CountryDetailsScreen = ({ route, navigation }) => {
   };
 
   const renderStatGrid = (items) => (
-    <View style={styles.countryStatGrid}>
-      {items.map((item) => (
-        <View key={item.label} style={styles.countryStatCard}>
-          <Text style={styles.countryStatLabel}>{item.label}</Text>
-          <Text style={styles.countryStatValue}>{item.value}</Text>
-        </View>
-      ))}
+    <View style={styles.countryStatGridContainer}>
+      <View style={styles.countryStatGrid}>
+        {items.map((item) => (
+          <View key={item.label} style={styles.countryStatCard}>
+            <View style={styles.countryStatCardContent}>
+              <Text style={styles.countryStatLabel}>{item.label}</Text>
+              <Text style={styles.countryStatValue} numberOfLines={2}>
+                {item.value}
+              </Text>
+            </View>
+          </View>
+        ))}
+      </View>
     </View>
   );
+
+  const renderInfoCard = (title, value, icon) => (
+    <View style={styles.countryInfoCard}>
+      <View style={styles.countryInfoCardHeader}>
+        {icon && (
+          <MaterialCommunityIcons
+            name={icon}
+            size={20}
+            color={theme.colors.button}
+            style={styles.countryInfoCardIcon}
+          />
+        )}
+        <Text style={styles.countryInfoCardTitle}>{title}</Text>
+      </View>
+      <Text style={styles.countryInfoCardValue}>{value}</Text>
+    </View>
+  );
+
+  const handleNavigateToSettings = () => {
+    navigation.navigate("Settings");
+  };
+
+  const handleNavigateToQuiz = () => {
+    navigation.navigate("Quiz", { country });
+  };
 
   return (
     <ImageBackground
@@ -138,31 +170,61 @@ const CountryDetailsScreen = ({ route, navigation }) => {
         style={styles.containerScrollView}
         contentContainerStyle={styles.countryDetailsContent}
       >
-        <TouchableOpacity
-          style={styles.countryBackRow}
-          onPress={() => navigation.goBack()}
-          activeOpacity={0.78}
-        >
-          <MaterialCommunityIcons
-            name="arrow-left"
-            size={20}
-            color={theme.colors.text}
-          />
+        <View style={[styles.countryBackRow, styles.countryTopBar]}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.6}
+            style={styles.countryTopBarButton}
+          >
+            <MaterialCommunityIcons
+              name="arrow-left"
+              size={24}
+              color={theme.colors.text}
+            />
+          </TouchableOpacity>
           <Text style={styles.countryBackText}>{t("back")}</Text>
-        </TouchableOpacity>
+          <View style={styles.countryTopBarSpacer} />
+          <TouchableOpacity
+            onPress={handleNavigateToSettings}
+            activeOpacity={0.6}
+            style={styles.countryTopBarButton}
+          >
+            <MaterialCommunityIcons
+              name="cog"
+              size={24}
+              color={theme.colors.text}
+            />
+          </TouchableOpacity>
+        </View>
 
-        <View style={styles.countryHeroCard}>
-          <Image
-            source={FLAG_ASSETS[country.flagPath]}
-            style={styles.countryHeroFlag}
-            resizeMode="cover"
-          />
-          <View style={styles.countryHeroOverlay} />
-          <View style={styles.countryHeroText}>
-            <Text style={styles.countryHeroName}>{countryName}</Text>
-            <Text style={styles.countryHeroRegion}>
-              {regionLine || t("noData")}
-            </Text>
+        <View style={styles.countryHeroSection}>
+          <View style={styles.countryHeroCard}>
+            <Image
+              source={FLAG_ASSETS[country.flagPath]}
+              style={styles.countryHeroFlag}
+              resizeMode="cover"
+            />
+            <View style={styles.countryHeroOverlay} />
+            <View style={styles.countryHeroText}>
+              <Text style={styles.countryHeroName}>{countryName}</Text>
+              <Text style={styles.countryHeroRegion}>
+                {regionLine || t("noData")}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.countryHeaderCard}>
+            <View>
+              <Text style={styles.countryHeaderName}>{countryName}</Text>
+              <Text style={styles.countryHeaderCapital}>
+                {t("capital")}: {capital}
+              </Text>
+            </View>
+            <View style={styles.countryRegionBadge}>
+              <Text style={styles.countryRegionBadgeText}>
+                {country.region ?? t("noData")}
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -192,12 +254,17 @@ const CountryDetailsScreen = ({ route, navigation }) => {
 
         {activeTab === "info" && (
           <View>
-            {renderStatGrid(infoStats)}
+            <View style={styles.countryInfoSection}>
+              {renderInfoCard(t("population"), population, "people")}
+              {renderInfoCard(t("area"), `${formatNumber(country.area) ?? t("noData")} km²`, "map")}
+              {renderInfoCard(t("languages"), languages, "translate")}
+            </View>
+
             <View style={styles.countryFactCard}>
               <View style={styles.countryFactHeader}>
                 <MaterialCommunityIcons
                   name="sparkles"
-                  size={14}
+                  size={16}
                   color={theme.colors.button}
                 />
                 <Text style={styles.countryFactLabel}>{t("countryFact")}</Text>
@@ -235,20 +302,37 @@ const CountryDetailsScreen = ({ route, navigation }) => {
           </View>
         )}
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleShowOnMap}
-          activeOpacity={0.82}
-        >
-          <View style={styles.countryCtaContent}>
-            <MaterialCommunityIcons
-              name="map-marker"
-              size={18}
-              color={theme.colors.buttonText}
-            />
-            <Text style={styles.buttonText}>{t("showOnMap")}</Text>
-          </View>
-        </TouchableOpacity>
+        <View style={styles.countryCtaSection}>
+          <TouchableOpacity
+            style={[styles.button, styles.countryQuizButton]}
+            onPress={handleNavigateToQuiz}
+            activeOpacity={0.82}
+          >
+            <View style={styles.countryCtaContent}>
+              <MaterialCommunityIcons
+                name="brain"
+                size={20}
+                color={theme.colors.buttonText}
+              />
+              <Text style={styles.buttonText}>{t("testKnowledge") || "Test Your Knowledge"}</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.countryMapButton]}
+            onPress={handleShowOnMap}
+            activeOpacity={0.82}
+          >
+            <View style={styles.countryCtaContent}>
+              <MaterialCommunityIcons
+                name="map-marker"
+                size={20}
+                color={theme.colors.buttonText}
+              />
+              <Text style={styles.buttonText}>{t("showOnMap")}</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
       <AdBanner />
     </ImageBackground>

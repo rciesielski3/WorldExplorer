@@ -67,3 +67,4 @@ theme/
 # Local development
 .env.local
 .DS_Store
+docs/superpowers/

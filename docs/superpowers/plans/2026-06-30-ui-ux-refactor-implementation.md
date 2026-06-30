@@ -1,40 +1,398 @@
-# WorldExplorer UI/UX Refactor — Implementation Plan
+# WorldExplorer UI/UX Refactor — Implementation Plan (REVISED)
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Transform WorldExplorer from a student app aesthetic to a professional, exploration-themed interface using Material Design 3 with playful interactions across all 6 screens.
 
-**Architecture:** Phased implementation starting with design tokens and atomic components, then screen-by-screen refactor with floating navigation. All components use design tokens (no hardcoded colors), support light/dark modes natively, and include playful animations and haptic feedback.
+**Architecture:** Pre-flight validation (assets, layout), then phased implementation starting with design tokens and atomic components (a/11y-first), state management layer, navigation system, then screen-by-screen refactor. All components use design tokens (no hardcoded colors), support light/dark modes with persistence, handle errors/empty states, and include playful animations.
 
-**Tech Stack:** React Native 0.79, Expo 53, TypeScript 5.8, react-native-reanimated 3.17, expo-haptics 14.1, expo-linear-gradient 14.1, lottie-react-native 7.2, React Navigation 7.x
+**Tech Stack:** React Native 0.79, Expo 53, TypeScript 5.8, react-native-reanimated 3.17, expo-haptics 14.1, expo-linear-gradient 14.1, lottie-react-native 7.2, React Navigation 7.x, AsyncStorage (theme persistence)
 
 ## Global Constraints
 
 - Material Design 3 foundation with rounded corners (12-16dp), elevation, ripple effects
 - Color palette: Sky Blue (#1E88E5), Earth Green (#43A047), Ocean Blue (#0277BD), White/Dark Gray surfaces
-- Light & dark mode: Automatic adaptive colors, no manual overrides
-- All components: TypeScript typed, reusable, use design tokens (theme/tokens.ts)
+- Light & dark mode: Automatic adaptive colors with user preference persistence (AsyncStorage)
+- All components: TypeScript typed, reusable, use design tokens (theme/tokens.ts), semantic a/11y labels from creation
 - Animations: 200-500ms durations, GPU-accelerated (react-native-reanimated), respects prefersReducedMotion
-- Accessibility: WCAG AA contrast ratios (≥4.5:1), 48dp touch targets, semantic labels for screen readers
-- Performance: 60fps target, all animations GPU-accelerated, Lottie lazy-loaded
+- Accessibility: WCAG AA contrast ratios (≥4.5:1), 48dp touch targets, semantic labels for screen readers, integrated into Phase 1
+- Performance: 60fps target on mid-range devices (Galaxy S9+, iPhone XS), all animations GPU-accelerated, Lottie lazy-loaded
+- Error handling: All screens handle API errors, loading states, empty states with UI patterns
+- State management: Context + useReducer for complex screens (no prop drilling between 3+ levels)
 - Haptic feedback: Pair with touch interactions using expo-haptics (Medium/Light/Subtle)
-- Navigation: Floating bottom nav (56dp, 5 icons) + top bar on all screens
-- Portfolio quality: Clean code, no breaking changes to existing API, frequent commits
+- Navigation: Floating bottom nav (56dp, 5 icons) + top bar on all screens (layout validated before code)
+- Portfolio quality: Clean code, TypeScript strict mode, no console.logs, frequent commits, accessibility from day 1
 
 ---
 
-## Phase 1: Foundation
+## Pre-Flight Phase: Assets & Layout Validation
 
-### Task 1: Create Design Tokens System
+### Task 0A: Source & Validate Lottie Animations
+
+**Files:**
+- Create: `src/assets/animations/` directory
+- Create: `LOTTIE_SOURCES.md` (documentation of animation sources)
+
+**Steps:**
+
+- [ ] **Step 1: Identify animation requirements**
+
+From design spec, we need:
+1. `rotating-earth.json` — 6s loop, globe rotation for hero (HomeScreen)
+2. `confetti.json` — 2s one-shot, celebration on quiz complete
+3. `spinner.json` — continuous, loading state indicator
+4. `achievement.json` — 2s one-shot, badge pop with bounce
+
+- [ ] **Step 2: Source animations from LottieFiles.com**
+
+Go to https://lottiefiles.com and download free animations:
+- Search "rotating globe" → Find one that matches specs, download JSON
+- Search "confetti" → Download
+- Search "loading spinner" → Download
+- Search "achievement badge" or "popup" → Download
+
+License check: Ensure animations are free/MIT licensed (most on LottieFiles are).
+
+- [ ] **Step 3: Test animations in Expo**
+
+Create temp test screen:
+```typescript
+import LottieView from 'lottie-react-native';
+
+<LottieView
+  source={require('../assets/animations/rotating-earth.json')}
+  autoPlay
+  loop
+  style={{ width: 140, height: 140 }}
+/>
+```
+
+Run: `npm start` → Load animation → Verify smooth playback (no stuttering), correct duration
+
+- [ ] **Step 4: Document animation sources**
+
+Create `LOTTIE_SOURCES.md`:
+```markdown
+# Lottie Animation Sources
+
+## rotating-earth.json
+- Source: LottieFiles
+- URL: [link to download]
+- License: Free / MIT
+- Duration: 6s
+- Loop: Yes
+- File size: X KB
+
+## confetti.json
+...
+
+## spinner.json
+...
+
+## achievement.json
+...
+
+**Attribution:** All animations sourced from LottieFiles.com (free tier)
+```
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add src/assets/animations/ LOTTIE_SOURCES.md
+git commit -m "feat: add Lottie animation assets
+
+- rotating-earth: 6s loop for hero section
+- confetti: 2s celebration animation
+- spinner: continuous loading indicator
+- achievement: 2s badge pop animation
+- All sourced from LottieFiles.com with MIT license
+- Tested smooth playback in Expo"
+```
+
+---
+
+### Task 0B: Validate Navigation Layout (Top Bar + Floating Nav)
+
+**Files:**
+- Create: `docs/navigation-layout.md` (quick reference, not full design doc)
+
+**Steps:**
+
+- [ ] **Step 1: Create quick wireframe/reference**
+
+Document in `docs/navigation-layout.md`:
+
+```markdown
+# Navigation Layout Reference
+
+## Layout Structure
+
+```
+┌─────────────────────────┐
+│  Status Bar (system)    │ ← Safe area
+├─────────────────────────┤
+│ TopBar (56dp)           │ ← App name or screen title + settings
+├─────────────────────────┤
+│                         │
+│  Screen Content         │ ← Scrollable, accounts for safe areas
+│  (scrollable)           │
+│                         │ ← Bottom safe area (home indicator, notch)
+├─────────────────────────┤
+│ FloatingNavBar (56dp)   │ ← Fixed 16dp above bottom + safe area
+│ (5 icons)               │
+└─────────────────────────┘
+```
+
+## Screen-Specific Notes
+
+**MapScreen:** Floating nav positioned over map. Map has padding-bottom: 80dp to avoid obstruction.
+**ExploreScreen:** Grid scrolls behind nav, nav hides/shows on scroll (threshold: 50dp).
+**QuizScreen:** Nav visible always, progress bar at top.
+
+## Safe Area Handling
+
+- Top inset: TopBar respects status bar + notch
+- Bottom inset: FloatingNavBar respects home indicator + notch
+- Content: ScrollView has useSafeAreaInsets() margins
+
+## Validation Checklist
+
+- [ ] TopBar + FloatingNav don't visually conflict
+- [ ] Floating nav doesn't obscure interactive content
+- [ ] MapScreen map clickable above floating nav
+- [ ] Notched devices: content not cut off
+```
+
+- [ ] **Step 2: Test layout on multiple devices**
+
+Run: `npm start`
+- iPhone SE (small, no notch)
+- iPhone 14 Pro (medium, notch)
+- iPad (tablet, safe area larger)
+
+Visual check:
+- TopBar visible, readable
+- FloatingNav positioned correctly at bottom
+- No visual overlaps
+- Content scrolls properly behind nav
+
+- [ ] **Step 3: Test on real device (if available)**
+
+If you have an Android device:
+- Run on Galaxy S9+ or similar (mid-range)
+- Verify layout, safe areas work
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add docs/navigation-layout.md
+git commit -m "docs: add navigation layout reference and validation
+
+- Layout diagram showing TopBar + FloatingNav coexistence
+- Screen-specific notes (MapScreen, ExploreScreen, QuizScreen)
+- Safe area handling for notched devices
+- Validation checklist for visual conflicts"
+```
+
+---
+
+### Task 0C: Define State Management & Error Handling Patterns
+
+**Files:**
+- Create: `docs/state-management.md`
+- Create: `src/types/errors.ts`
+
+**Steps:**
+
+- [ ] **Step 1: Document state management approach**
+
+Create `docs/state-management.md`:
+
+```markdown
+# State Management Strategy
+
+## Approach: Context + useReducer (no Redux)
+
+**Why:** App is mid-complexity (6 screens), doesn't need Redux. Context + reducer is sufficient.
+
+## Screen-Level State (useReducer)
+
+- **ExploreScreen:** selectedRegion, searchQuery, filteredCountries, loading, error
+- **QuizScreen:** currentQuestion, userAnswers, score, loading
+- **MapScreen:** visibleRegions, selectedCountry, zoomLevel
+
+Each screen has its own reducer with actions:
+```typescript
+type ExploreAction =
+  | { type: 'SET_REGION'; payload: string }
+  | { type: 'SET_SEARCH'; payload: string }
+  | { type: 'SET_LOADING'; payload: boolean }
+  | { type: 'SET_ERROR'; payload: string | null };
+```
+
+## Global State (Context)
+
+- **ThemeContext:** isDarkMode, toggleTheme
+- **AuthContext (if needed):** currentUser, loginState
+
+## Prop Drilling Rule
+
+- 1-2 levels deep: Prop drill
+- 3+ levels: Use Context
+- Example: HomeScreen → DailyCard → CountryInfo → Badge
+  → Prop drill (3 levels OK for simple data)
+
+## Error Handling Pattern (all screens)
+
+Every API call follows this pattern:
+
+```typescript
+const [state, dispatch] = useReducer(reducer, initialState);
+
+const loadData = async () => {
+  dispatch({ type: 'SET_LOADING', payload: true });
+  try {
+    const data = await api.fetch(...);
+    dispatch({ type: 'SET_DATA', payload: data });
+  } catch (error) {
+    dispatch({ type: 'SET_ERROR', payload: error.message });
+  } finally {
+    dispatch({ type: 'SET_LOADING', payload: false });
+  }
+};
+```
+
+## UI Patterns (for error/loading/empty)
+
+**Loading State:**
+```typescript
+{state.loading && <SkeletonLoader />}
+{!state.loading && state.data && <DataView />}
+```
+
+**Error State:**
+```typescript
+{state.error && (
+  <ErrorCard
+    message={state.error}
+    onRetry={loadData}
+  />
+)}
+```
+
+**Empty State:**
+```typescript
+{!state.loading && state.data?.length === 0 && (
+  <EmptyStateCard message="No countries match your search" />
+)}
+```
+```
+
+- [ ] **Step 2: Create error types**
+
+`src/types/errors.ts`:
+
+```typescript
+export interface ApiError {
+  code: string;
+  message: string;
+  retryable: boolean;
+}
+
+export const ERRORS = {
+  NETWORK: { code: 'NETWORK_ERROR', message: 'Network error. Check connection.', retryable: true },
+  NOT_FOUND: { code: 'NOT_FOUND', message: 'Resource not found.', retryable: false },
+  INVALID_DATA: { code: 'INVALID_DATA', message: 'Invalid data format.', retryable: false },
+  UNKNOWN: { code: 'UNKNOWN', message: 'Something went wrong.', retryable: true },
+};
+```
+
+- [ ] **Step 3: Create ErrorCard & EmptyStateCard components**
+
+Add to `src/components/ui/`:
+
+```typescript
+// src/components/ui/ErrorCard.tsx
+export function ErrorCard({ message, onRetry }: { message: string; onRetry: () => void }) {
+  const { theme } = useTheme();
+  return (
+    <Card style={{ backgroundColor: theme.colors.error + '15' }}>
+      <MaterialCommunityIcons name="alert-circle" size={32} color={theme.colors.error} />
+      <Text style={{ color: theme.colors.error, marginVertical: theme.spacing.md }}>
+        {message}
+      </Text>
+      <Button label="Retry" onPress={onRetry} />
+    </Card>
+  );
+}
+
+// src/components/ui/EmptyStateCard.tsx
+export function EmptyStateCard({ message }: { message: string }) {
+  const { theme } = useTheme();
+  return (
+    <Card style={{ alignItems: 'center', paddingVertical: theme.spacing.xl }}>
+      <MaterialCommunityIcons name="inbox-multiple" size={48} color={theme.colors.textSecondary} />
+      <Text style={{ marginTop: theme.spacing.md, color: theme.colors.textSecondary }}>
+        {message}
+      </Text>
+    </Card>
+  );
+}
+```
+
+- [ ] **Step 4: Test error patterns**
+
+Create temp test component with dummy API call:
+```typescript
+const [error, setError] = useState<string | null>(null);
+const [loading, setLoading] = useState(false);
+
+const simulateError = () => {
+  setError('Failed to load data');
+};
+
+return (
+  <>
+    {loading && <Text>Loading...</Text>}
+    {error && <ErrorCard message={error} onRetry={simulateError} />}
+    <Button label="Trigger Error" onPress={simulateError} />
+  </>
+);
+```
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add docs/state-management.md src/types/errors.ts src/components/ui/ErrorCard.tsx src/components/ui/EmptyStateCard.tsx
+git commit -m "docs: add state management strategy and error handling patterns
+
+- Context + useReducer for screen-level state
+- Prop drilling rules (no Redux)
+- Error/loading/empty state UI patterns
+- ErrorCard and EmptyStateCard components
+- ApiError types for consistent error handling"
+```
+
+---
+
+## Phase 1: Foundation (Updated)
+
+### Task 1: Create Design Tokens System with Theme Persistence
 
 **Files:**
 - Create: `src/theme/tokens.ts`
 - Modify: `src/theme/ThemeContext.tsx` (if exists, else create)
+- Install: `@react-native-async-storage/async-storage` (for persistence)
 
 **Interfaces:**
 - Produces: `lightTheme` and `darkTheme` objects with colors, spacing, typography, shadows
+- ThemeContext provides: `isDarkMode`, `toggleTheme`, `themeLoading`
 
 **Steps:**
+
+- [ ] **Step 0: Install AsyncStorage**
+
+Run: `npm install @react-native-async-storage/async-storage`
 
 - [ ] **Step 1: Create tokens.ts**
 
@@ -150,36 +508,82 @@ export const darkTheme = {
 export type Theme = typeof lightTheme;
 ```
 
-- [ ] **Step 2: Create/Update ThemeContext.tsx**
+- [ ] **Step 2: Create/Update ThemeContext.tsx with AsyncStorage**
 
 ```typescript
 // src/theme/ThemeContext.tsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useColorScheme } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { lightTheme, darkTheme } from './tokens';
 
 interface ThemeContextType {
   theme: typeof lightTheme;
   isDarkMode: boolean;
   toggleTheme: () => void;
+  isLoading: boolean; // Prevents flashing wrong theme on startup
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const THEME_KEY = 'app_theme_preference';
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemColorScheme = useColorScheme();
   const [isDarkMode, setIsDarkMode] = useState(systemColorScheme === 'dark');
+  const [isLoading, setIsLoading] = useState(true);
 
+  // On mount: load saved preference, then detect system
   useEffect(() => {
-    setIsDarkMode(systemColorScheme === 'dark');
-  }, [systemColorScheme]);
+    const loadThemePreference = async () => {
+      try {
+        const saved = await AsyncStorage.getItem(THEME_KEY);
+        if (saved) {
+          setIsDarkMode(saved === 'dark');
+        } else {
+          // Fall back to system preference
+          setIsDarkMode(systemColorScheme === 'dark');
+        }
+      } catch (error) {
+        console.error('Failed to load theme preference:', error);
+        setIsDarkMode(systemColorScheme === 'dark');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadThemePreference();
+  }, []);
 
-  const toggleTheme = () => setIsDarkMode(!isDarkMode);
+  // On system preference change: only update if user hasn't set custom preference
+  useEffect(() => {
+    if (!isLoading) {
+      AsyncStorage.getItem(THEME_KEY).then((saved) => {
+        if (!saved && systemColorScheme) {
+          setIsDarkMode(systemColorScheme === 'dark');
+        }
+      });
+    }
+  }, [systemColorScheme, isLoading]);
+
+  const toggleTheme = async () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    try {
+      await AsyncStorage.setItem(THEME_KEY, newMode ? 'dark' : 'light');
+    } catch (error) {
+      console.error('Failed to save theme preference:', error);
+    }
+  };
 
   const theme = isDarkMode ? darkTheme : lightTheme;
 
+  // Don't render until theme is loaded (prevents flash)
+  if (isLoading) {
+    return null; // Or splash screen if preferred
+  }
+
   return (
-    <ThemeContext.Provider value={{ theme, isDarkMode, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, isDarkMode, toggleTheme, isLoading }}>
       {children}
     </ThemeContext.Provider>
   );
@@ -227,7 +631,7 @@ git commit -m "feat: add design tokens system and theme context
 
 ---
 
-### Task 2: Create Atomic Component Library — Part 1 (Button, Card, Badge)
+### Task 2: Create Atomic Component Library — Part 1 (Button, Card, Badge) with A/11y
 
 **Files:**
 - Create: `src/components/ui/Button.tsx`
@@ -237,19 +641,25 @@ git commit -m "feat: add design tokens system and theme context
 **Interfaces:**
 - Consumes: `useTheme()`, design tokens from tokens.ts
 - Produces: 
-  - `Button` props: `variant: 'filled' | 'outlined' | 'text'`, `onPress`, `label`, `disabled`
-  - `Card` props: `children`, `onPress`, `style`, `elevation`
-  - `Badge` props: `label`, `icon`, `variant`
+  - `Button` props: `variant: 'filled' | 'outlined' | 'text'`, `onPress`, `label`, `disabled`, `accessibilityLabel` (optional, defaults to label)
+  - `Card` props: `children`, `onPress`, `style`, `elevation`, `accessibilityLabel` (if interactive)
+  - `Badge` props: `label`, `icon`, `variant`, `accessibilityLabel`
+
+**A/11y Checklist (all components):**
+- ✅ 4.5:1 contrast ratio verified for all colors
+- ✅ Semantic labels on all interactive elements
+- ✅ 48dp minimum touch targets
+- ✅ Respects prefersReducedMotion setting
 
 **Steps:**
 
-- [ ] **Step 1: Create Button.tsx**
+- [ ] **Step 1: Create Button.tsx with A/11y**
 
 ```typescript
 // src/components/ui/Button.tsx
 import React from 'react';
-import { Pressable, Text, StyleSheet, ViewStyle } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import { Pressable, Text, ViewStyle, AccessibilityRole } from 'react-native';
+import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../theme/ThemeContext';
 
@@ -259,6 +669,8 @@ interface ButtonProps {
   variant?: 'filled' | 'outlined' | 'text';
   disabled?: boolean;
   style?: ViewStyle;
+  accessibilityLabel?: string; // A/11y: defaults to label if not provided
+  accessibilityHint?: string;
 }
 
 export function Button({
@@ -267,8 +679,11 @@ export function Button({
   variant = 'filled',
   disabled = false,
   style,
+  accessibilityLabel,
+  accessibilityHint,
 }: ButtonProps) {
   const { theme } = useTheme();
+  const scale = useSharedValue(1);
 
   const handlePress = () => {
     if (!disabled) {
@@ -277,9 +692,14 @@ export function Button({
     }
   };
 
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
   const getStyles = () => {
     const baseStyle: ViewStyle = {
       height: 48,
+      minWidth: 48, // A/11y: minimum touch target
       paddingHorizontal: theme.spacing.lg,
       borderRadius: theme.borderRadius.md,
       justifyContent: 'center',
@@ -318,21 +738,25 @@ export function Button({
     <Animated.View entering={FadeIn} style={style}>
       <Pressable
         onPress={handlePress}
+        onPressIn={() => { scale.value = withSpring(1.02); }}
+        onPressOut={() => { scale.value = withSpring(1); }}
         disabled={disabled}
-        style={({ pressed }) => [
-          getStyles(),
-          pressed && !disabled && { opacity: 0.8, transform: [{ scale: 1.02 }] },
-        ]}
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel || label}
+        accessibilityHint={accessibilityHint}
+        accessibilityState={{ disabled }}
       >
-        <Text
-          style={{
-            color: getTextColor(),
-            fontSize: theme.typography.sizes.label,
-            fontWeight: theme.typography.weights.medium,
-          }}
-        >
-          {label}
-        </Text>
+        <Animated.View style={[getStyles(), animatedStyle]}>
+          <Text
+            style={{
+              color: getTextColor(),
+              fontSize: theme.typography.sizes.label,
+              fontWeight: theme.typography.weights.medium,
+            }}
+          >
+            {label}
+          </Text>
+        </Animated.View>
       </Pressable>
     </Animated.View>
   );
@@ -502,12 +926,12 @@ git commit -m "feat: add atomic UI components (Button, Card, Badge)
 
 **Steps:**
 
-- [ ] **Step 1: Create Input.tsx**
+- [ ] **Step 1: Create Input.tsx with KeyboardAvoidingView & A/11y**
 
 ```typescript
 // src/components/ui/Input.tsx
 import React, { useState } from 'react';
-import { TextInput, View, Animated } from 'react-native';
+import { TextInput, View, KeyboardAvoidingView, Platform } from 'react-native';
 import MaterialCommunityIcons from '@react-native-vector-icons/material-community-icons';
 import { useTheme } from '../../theme/ThemeContext';
 
@@ -517,6 +941,8 @@ interface InputProps {
   onChangeText: (text: string) => void;
   icon?: string;
   disabled?: boolean;
+  label?: string; // A/11y: semantic label
+  accessibilityHint?: string;
 }
 
 export function Input({
@@ -525,47 +951,59 @@ export function Input({
   onChangeText,
   icon,
   disabled = false,
+  label,
+  accessibilityHint,
 }: InputProps) {
   const { theme } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        height: 48,
-        borderRadius: theme.borderRadius.md,
-        backgroundColor: theme.colors.surfaceVariant,
-        paddingHorizontal: theme.spacing.md,
-        borderWidth: isFocused ? 2 : 1,
-        borderColor: isFocused ? theme.colors.primary : theme.colors.border,
-      }}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
     >
-      {icon && (
-        <MaterialCommunityIcons
-          name={icon}
-          size={20}
-          color={isFocused ? theme.colors.primary : theme.colors.textSecondary}
-          style={{ marginRight: theme.spacing.sm }}
-        />
-      )}
-      <TextInput
-        placeholder={placeholder}
-        value={value}
-        onChangeText={onChangeText}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        editable={!disabled}
-        placeholderTextColor={theme.colors.textSecondary}
+      <View
         style={{
-          flex: 1,
-          color: theme.colors.text,
-          fontSize: theme.typography.sizes.body,
-          fontFamily: theme.typography.fontFamily,
+          flexDirection: 'row',
+          alignItems: 'center',
+          height: 48,
+          minHeight: 48, // A/11y: touch target
+          borderRadius: theme.borderRadius.md,
+          backgroundColor: theme.colors.surfaceVariant,
+          paddingHorizontal: theme.spacing.md,
+          borderWidth: isFocused ? 2 : 1,
+          borderColor: isFocused ? theme.colors.primary : theme.colors.border,
         }}
-      />
-    </View>
+      >
+        {icon && (
+          <MaterialCommunityIcons
+            name={icon}
+            size={20}
+            color={isFocused ? theme.colors.primary : theme.colors.textSecondary}
+            style={{ marginRight: theme.spacing.sm }}
+          />
+        )}
+        <TextInput
+          placeholder={placeholder}
+          value={value}
+          onChangeText={onChangeText}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          editable={!disabled}
+          placeholderTextColor={theme.colors.textSecondary}
+          accessibilityLabel={label || placeholder}
+          accessibilityHint={accessibilityHint}
+          accessibilityRole="search" // if search field
+          style={{
+            flex: 1,
+            color: theme.colors.text,
+            fontSize: theme.typography.sizes.body,
+            fontFamily: theme.typography.fontFamily,
+            minHeight: 48,
+          }}
+        />
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 ```
@@ -1000,7 +1438,7 @@ git commit -m "feat: add floating navigation bar system
 
 ---
 
-## Phase 3: Screen Refactors (1-2 per task, parallel friendly)
+## Phase 3: Screen Refactors (One screen per task, fully independent)
 
 ### Task 6: Refactor HomeScreen
 
@@ -1086,11 +1524,11 @@ git commit -m "refactor: redesign HomeScreen with Material Design 3
 
 ---
 
-### Task 7: Refactor ExploreScreen & CountryDetailsScreen
+### Task 7: Refactor ExploreScreen
 
 **Files:**
 - Modify: `src/screens/ExploreScreen.tsx`
-- Modify: `src/screens/CountryDetailsScreen.tsx`
+- Create: `src/components/CountryCard.tsx` (shared with other screens)
 
 **Steps:**
 
@@ -1149,40 +1587,119 @@ export function CountryCard({ country, onPress }) {
 }
 ```
 
-- [ ] **Step 3: Update CountryDetailsScreen**
+- [ ] **Step 3: Test ExploreScreen**
 
-```typescript
-<TopBar title="" showBack onBackPress={navigation.goBack} />
-<Image source={{ uri: country.flag }} style={{ height: 200 }} />
-<Card>
-  <Text style={{ fontSize: 28, fontWeight: 'bold' }}>{country.name}</Text>
-  <Text>{country.capital}</Text>
-  <Badge label={country.region} icon="map" />
-</Card>
-// ... info sections ...
-<Button label="Test Your Knowledge" onPress={() => navigate('Quiz')} />
-```
+Run: `npm start` → Navigate to ExploreScreen → Search, filter by region, tap card
 
-- [ ] **Step 4: Test both screens**
-
-Run: `npm start` → Navigate Explore → Tap country → View details
-
-- [ ] **Step 5: Commit**
+- [ ] **Step 4: Commit**
 
 ```bash
-git add src/screens/ExploreScreen.tsx src/screens/CountryDetailsScreen.tsx src/components/CountryCard.tsx
-git commit -m "refactor: redesign Explore and CountryDetails screens
+git add src/screens/ExploreScreen.tsx src/components/CountryCard.tsx
+git commit -m "refactor: redesign ExploreScreen
 
-- ExploreScreen with search bar, region filters, 2-column country grid
-- Animated filter chip selection
-- CountryCard component with flag image and badges
-- CountryDetailsScreen with hero image, info cards, CTA button
-- Material Design 3 styling throughout"
+- Search bar with animated focus
+- Region filter chips with smooth transitions
+- 2-column country grid with CountryCard component
+- Flag images and region badges
+- Material Design 3 + earth-green gradient"
 ```
 
 ---
 
-### Task 8: Refactor MapScreen & QuizScreen
+### Task 8: Refactor CountryDetailsScreen
+
+**Files:**
+- Modify: `src/screens/CountryDetailsScreen.tsx`
+
+**Steps:**
+
+- [ ] **Step 1: Update CountryDetailsScreen layout**
+
+```typescript
+<TopBar title="" showBack onBackPress={navigation.goBack} />
+
+<ScrollView>
+  {/* Hero image with gradient overlay */}
+  <Image source={{ uri: country.flag }} style={{ height: 200 }} />
+  
+  {/* Header section */}
+  <Card style={{ marginHorizontal: theme.spacing.md }}>
+    <Text style={{ fontSize: 28, fontWeight: 'bold' }}>{country.name}</Text>
+    <Text style={{ fontSize: 16, color: theme.colors.textSecondary }}>
+      {country.capital}
+    </Text>
+    <Badge label={country.region} icon="map" />
+  </Card>
+
+  {/* Info sections */}
+  <View style={{ paddingHorizontal: theme.spacing.md, gap: theme.spacing.md }}>
+    <InfoCard label="Population" value={country.population} />
+    <InfoCard label="Area" value={country.area} />
+    <InfoCard label="Languages" value={country.languages.join(', ')} />
+  </View>
+
+  {/* Fun fact */}
+  <Card style={{ margin: theme.spacing.md, backgroundColor: theme.colors.warning + '15' }}>
+    <MaterialCommunityIcons name="lightbulb" size={24} color={theme.colors.warning} />
+    <Text style={{ marginTop: theme.spacing.sm }}>{country.funFact}</Text>
+  </Card>
+
+  {/* Mini map */}
+  <View style={{ height: 200, margin: theme.spacing.md }}>
+    <MapView region={country.coordinates} />
+  </View>
+
+  {/* Quiz CTA */}
+  <Button label="Test Your Knowledge" onPress={() => navigate('Quiz')} style={{ margin: theme.spacing.md }} />
+</ScrollView>
+```
+
+- [ ] **Step 2: Create InfoCard component** (reusable for details)
+
+```typescript
+// src/components/InfoCard.tsx
+export function InfoCard({ label, value }: { label: string; value: string }) {
+  const { theme } = useTheme();
+  return (
+    <Card>
+      <Text style={{ fontSize: 12, color: theme.colors.textSecondary }}>{label}</Text>
+      <Text style={{ fontSize: 16, fontWeight: 'bold', marginTop: theme.spacing.xs }}>
+        {value}
+      </Text>
+    </Card>
+  );
+}
+```
+
+- [ ] **Step 3: Test CountryDetailsScreen**
+
+Run: `npm start` → Navigate Explore → Tap a country → View all details
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add src/screens/CountryDetailsScreen.tsx src/components/InfoCard.tsx
+git commit -m "refactor: redesign CountryDetailsScreen
+
+- Hero image with gradient overlay
+- Country header (name, capital, region badge)
+- Info cards (population, area, languages)
+- Fun fact section with icon
+- Mini map view
+- Quiz CTA button
+- Material Design 3 card-based layout"
+```
+
+---
+
+### Task 9: Refactor MapScreen
+
+**Files:**
+- Modify: `src/screens/MapScreen.tsx`
+
+**Steps:**
+
+- [ ] **Step 1: Update MapScreen**
 
 **Files:**
 - Modify: `src/screens/MapScreen.tsx`

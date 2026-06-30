@@ -50,7 +50,7 @@ const ExploreScreen = ({ navigation }) => {
   const [loading, setLoading] = React.useState(true);
   const { theme } = React.useContext(ThemeContext);
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const styles = getStyles(theme);
 
   React.useEffect(() => {
