@@ -79,8 +79,8 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.PLAYSTORE_SERVICE_ACCOUNT_JSON }}
           packageName: com.adateo.WorldExplorer
           releaseFiles: 'android/app/build/outputs/bundle/release/app-release.aab'
-          track: ${{ github.event.inputs.track }}
-          releaseNotes: ${{ github.event.inputs.release_notes }}
+          tracks: ${{ github.event.inputs.track }}
+          releaseName: 'v${{ steps.version.outputs.version }}'
           status: completed
 
       - name: Create GitHub Release
