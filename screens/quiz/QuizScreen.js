@@ -27,7 +27,7 @@ const QuizScreen = ({ route, navigation }) => {
   const [loading, setLoading] = React.useState(true);
   const [selectedAnswer, setSelectedAnswer] = React.useState(null);
   const { theme } = React.useContext(ThemeContext);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const styles = getStyles(theme);
   const practiceQuestions = route.params?.practiceQuestions;
 
@@ -55,7 +55,12 @@ const QuizScreen = ({ route, navigation }) => {
           setLoading(false);
         }
       })
-      .catch((error) => console.error("Error fetching countries:", error));
+      .catch((error) => {
+        console.error("Error fetching countries:", error);
+        if (isMounted) {
+          setLoading(false);
+        }
+      });
 
     return () => (isMounted = false);
   }, [practiceQuestions]);

@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import * as Constants from "expo-constants";
 import { useTranslation } from "react-i18next";
+import packageJson from "../package.json";
 
 import { Picker } from "@react-native-picker/picker";
 
@@ -78,7 +79,7 @@ const SettingsScreen = () => {
 
         <View style={styles.settingItem}>
           <Text style={styles.buttonText}>
-            {t("appVersion")}: {Constants.expoConfig?.version || ""}
+            {t("appVersion")}: {packageJson.version}
           </Text>
         </View>
 
