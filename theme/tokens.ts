@@ -180,15 +180,44 @@ type ThemeGradients = {
   map: string[];
 };
 
+export type TypographyStyles = typeof commonTokens.typography;
+
+export type TypographyShortcuts = {
+  sizes: {
+    title: (typeof commonTokens.typography)['titleLg'];
+    subtitle: (typeof commonTokens.typography)['titleMd'];
+  };
+  weights: {
+    bold: string;
+    medium: string;
+  };
+};
+
 export type Theme = {
   colors: ThemeColors;
   gradients: ThemeGradients;
+  spacing: typeof commonTokens.spacing;
+  typography: TypographyStyles & TypographyShortcuts;
+  shadows: typeof commonTokens.shadows;
   isDarkMode: boolean;
   toggleTheme: () => void;
 };
 
 /** @deprecated Use ThemeColors directly. Kept for backward compatibility. */
 export type DarkTheme = { colors: ThemeColors };
+
+// ─── Typography Shortcuts ──────────────────────────────────────────────────
+
+const typographyShortcuts: TypographyShortcuts = {
+  sizes: {
+    title: commonTokens.typography.titleLg,
+    subtitle: commonTokens.typography.titleMd,
+  },
+  weights: {
+    bold: 'Exo2-Bold',
+    medium: 'Exo2-Regular',
+  },
+};
 
 // ─── Light theme ───────────────────────────────────────────────────────────
 
@@ -226,6 +255,12 @@ export const lightTheme = {
     buttonText:    '#FFFFFF',
     border:        palette.lightBorder,
   } satisfies ThemeColors,
+  spacing: commonTokens.spacing,
+  typography: {
+    ...commonTokens.typography,
+    ...typographyShortcuts,
+  },
+  shadows: commonTokens.shadows,
   gradients: {
     home:    [palette.skyBlue500, palette.oceanBlue500],
     explore: [palette.earthGreen500, palette.skyBlue500],
@@ -269,6 +304,12 @@ export const darkTheme = {
     buttonText:    '#FFFFFF',
     border:        palette.cardBorderDark,
   } satisfies ThemeColors,
+  spacing: commonTokens.spacing,
+  typography: {
+    ...commonTokens.typography,
+    ...typographyShortcuts,
+  },
+  shadows: commonTokens.shadows,
   gradients: {
     home:    [palette.skyBlue300, palette.oceanBlue300],
     explore: [palette.earthGreen300, palette.skyBlue300],

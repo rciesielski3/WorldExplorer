@@ -61,3 +61,53 @@ test("country details prototype copy is translated in every supported locale", (
     }
   }
 });
+
+test("CountryDetailsScreen displays all info sections", () => {
+  const screen = read("screens/CountryDetailsScreen.js");
+  const styles = read("styles.js");
+
+  // Check for info section with icon cards
+  assert.match(screen, /renderInfoCard/, "renderInfoCard function");
+  assert.match(screen, /countryInfoSection/, "countryInfoSection");
+  assert.match(
+    screen,
+    /countryInfoCard/,
+    "countryInfoCard styling"
+  );
+
+  // Check for header card with region badge
+  assert.match(screen, /countryHeaderCard/, "countryHeaderCard");
+  assert.match(screen, /countryRegionBadge/, "countryRegionBadge");
+
+  // Check for fun fact card
+  assert.match(screen, /countryFactCard/, "countryFactCard");
+
+  // Check for quiz CTA button
+  assert.match(
+    screen,
+    /handleNavigateToQuiz|"brain"/,
+    "Quiz CTA button"
+  );
+
+  // Check for map button
+  assert.match(screen, /handleShowOnMap/, "Map button");
+
+  // Check for top bar with settings icon
+  assert.match(screen, /countryTopBar/, "Top bar");
+  assert.match(screen, /cog/, "Settings icon");
+
+  // Check for mini map
+  assert.match(screen, /countryMiniMapCard/, "Mini map card");
+
+  // Verify styles exist
+  for (const styleName of [
+    "countryHeaderCard",
+    "countryRegionBadge",
+    "countryInfoSection",
+    "countryInfoCard",
+    "countryCtaSection",
+    "countryTopBar",
+  ]) {
+    assert.match(styles, new RegExp(`${styleName}:`), styleName);
+  }
+});

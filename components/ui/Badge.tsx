@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import Animated, { ZoomIn } from 'react-native-reanimated';
 import MaterialCommunityIcons from '@react-native-vector-icons/material-community-icons';
-import { useTheme } from '../context/ThemeContext';
-import { commonTokens } from '../theme/tokens';
+import { useTheme } from '../../context/ThemeContext';
+import { commonTokens } from '../../theme/tokens';
 
 interface BadgeProps {
   label: string;

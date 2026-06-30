@@ -2,8 +2,8 @@ import React from 'react';
 import { Pressable, Text, ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import { useTheme } from '../context/ThemeContext';
-import { commonTokens } from '../theme/tokens';
+import { useTheme } from '../../context/ThemeContext';
+import { commonTokens } from '../../theme/tokens';
 
 interface ButtonProps {
   label: string;

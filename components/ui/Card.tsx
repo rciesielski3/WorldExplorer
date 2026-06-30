@@ -1,8 +1,8 @@
 import React from 'react';
 import { Pressable, ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { useTheme } from '../context/ThemeContext';
-import { commonTokens } from '../theme/tokens';
+import { useTheme } from '../../context/ThemeContext';
+import { commonTokens } from '../../theme/tokens';
 
 interface CardProps {
   children: React.ReactNode;

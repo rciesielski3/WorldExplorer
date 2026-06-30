@@ -102,6 +102,9 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
   const theme: Theme = {
     colors: activeTheme.colors,
+    spacing: activeTheme.spacing,
+    typography: activeTheme.typography,
+    shadows: activeTheme.shadows,
     gradients: activeTheme.gradients,
     isDarkMode,
     toggleTheme,
