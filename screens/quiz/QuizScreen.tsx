@@ -104,6 +104,10 @@ const QuizScreen = ({ route, navigation }: any) => {
   const generateQuestions = (countries: any[]): Question[] => {
     const generatedQuestions: Question[] = [];
 
+    if (countries.length === 0) {
+      return generatedQuestions;
+    }
+
     for (let i = 0; i < 10; i++) {
       const randomCountry =
         countries[Math.floor(Math.random() * countries.length)];

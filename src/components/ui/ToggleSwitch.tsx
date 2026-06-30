@@ -17,6 +17,10 @@ export function ToggleSwitch({ value, onToggle, label, accessibilityLabel }: Tog
   const { theme } = useTheme();
   const translateX = useSharedValue(value ? 24 : 0);
 
+  React.useEffect(() => {
+    translateX.value = withSpring(value ? 24 : 0);
+  }, [value, translateX]);
+
   const handleToggle = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const newValue = !value;
