@@ -26,9 +26,6 @@ import QuizResultsScreen from "./screens/quiz/QuizResultsScreen";
 const Stack = createStackNavigator();
 
 export default function App() {
-  const [isDarkMode, setIsDarkMode] = React.useState(false);
-  const toggleTheme = () => setIsDarkMode((prev) => !prev);
-
   const { t } = useTranslation();
 
   const [fontsLoaded, fontError] = useFonts({
@@ -64,7 +61,7 @@ export default function App() {
 
   return (
     <PremiumProvider>
-      <ThemeProvider isDarkMode={isDarkMode} toggleTheme={toggleTheme}>
+      <ThemeProvider>
         <NavigationContainer>
           <Stack.Navigator
             initialRouteName="Home"

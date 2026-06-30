@@ -91,11 +91,15 @@ export default function LottieAnimationTestScreen() {
     )
   );
 
-  const updateTestResult = (name: string, updates: Partial<TestResult>) => {
-    setTestResults((prev) => ({
-      ...prev,
-      [name]: { ...prev[name], ...updates },
-    }));
+  const updateTestResult = (
+    name: string,
+    updates: Partial<TestResult> | ((prev: TestResult) => Partial<TestResult>),
+  ) => {
+    setTestResults((prev) => {
+      const current = prev[name];
+      const resolved = typeof updates === 'function' ? updates(current) : updates;
+      return { ...prev, [name]: { ...current, ...resolved } };
+    });
   };
 
   const handleAnimationLoad = (name: string) => {
