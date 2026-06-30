@@ -16,6 +16,7 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
+  withDelay,
 } from 'react-native-reanimated';
 import LottieView from 'lottie-react-native';
 import * as Haptics from 'expo-haptics';
@@ -66,9 +67,7 @@ export function QuizResultsScreen({ route, navigation }: QuizResultsScreenProps)
     }
 
     // Animate score badge after 500ms
-    setTimeout(() => {
-      badgeScale.value = withSpring(1, { damping: 8, mass: 1, overshootClamping: false });
-    }, 500);
+    badgeScale.value = withDelay(500, withSpring(1, { damping: 8, mass: 1, overshootClamping: false }));
   }, []);
 
   const handlePlayAgain = () => {
@@ -140,7 +139,7 @@ export function QuizResultsScreen({ route, navigation }: QuizResultsScreenProps)
           </Text>
           <View style={styles.progressBarContainer}>
             <View style={styles.progressBarBackground}>
-              <Animated.View
+              <View
                 style={[
                   styles.progressBarFill,
                   {
