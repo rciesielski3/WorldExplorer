@@ -14,7 +14,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 
 import { ThemeContext } from "../context/ThemeContext";
 import { getStyles } from "../styles";
-import AdBanner from "../components/AdBanner";
+import AdBanner from "../src/components/AdBanner";
 import { FLAG_ASSETS } from "../utils/flagAssets";
 
 const DETAIL_TABS = [
@@ -256,7 +256,11 @@ const CountryDetailsScreen = ({ route, navigation }) => {
           <View>
             <View style={styles.countryInfoSection}>
               {renderInfoCard(t("population"), population, "people")}
-              {renderInfoCard(t("area"), `${formatNumber(country.area) ?? t("noData")} km²`, "map")}
+              {renderInfoCard(
+                t("area"),
+                `${formatNumber(country.area) ?? t("noData")} km²`,
+                "map",
+              )}
               {renderInfoCard(t("languages"), languages, "translate")}
             </View>
 
@@ -314,7 +318,9 @@ const CountryDetailsScreen = ({ route, navigation }) => {
                 size={20}
                 color={theme.colors.buttonText}
               />
-              <Text style={styles.buttonText}>{t("testKnowledge") || "Test Your Knowledge"}</Text>
+              <Text style={styles.buttonText}>
+                {t("testKnowledge") || "Test Your Knowledge"}
+              </Text>
             </View>
           </TouchableOpacity>
 
