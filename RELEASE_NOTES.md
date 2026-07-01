@@ -1,4 +1,4 @@
-# WorldExplorer v1.1.0 - Release Notes
+# WorldExplorer v2.0.0 - Release Notes
 
 ## 🌍 English (US)
 
@@ -110,9 +110,10 @@ Odkrywaj świat jak nigdy dotąd dzięki intuicyjnemu i wizualnie atrakcyjnemu n
 
 ## 📋 Version Information
 
-**Version:** 1.1.0  
+**Version:** 2.0.0  
 **Release Date:** July 1, 2026  
 **Platform:** Android (via Google Play Store)
+**Build Code:** 139
 
 ---
 
