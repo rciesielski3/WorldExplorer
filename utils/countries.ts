@@ -1,10 +1,24 @@
 import countriesData from "../data/countries.json";
+import { retryWithBackoffNamed } from "./retry";
 
 export type Country = (typeof countriesData.countries)[number];
 
 export const countries = countriesData.countries;
 
-export const fetchCountries = async () => countries;
+/**
+ * Fetch countries data with retry logic
+ * This function loads countries from local storage and retries on failure
+ */
+export const fetchCountries = async () => {
+  return retryWithBackoffNamed(
+    async () => countries,
+    "fetchCountries",
+    {
+      maxRetries: 3,
+      baseDelay: 1000,
+    }
+  );
+};
 
 export const getCountryByCode = (code: string) =>
   countries.find((country) => country.code === code || country.code3 === code);

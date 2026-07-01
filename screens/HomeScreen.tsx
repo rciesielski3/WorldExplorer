@@ -1,450 +1,216 @@
-import React from 'react';
+import React from "react";
 import {
   View,
   Text,
-  ScrollView,
+  TouchableOpacity,
+  ImageBackground,
   Image,
   ActivityIndicator,
-} from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useTranslation } from 'react-i18next';
-import LottieView from 'lottie-react-native';
-import * as Haptics from 'expo-haptics';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+  ScrollView,
+} from "react-native";
+import { useTranslation } from "react-i18next";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import { useTheme } from '../context/ThemeContext';
-import { commonTokens } from '../theme/tokens';
-import { TopBar } from '../src/components/Navigation/TopBar';
-import { Card } from '../src/components/ui/Card';
-import { Button } from '../src/components/ui/Button';
-import { FloatingNavBar } from '../src/components/Navigation/FloatingNavBar';
-import { fetchCountries, getLocalizedCountryName } from '../utils/countries';
-import { getDailyCountry } from '../utils/dailyCountry';
-import { FLAG_ASSETS } from '../utils/flagAssets';
+import { ThemeContext } from "../context/ThemeContext";
+import { getStyles } from "../styles";
+import { getDailyCountry } from "../utils/dailyCountry";
+import { fetchCountries, getLocalizedCountryName } from "../utils/countries";
+import { FLAG_ASSETS } from "../utils/flagAssets";
+import LottieView from "lottie-react-native";
+import { logger } from "../utils/logger";
 
-const HomeScreen = ({ navigation }: any) => {
+interface Country {
+  code3: string;
+  translations?: { en?: { name: string } };
+  flagPath: string;
+  capital: string;
+  lat: number;
+  lng: number;
+  languages: string[];
+  currencies: string[];
+}
+
+type RootStackParamList = {
+  Home: undefined;
+  Explore: undefined;
+  Map: { latitude: number; longitude: number; countryName: string; country: Country };
+  Quiz: { country: Country };
+  CountryDetails: { country: Country };
+  Settings: undefined;
+  QuizResults: { score: number };
+};
+
+type HomeScreenProps = NativeStackScreenProps<RootStackParamList, "Home">;
+
+interface HomeAction {
+  key: string;
+  icon: string;
+  label: string;
+  subtitle: string;
+  screen: keyof RootStackParamList;
+}
+
+const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const { t, i18n } = useTranslation();
-  const { theme } = useTheme();
-  const insets = useSafeAreaInsets();
+  const [dailyCountry, setDailyCountry] = React.useState<Country | null>(null);
+  const [isDailyCountryLoading, setIsDailyCountryLoading] =
+    React.useState<boolean>(true);
 
-  const [dailyCountry, setDailyCountry] = React.useState<any>(null);
-  const [isDailyCountryLoading, setIsDailyCountryLoading] = React.useState(true);
+  const { theme } = React.useContext(ThemeContext);
+  const styles = getStyles(theme);
 
-  // Sample stats (in a real app, these would come from context/storage)
-  const [stats] = React.useState({
-    countriesExplored: 47,
-    quizStreak: 12,
-    regionsUnlocked: 8,
-  });
-
-  React.useEffect(() => {
-    fetchCountries()
-      .then((countriesData) => {
-        setDailyCountry(getDailyCountry(countriesData));
-      })
-      .catch((error) => console.error('Error fetching daily country:', error))
-      .finally(() => setIsDailyCountryLoading(false));
-  }, []);
-
-  const handleExplorePress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    navigation.navigate('Explore');
-  };
-
-  const handleQuizPress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    navigation.navigate('Quiz');
-  };
-
-  const handleSettingsPress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    navigation.navigate('Settings');
-  };
-
-  const handleDailyCountryPress = () => {
-    if (dailyCountry) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      navigation.navigate('CountryDetails', { country: dailyCountry });
-    }
-  };
-
-  const navItems = [
+  const HOME_ACTIONS: HomeAction[] = [
     {
-      name: 'Explore',
-      icon: 'earth',
-      color: theme.colors.primary,
+      key: "explore",
+      icon: "earth",
+      label: t("explore"),
+      subtitle: t("homeExploreSubtitle"),
+      screen: "Explore",
     },
     {
-      name: 'Map',
-      icon: 'map-outline',
-      color: theme.colors.secondary,
+      key: "map",
+      icon: "map-outline",
+      label: t("map"),
+      subtitle: t("homeMapSubtitle"),
+      screen: "Map",
     },
     {
-      name: 'Quiz',
-      icon: 'puzzle-outline',
-      color: theme.colors.amber,
+      key: "quiz",
+      icon: "puzzle-outline",
+      label: t("quiz"),
+      subtitle: t("homeQuizSubtitle"),
+      screen: "Quiz",
+    },
+    {
+      key: "settings",
+      icon: "cog-outline",
+      label: t("settings"),
+      subtitle: t("homeSettingsSubtitle"),
+      screen: "Settings",
     },
   ];
 
-  return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: theme.colors.background,
-      }}
-    >
-      <TopBar
-        title="WorldExplorer"
-        onSettingsPress={handleSettingsPress}
-      />
+  React.useEffect(() => {
+    fetchCountries()
+      .then((countriesData: Country[]) => {
+        setDailyCountry(getDailyCountry(countriesData));
+      })
+      .catch((error: Error) => {
+        logger.error("Failed to fetch countries for daily country", {
+          context: "HomeScreen",
+          timestamp: new Date().toISOString(),
+          metadata: {
+            action: "loadDailyCountry",
+            error: error instanceof Error ? error.message : String(error),
+          },
+        });
+      })
+      .finally(() => setIsDailyCountryLoading(false));
+  }, []);
 
+  return (
+    <ImageBackground
+      source={require("../assets/worldMapBackground.png")}
+      style={styles.backgroundImage}
+    >
       <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          paddingBottom: 100,
-        }}
+        style={styles.homeScroll}
+        contentContainerStyle={styles.homeScrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero Section */}
-        <LinearGradient
-          colors={theme.gradients.home}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={{
-            marginHorizontal: commonTokens.spacing.md,
-            marginTop: commonTokens.spacing.lg,
-            marginBottom: commonTokens.spacing.lg,
-            borderRadius: commonTokens.borderRadius.lg,
-            paddingVertical: commonTokens.spacing.xxl,
-            paddingHorizontal: commonTokens.spacing.lg,
-            alignItems: 'center',
-            ...commonTokens.shadows.md,
-          }}
-        >
+        <View style={styles.homeHero}>
           <LottieView
-            source={require('../assets/animations/rotating-earth.json')}
+            source={require("../assets/animations/explore.json")}
             autoPlay
             loop
-            style={{
-              width: 120,
-              height: 120,
-              marginBottom: commonTokens.spacing.md,
-            }}
+            style={styles.homeGlobe}
           />
+          <Text style={styles.homeEyebrow}>World Explorer</Text>
+          <Text style={styles.homeTitle}>{t("welcome")} World Explorer</Text>
+          <Text style={styles.homeSubtitle}>{t("homeHeroSubtitle")}</Text>
+        </View>
 
-          <Text
-            style={{
-              fontSize: commonTokens.typography.displayMd.fontSize,
-              fontFamily: commonTokens.typography.displayMd.fontFamily,
-              fontWeight: '700',
-              color: '#FFFFFF',
-              textAlign: 'center',
-              marginBottom: commonTokens.spacing.sm,
-            }}
-          >
-            {t('welcome')} Explorer
-          </Text>
-
-          <Text
-            style={{
-              fontSize: commonTokens.typography.bodyMd.fontSize,
-              fontFamily: commonTokens.typography.bodyMd.fontFamily,
-              color: 'rgba(255, 255, 255, 0.85)',
-              textAlign: 'center',
-              marginBottom: commonTokens.spacing.lg,
-            }}
-          >
-            {t('homeHeroSubtitle') || 'Discover the world, one country at a time'}
-          </Text>
-
-          {/* CTA Buttons */}
-          <View
-            style={{
-              width: '100%',
-              gap: commonTokens.spacing.md,
-            }}
-          >
-            <Button
-              label={t('exploreNow') || 'Explore Now'}
-              onPress={handleExplorePress}
-              variant="filled"
-              accessibilityLabel={t('exploreNow')}
-            />
-            <Button
-              label={t('takeQuiz') || 'Take Quiz'}
-              onPress={handleQuizPress}
-              variant="outlined"
-              accessibilityLabel={t('takeQuiz')}
-            />
+        <View style={styles.homeQuickActions}>
+          <View style={styles.homeActionGrid}>
+            {HOME_ACTIONS.map((item) => (
+              <TouchableOpacity
+                key={item.key}
+                style={styles.homeActionCard}
+                onPress={() => navigation.navigate(item.screen)}
+                activeOpacity={0.78}
+              >
+                <View style={styles.homeActionIcon}>
+                  <MaterialCommunityIcons
+                    name={item.icon as any}
+                    size={24}
+                    color="#FFFFFF"
+                  />
+                </View>
+                <Text style={styles.homeActionTitle}>{item.label}</Text>
+                <Text style={styles.homeActionSubtitle}>{item.subtitle}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
-        </LinearGradient>
+        </View>
 
-        {/* Daily Challenge Card */}
-        <View
-          style={{
-            marginHorizontal: commonTokens.spacing.md,
-            marginBottom: commonTokens.spacing.lg,
-          }}
-        >
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: commonTokens.spacing.md,
-              paddingHorizontal: commonTokens.spacing.sm,
-            }}
-          >
+        <View style={styles.dailyCountryCard}>
+          <View style={styles.dailyCountryHeader}>
+            <Text style={styles.dailyCountryEyebrow}>{t("dailyCountry")}</Text>
             <MaterialCommunityIcons
               name="star"
-              size={20}
-              color={theme.colors.amber}
-              style={{ marginRight: commonTokens.spacing.sm }}
+              size={18}
+              color={theme.colors.button}
             />
-            <Text
-              style={{
-                fontSize: commonTokens.typography.titleMd.fontSize,
-                fontFamily: commonTokens.typography.titleMd.fontFamily,
-                fontWeight: '600',
-                color: theme.colors.text,
-              }}
-            >
-              {t('dailyCountry') || 'Daily Challenge'}
-            </Text>
           </View>
-
-          <Card
-            onPress={handleDailyCountryPress}
-            elevation="md"
-            style={{
-              padding: commonTokens.spacing.lg,
-            }}
-          >
-            {isDailyCountryLoading ? (
-              <ActivityIndicator
-                color={theme.colors.primary}
-                size="large"
-                style={{
-                  height: 100,
-                  justifyContent: 'center',
-                }}
-              />
-            ) : dailyCountry ? (
-              <View style={{ gap: commonTokens.spacing.md }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: commonTokens.spacing.md,
-                  }}
-                >
-                  <Image
-                    source={FLAG_ASSETS[dailyCountry.flagPath]}
-                    style={{
-                      width: 48,
-                      height: 32,
-                      borderRadius: commonTokens.borderRadius.sm,
-                    }}
-                  />
-                  <View style={{ flex: 1 }}>
-                    <Text
-                      style={{
-                        fontSize: commonTokens.typography.titleLg.fontSize,
-                        fontFamily: commonTokens.typography.titleLg.fontFamily,
-                        fontWeight: '600',
-                        color: theme.colors.text,
-                      }}
-                    >
-                      {getLocalizedCountryName(dailyCountry, i18n.language)}
+          {isDailyCountryLoading ? (
+            <ActivityIndicator
+              color={theme.colors.button}
+              style={styles.dailyCountryLoader}
+            />
+          ) : dailyCountry ? (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("CountryDetails", {
+                  country: dailyCountry,
+                })
+              }
+            >
+              <View style={styles.dailyCountryContent}>
+                <Image
+                  source={FLAG_ASSETS[dailyCountry.flagPath]}
+                  style={styles.dailyCountryFlag}
+                />
+                <View style={styles.dailyCountryText}>
+                  <Text style={styles.countryName}>
+                    {getLocalizedCountryName(dailyCountry, i18n.language)}
+                  </Text>
+                  <Text style={styles.settingDescription}>
+                    {t("dailyCountrySubtitle", {
+                      capital: dailyCountry.capital,
+                    })}
+                  </Text>
+                  <View style={styles.dailyCountryActionRow}>
+                    <Text style={styles.dailyCountryAction}>
+                      {t("viewCountry")}
                     </Text>
-                    <Text
-                      style={{
-                        fontSize: commonTokens.typography.bodySm.fontSize,
-                        fontFamily: commonTokens.typography.bodySm.fontFamily,
-                        color: theme.colors.textSecondary,
-                      }}
-                    >
-                      {t('capitalOf')} {dailyCountry.capital}
-                    </Text>
+                    <MaterialCommunityIcons
+                      name="arrow-right"
+                      size={16}
+                      color={theme.colors.button}
+                    />
                   </View>
                 </View>
-
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: commonTokens.typography.bodySm.fontSize,
-                      fontFamily: commonTokens.typography.bodySm.fontFamily,
-                      color: theme.colors.primary,
-                      fontWeight: '500',
-                    }}
-                  >
-                    {t('viewCountry') || 'View Details'}
-                  </Text>
-                  <MaterialCommunityIcons
-                    name="arrow-right"
-                    size={18}
-                    color={theme.colors.primary}
-                  />
-                </View>
               </View>
-            ) : (
-              <Text
-                style={{
-                  fontSize: commonTokens.typography.bodySm.fontSize,
-                  fontFamily: commonTokens.typography.bodySm.fontFamily,
-                  color: theme.colors.textTertiary,
-                  textAlign: 'center',
-                }}
-              >
-                {t('dailyCountryUnavailable') || 'No country available'}
-              </Text>
-            )}
-          </Card>
-        </View>
-
-        {/* Stats Row */}
-        <View
-          style={{
-            marginHorizontal: commonTokens.spacing.md,
-            marginBottom: commonTokens.spacing.lg,
-          }}
-        >
-          <View
-            style={{
-              flexDirection: 'row',
-              gap: commonTokens.spacing.md,
-            }}
-          >
-            {/* Countries Explored */}
-            <Card
-              elevation="sm"
-              style={{
-                flex: 1,
-                padding: commonTokens.spacing.md,
-                alignItems: 'center',
-              }}
-            >
-              <MaterialCommunityIcons
-                name="earth"
-                size={28}
-                color={theme.colors.primary}
-                style={{ marginBottom: commonTokens.spacing.sm }}
-              />
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontFamily: commonTokens.typography.titleLg.fontFamily,
-                  fontWeight: '700',
-                  color: theme.colors.text,
-                }}
-              >
-                {stats.countriesExplored}
-              </Text>
-              <Text
-                style={{
-                  fontSize: commonTokens.typography.bodySm.fontSize,
-                  fontFamily: commonTokens.typography.bodySm.fontFamily,
-                  color: theme.colors.textSecondary,
-                  textAlign: 'center',
-                  marginTop: commonTokens.spacing.xs,
-                }}
-              >
-                {t('countriesExplored') || 'Explored'}
-              </Text>
-            </Card>
-
-            {/* Quiz Streak */}
-            <Card
-              elevation="sm"
-              style={{
-                flex: 1,
-                padding: commonTokens.spacing.md,
-                alignItems: 'center',
-              }}
-            >
-              <MaterialCommunityIcons
-                name="fire"
-                size={28}
-                color={theme.colors.amber}
-                style={{ marginBottom: commonTokens.spacing.sm }}
-              />
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontFamily: commonTokens.typography.titleLg.fontFamily,
-                  fontWeight: '700',
-                  color: theme.colors.text,
-                }}
-              >
-                {stats.quizStreak}
-              </Text>
-              <Text
-                style={{
-                  fontSize: commonTokens.typography.bodySm.fontSize,
-                  fontFamily: commonTokens.typography.bodySm.fontFamily,
-                  color: theme.colors.textSecondary,
-                  textAlign: 'center',
-                  marginTop: commonTokens.spacing.xs,
-                }}
-              >
-                {t('quizStreak') || 'Streak'}
-              </Text>
-            </Card>
-
-            {/* Regions Unlocked */}
-            <Card
-              elevation="sm"
-              style={{
-                flex: 1,
-                padding: commonTokens.spacing.md,
-                alignItems: 'center',
-              }}
-            >
-              <MaterialCommunityIcons
-                name="globe-model"
-                size={28}
-                color={theme.colors.secondary}
-                style={{ marginBottom: commonTokens.spacing.sm }}
-              />
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontFamily: commonTokens.typography.titleLg.fontFamily,
-                  fontWeight: '700',
-                  color: theme.colors.text,
-                }}
-              >
-                {stats.regionsUnlocked}
-              </Text>
-              <Text
-                style={{
-                  fontSize: commonTokens.typography.bodySm.fontSize,
-                  fontFamily: commonTokens.typography.bodySm.fontFamily,
-                  color: theme.colors.textSecondary,
-                  textAlign: 'center',
-                  marginTop: commonTokens.spacing.xs,
-                }}
-              >
-                {t('regionsUnlocked') || 'Regions'}
-              </Text>
-            </Card>
-          </View>
+            </TouchableOpacity>
+          ) : (
+            <Text style={styles.settingDescription}>
+              {t("dailyCountryUnavailable")}
+            </Text>
+          )}
         </View>
       </ScrollView>
-
-      {/* Floating Navigation Bar */}
-      <FloatingNavBar
-        currentRoute="Home"
-        onNavigate={(routeName: string) => navigation.navigate(routeName)}
-        items={navItems}
-      />
-    </View>
+    </ImageBackground>
   );
 };
 

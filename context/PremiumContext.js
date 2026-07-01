@@ -1,6 +1,7 @@
 import React from "react";
 import { Platform } from "react-native";
 import Purchases, { LOG_LEVEL } from "react-native-purchases";
+import { retryWithBackoffNamed } from "../utils/retry";
 
 const PREMIUM_ENABLED = process.env.EXPO_PUBLIC_PREMIUM_ENABLED === "true";
 const PREMIUM_ENTITLEMENT_ID =
@@ -73,7 +74,14 @@ export const PremiumProvider = ({ children }) => {
     }
 
     try {
-      const customerInfo = await Purchases.getCustomerInfo();
+      const customerInfo = await retryWithBackoffNamed(
+        () => Purchases.getCustomerInfo(),
+        "refreshCustomerInfo",
+        {
+          maxRetries: 3,
+          baseDelay: 1000,
+        }
+      );
       applyCustomerInfo(customerInfo);
       setError(null);
     } catch (refreshError) {
@@ -89,7 +97,14 @@ export const PremiumProvider = ({ children }) => {
     }
 
     try {
-      const offerings = await Purchases.getOfferings();
+      const offerings = await retryWithBackoffNamed(
+        () => Purchases.getOfferings(),
+        "refreshOfferings",
+        {
+          maxRetries: 3,
+          baseDelay: 1000,
+        }
+      );
       setPremiumPackage(getPremiumPackage(offerings));
       setError(null);
     } catch (offeringsError) {
@@ -114,7 +129,14 @@ export const PremiumProvider = ({ children }) => {
     setIsPurchasing(true);
 
     try {
-      const { customerInfo } = await Purchases.purchasePackage(premiumPackage);
+      const { customerInfo } = await retryWithBackoffNamed(
+        () => Purchases.purchasePackage(premiumPackage),
+        "purchasePremium",
+        {
+          maxRetries: 2,
+          baseDelay: 1000,
+        }
+      );
       applyCustomerInfo(customerInfo);
       setError(null);
       return hasPremiumEntitlement(customerInfo);
@@ -140,7 +162,14 @@ export const PremiumProvider = ({ children }) => {
     setIsRestoring(true);
 
     try {
-      const customerInfo = await Purchases.restorePurchases();
+      const customerInfo = await retryWithBackoffNamed(
+        () => Purchases.restorePurchases(),
+        "restorePurchases",
+        {
+          maxRetries: 3,
+          baseDelay: 1000,
+        }
+      );
       applyCustomerInfo(customerInfo);
       setError(null);
       return hasPremiumEntitlement(customerInfo);
@@ -180,7 +209,14 @@ export const PremiumProvider = ({ children }) => {
         Purchases.configure({ apiKey });
         Purchases.addCustomerInfoUpdateListener(customerInfoListener);
 
-        const customerInfo = await Purchases.getCustomerInfo();
+        const customerInfo = await retryWithBackoffNamed(
+          () => Purchases.getCustomerInfo(),
+          "configurePurchases-getCustomerInfo",
+          {
+            maxRetries: 3,
+            baseDelay: 1000,
+          }
+        );
 
         if (isMounted) {
           applyCustomerInfo(customerInfo);
@@ -189,7 +225,14 @@ export const PremiumProvider = ({ children }) => {
         }
 
         try {
-          const offerings = await Purchases.getOfferings();
+          const offerings = await retryWithBackoffNamed(
+            () => Purchases.getOfferings(),
+            "configurePurchases-getOfferings",
+            {
+              maxRetries: 3,
+              baseDelay: 1000,
+            }
+          );
 
           if (isMounted) {
             setPremiumPackage(getPremiumPackage(offerings));
