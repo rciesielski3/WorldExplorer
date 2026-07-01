@@ -4,7 +4,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import * as Haptics from 'expo-haptics';
 
 import { useTheme } from '../../../context/ThemeContext';
-import { spacing, radius, typography, type ThemeColors } from '../../../theme/tokens';
+import { spacing, radius, typography, type ThemeColors, darkTheme, lightTheme } from '../../../theme/tokens';
 
 interface EmptyStateCardProps {
   icon?: string;
@@ -48,6 +48,7 @@ const EmptyStateCard: React.FC<EmptyStateCardProps> = ({
   testID = 'empty-state-card',
 }) => {
   const { theme } = useTheme();
+  const colors = theme.colors;
 
   const handleActionPress = async () => {
     await Haptics.selectionAsync();

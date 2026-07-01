@@ -5,7 +5,7 @@ import * as Haptics from 'expo-haptics';
 
 import { useTheme } from '../../../context/ThemeContext';
 import type { ApiError } from '../../../types/errors';
-import { spacing, radius, typography, type ThemeColors } from '../../../theme/tokens';
+import { spacing, radius, typography, type ThemeColors, darkTheme, lightTheme } from '../../../theme/tokens';
 
 interface ErrorCardProps {
   error: ApiError;
@@ -46,6 +46,7 @@ const ErrorCard: React.FC<ErrorCardProps> = ({
   testID = 'error-card',
 }) => {
   const { theme } = useTheme();
+  const colors = theme.colors;
   const isRetryable = error.retryable && showRetryButton;
 
   const handleRetryPress = async () => {

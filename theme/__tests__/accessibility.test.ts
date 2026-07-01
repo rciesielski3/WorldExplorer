@@ -6,25 +6,39 @@ import { lightTheme, darkTheme } from '../tokens';
  * Calculates relative luminance using WCAG 2.0 formula
  * https://www.w3.org/TR/WCAG20/#relativeluminancedef
  */
-function getLuminance(color: string): number {
+function getLuminance(color: string | null | undefined): number {
+  // Handle invalid input
+  if (!color || typeof color !== 'string') {
+    return 0;
+  }
+
   // Parse hex color
-  let hex = color;
+  let hex = color.trim();
   if (hex.startsWith('#')) {
     hex = hex.slice(1);
   }
 
-  // Handle rgba colors by extracting rgb
-  if (color.startsWith('rgba')) {
-    const match = color.match(/rgba\((\d+),(\d+),(\d+)/);
+  // Handle rgba/rgb colors by extracting rgb
+  if (color.includes('rgba') || color.includes('rgb')) {
+    const match = color.match(/rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
     if (match) {
-      const r = parseInt(match[1]) / 255;
-      const g = parseInt(match[2]) / 255;
-      const b = parseInt(match[3]) / 255;
+      const r = parseInt(match[1], 10) / 255;
+      const g = parseInt(match[2], 10) / 255;
+      const b = parseInt(match[3], 10) / 255;
       return calculateLuminance(r, g, b);
     }
   }
 
-  // Parse hex
+  // Validate hex color format
+  if (hex.length !== 6) {
+    return 0;
+  }
+
+  // Parse hex - validate that characters are valid hex digits
+  if (!/^[0-9a-fA-F]{6}$/.test(hex)) {
+    return 0;
+  }
+
   const r = parseInt(hex.substring(0, 2), 16) / 255;
   const g = parseInt(hex.substring(2, 4), 16) / 255;
   const b = parseInt(hex.substring(4, 6), 16) / 255;
