@@ -26,6 +26,12 @@ export function FloatingNavBar({
 }: FloatingNavBarProps) {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
+  const colors = theme.colors;
+
+  // No dedicated "surfaceOverlay" design token exists yet (see theme/tokens.ts).
+  // Named constant (not an inline literal) applies a 95% opacity hex suffix
+  // (0xF2 = 242/255 ≈ 95%) to the surface token for the translucent nav bar.
+  const navBarBackgroundColor = `${colors.surface}F2`;
 
   return (
     <Animated.View
@@ -37,7 +43,7 @@ export function FloatingNavBar({
         right: 24,
         height: 56,
         borderRadius: 28,
-        backgroundColor: `${theme.colors.surface}F2`,
+        backgroundColor: navBarBackgroundColor,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-around',
