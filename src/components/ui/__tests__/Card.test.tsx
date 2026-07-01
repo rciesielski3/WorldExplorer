@@ -112,18 +112,16 @@ describe('Card Component', () => {
 
     it('should call onPress when card is pressed', () => {
       const mockOnPress = jest.fn();
-      const { getByText } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
-          <Card onPress={mockOnPress}>
+          <Card onPress={mockOnPress} testID="pressable-card">
             <Text>Pressable Card</Text>
           </Card>
         </ThemeProvider>
       );
-      const card = getByText('Pressable Card').parent?.parent?.parent;
-      if (card) {
-        fireEvent.press(card);
-        expect(mockOnPress).toHaveBeenCalledTimes(1);
-      }
+      const card = getByTestId('pressable-card');
+      fireEvent.press(card);
+      expect(mockOnPress).toHaveBeenCalledTimes(1);
     });
 
     it('should not trigger press when no onPress handler', () => {
@@ -141,20 +139,18 @@ describe('Card Component', () => {
 
     it('should handle multiple presses on interactive card', () => {
       const mockOnPress = jest.fn();
-      const { getByText } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
-          <Card onPress={mockOnPress}>
+          <Card onPress={mockOnPress} testID="clickable-card">
             <Text>Clickable</Text>
           </Card>
         </ThemeProvider>
       );
-      const card = getByText('Clickable').parent?.parent?.parent;
-      if (card) {
-        fireEvent.press(card);
-        fireEvent.press(card);
-        fireEvent.press(card);
-        expect(mockOnPress).toHaveBeenCalledTimes(3);
-      }
+      const card = getByTestId('clickable-card');
+      fireEvent.press(card);
+      fireEvent.press(card);
+      fireEvent.press(card);
+      expect(mockOnPress).toHaveBeenCalledTimes(3);
     });
   });
 
@@ -211,19 +207,17 @@ describe('Card Component', () => {
   describe('Animations', () => {
     it('should animate on press', () => {
       const mockOnPress = jest.fn();
-      const { getByText } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
-          <Card onPress={mockOnPress}>
+          <Card onPress={mockOnPress} testID="animated-card">
             <Text>Animated Card</Text>
           </Card>
         </ThemeProvider>
       );
-      const card = getByText('Animated Card').parent?.parent?.parent;
-      if (card) {
-        fireEvent.pressIn(card);
-        fireEvent.pressOut(card);
-        expect(mockOnPress).toBeDefined();
-      }
+      const card = getByTestId('animated-card');
+      fireEvent.pressIn(card);
+      fireEvent.pressOut(card);
+      expect(card).toBeTruthy();
     });
 
     it('should handle pressIn without onPress', () => {

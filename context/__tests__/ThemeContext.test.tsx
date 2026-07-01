@@ -331,12 +331,12 @@ describe('ThemeProvider Integration Tests', () => {
 
     it('should not crash when loading theme', async () => {
       (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
-      const { container } = render(
+      const { getByText } = render(
         <ThemeProvider>
           <Text>Loading...</Text>
         </ThemeProvider>
       );
-      expect(container).toBeTruthy();
+      expect(getByText('Loading...')).toBeTruthy();
     });
 
     it('should apply light theme by default', async () => {
@@ -631,13 +631,13 @@ describe('ThemeProvider Integration Tests', () => {
     it('should handle AsyncStorage errors gracefully', async () => {
       (AsyncStorage.getItem as jest.Mock).mockRejectedValue(new Error('Storage error'));
 
-      const { container } = render(
+      const { getByText } = render(
         <ThemeProvider>
           <Text>Content</Text>
         </ThemeProvider>
       );
 
-      expect(container).toBeTruthy();
+      expect(getByText('Content')).toBeTruthy();
     });
 
     it('should handle missing AsyncStorage gracefully', async () => {

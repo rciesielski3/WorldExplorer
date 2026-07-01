@@ -15,14 +15,21 @@ interface FloatingNavBarProps {
   currentRoute: string;
   onNavigate: (routeName: string) => void;
   items: NavItem[];
+  testID?: string;
 }
 
-export function FloatingNavBar({ currentRoute, onNavigate, items }: FloatingNavBarProps) {
+export function FloatingNavBar({
+  currentRoute,
+  onNavigate,
+  items,
+  testID = 'floating-nav-bar'
+}: FloatingNavBarProps) {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
 
   return (
     <Animated.View
+      testID={testID}
       style={{
         position: 'absolute',
         bottom: insets.bottom + 16,

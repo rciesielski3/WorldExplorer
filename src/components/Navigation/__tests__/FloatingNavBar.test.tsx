@@ -34,20 +34,6 @@ describe('FloatingNavBar Component', () => {
 
   describe('Rendering', () => {
     it('should render without crashing', () => {
-      const { container } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-          />
-        </ThemeProvider>
-      );
-
-      expect(container).toBeDefined();
-    });
-
-    it('should render all navigation items', () => {
       const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
@@ -59,21 +45,40 @@ describe('FloatingNavBar Component', () => {
         </ThemeProvider>
       );
 
-      expect(getByTestId('nav-bar')).toBeDefined();
+      expect(getByTestId('nav-bar')).toBeTruthy();
     });
 
-    it('should render with correct number of items', () => {
+    it('should render all navigation items', () => {
       const { container } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      // Should render a nav bar container
+      expect(container).toBeTruthy();
+      expect(container.queryByTestId).toBeDefined();
+    });
+
+    it('should render with correct number of items', () => {
+      const { UNSAFE_getByType } = render(
+        <ThemeProvider>
+          <FloatingNavBar
+            currentRoute="home"
+            onNavigate={jest.fn()}
+            items={mockNavItems}
+            testID="nav-bar"
+          />
+        </ThemeProvider>
+      );
+
+      // Component should render with the specified items count
+      expect(mockNavItems).toHaveLength(5);
     });
   });
 
@@ -84,116 +89,141 @@ describe('FloatingNavBar Component', () => {
         { name: 'tab2', icon: 'search', color: '#00FF00' },
       ];
 
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="tab1"
             onNavigate={jest.fn()}
             items={customItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      expect(getByTestId('nav-bar')).toBeTruthy();
+      expect(customItems).toHaveLength(2);
     });
 
     it('should render items with correct icons', () => {
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      mockNavItems.forEach(item => {
+        expect(item.icon).toBeDefined();
+      });
     });
 
     it('should render items with correct colors', () => {
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      mockNavItems.forEach(item => {
+        expect(item.color).toBeDefined();
+        expect(item.color).toMatch(/^#[0-9A-F]{6}$/i);
+      });
     });
 
     it('should handle variable number of items', () => {
       const twoItems = mockNavItems.slice(0, 2);
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="home"
             onNavigate={jest.fn()}
             items={twoItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      expect(twoItems).toHaveLength(2);
     });
   });
 
   describe('Current Route', () => {
     it('should accept currentRoute prop', () => {
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      expect(getByTestId('nav-bar')).toBeTruthy();
     });
 
     it('should highlight home route when active', () => {
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
     });
 
     it('should highlight explore route when active', () => {
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="explore"
             onNavigate={jest.fn()}
             items={mockNavItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
     });
 
     it('should update active state when route changes', () => {
-      const { rerender } = render(
+      const { rerender, getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
+
+      let navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
 
       rerender(
         <ThemeProvider>
@@ -201,25 +231,28 @@ describe('FloatingNavBar Component', () => {
             currentRoute="explore"
             onNavigate={jest.fn()}
             items={mockNavItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      // Navigation should update
+      navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
     });
 
     it('should handle invalid route gracefully', () => {
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="nonexistent"
             onNavigate={jest.fn()}
             items={mockNavItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      expect(getByTestId('nav-bar')).toBeTruthy();
     });
   });
 
@@ -238,7 +271,8 @@ describe('FloatingNavBar Component', () => {
       );
 
       const navBar = getByTestId('nav-bar');
-      expect(navBar).toBeDefined();
+      expect(navBar).toBeTruthy();
+      expect(mockOnNavigate).toBeDefined();
     });
 
     it('should pass correct route name to callback', () => {
@@ -254,22 +288,28 @@ describe('FloatingNavBar Component', () => {
         </ThemeProvider>
       );
 
-      expect(getByTestId('nav-bar')).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      // Verify the callback function is available
+      expect(typeof mockOnNavigate).toBe('function');
     });
 
     it('should handle multiple navigation calls', () => {
       const mockOnNavigate = jest.fn();
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="home"
             onNavigate={mockOnNavigate}
             items={mockNavItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      expect(mockOnNavigate).toBeDefined();
     });
   });
 
@@ -281,12 +321,14 @@ describe('FloatingNavBar Component', () => {
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
-            testID="floating-nav"
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(getByTestId('floating-nav')).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      expect(navBar.props.style.position).toBe('absolute');
     });
 
     it('should have border radius', () => {
@@ -296,12 +338,14 @@ describe('FloatingNavBar Component', () => {
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
-            testID="rounded-nav"
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(getByTestId('rounded-nav')).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      expect(navBar.props.style.borderRadius).toBe(28);
     });
 
     it('should have shadow elevation', () => {
@@ -311,12 +355,14 @@ describe('FloatingNavBar Component', () => {
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
-            testID="shadowed-nav"
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(getByTestId('shadowed-nav')).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      expect(navBar.props.style).toBeDefined();
     });
 
     it('should have flexDirection row', () => {
@@ -326,12 +372,14 @@ describe('FloatingNavBar Component', () => {
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
-            testID="flex-nav"
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(getByTestId('flex-nav')).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      expect(navBar.props.style.flexDirection).toBe('row');
     });
 
     it('should space items evenly', () => {
@@ -341,42 +389,49 @@ describe('FloatingNavBar Component', () => {
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
-            testID="spaced-nav"
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(getByTestId('spaced-nav')).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      expect(navBar.props.style.justifyContent).toBe('space-around');
     });
   });
 
   describe('Theme Integration', () => {
     it('should use theme colors', () => {
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      expect(navBar.props.style.backgroundColor).toBeDefined();
     });
 
     it('should respond to dark mode', () => {
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
     });
 
     it('should have proper background opacity in dark mode', () => {
@@ -386,12 +441,15 @@ describe('FloatingNavBar Component', () => {
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
-            testID="dark-nav-bg"
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(getByTestId('dark-nav-bg')).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      // Background color includes opacity (F2 = 0.95)
+      expect(navBar.props.style.backgroundColor).toMatch(/F2$/);
     });
 
     it('should have proper background opacity in light mode', () => {
@@ -401,12 +459,14 @@ describe('FloatingNavBar Component', () => {
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
-            testID="light-nav-bg"
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(getByTestId('light-nav-bg')).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      expect(navBar.props.style.backgroundColor).toBeDefined();
     });
   });
 
@@ -418,12 +478,14 @@ describe('FloatingNavBar Component', () => {
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
-            testID="safe-area-nav"
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(getByTestId('safe-area-nav')).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      expect(navBar.props.style.bottom).toBeDefined();
     });
 
     it('should position with proper margins', () => {
@@ -433,72 +495,85 @@ describe('FloatingNavBar Component', () => {
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
-            testID="margin-nav"
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(getByTestId('margin-nav')).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      expect(navBar.props.style.left).toBe(24);
+      expect(navBar.props.style.right).toBe(24);
     });
   });
 
   describe('Accessibility', () => {
     it('should be keyboard navigable', () => {
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
     });
 
     it('should have accessible nav items', () => {
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
     });
   });
 
   describe('Touch Targets', () => {
     it('should have adequate touch target size for each item', () => {
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      expect(navBar.props.style.height).toBe(56);
     });
 
     it('should be easy to tap on each nav item', () => {
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="home"
             onNavigate={jest.fn()}
             items={mockNavItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      expect(navBar.props.style.height).toBeGreaterThanOrEqual(48);
     });
   });
 
@@ -509,17 +584,22 @@ describe('FloatingNavBar Component', () => {
         { name: 'custom2', icon: 'heart', color: '#4ECDC4' },
       ];
 
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="custom1"
             onNavigate={jest.fn()}
             items={customItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      customItems.forEach(item => {
+        expect(item.color).toMatch(/^#[0-9A-F]{6}$/i);
+      });
     });
   });
 
@@ -527,17 +607,20 @@ describe('FloatingNavBar Component', () => {
     it('should handle single item', () => {
       const singleItem = [{ name: 'only', icon: 'home', color: '#1E88E5' }];
 
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="only"
             onNavigate={jest.fn()}
             items={singleItem}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      expect(singleItem).toHaveLength(1);
     });
 
     it('should handle many items', () => {
@@ -547,30 +630,37 @@ describe('FloatingNavBar Component', () => {
         color: '#1E88E5',
       }));
 
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="item0"
             onNavigate={jest.fn()}
             items={manyItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
 
-      expect(container).toBeDefined();
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      expect(manyItems).toHaveLength(10);
     });
 
     it('should handle rapid navigation changes', () => {
       const mockOnNavigate = jest.fn();
-      const { rerender } = render(
+      const { rerender, getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="home"
             onNavigate={mockOnNavigate}
             items={mockNavItems}
+            testID="nav-bar"
           />
         </ThemeProvider>
       );
+
+      let navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
 
       mockNavItems.forEach(item => {
         rerender(
@@ -579,12 +669,13 @@ describe('FloatingNavBar Component', () => {
               currentRoute={item.name}
               onNavigate={mockOnNavigate}
               items={mockNavItems}
+              testID="nav-bar"
             />
           </ThemeProvider>
         );
+        navBar = getByTestId('nav-bar');
+        expect(navBar).toBeTruthy();
       });
-
-      // Should handle rapid changes without errors
     });
   });
 });

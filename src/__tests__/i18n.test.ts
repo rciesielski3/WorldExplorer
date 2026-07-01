@@ -387,6 +387,7 @@ describe('i18n Completeness', () => {
       if (ptData && enData) {
         Object.entries(enData).forEach(([key, enValue]) => {
           if ((enValue as string).includes('{{')) {
+            if (!ptData) return;
             const ptValue = ptData[key];
             expect(ptValue).toContain('{{');
           }
@@ -440,6 +441,7 @@ describe('i18n Completeness', () => {
       if (itData && enData) {
         Object.entries(enData).forEach(([key, enValue]) => {
           if ((enValue as string).includes('{{')) {
+            if (!itData) return;
             const itValue = itData[key];
             expect(itValue).toContain('{{');
           }
