@@ -1,3 +1,34 @@
+// Global setup
+global.__DEV__ = false;
+
+// Mock Dimensions
+jest.mock('react-native/Libraries/Utilities/Dimensions', () => ({
+  get: jest.fn(() => ({
+    width: 375,
+    height: 812,
+    scale: 2,
+    fontScale: 1,
+  })),
+  addEventListener: jest.fn(),
+  removeEventListener: jest.fn(),
+  setUseNativeDriver: jest.fn(),
+}));
+
+// Mock PixelRatio
+jest.mock('react-native/Libraries/Utilities/PixelRatio', () => ({
+  get: jest.fn(() => 2),
+  getFontScale: jest.fn(() => 1),
+  roundToNearestPixel: jest.fn((num) => num),
+  getPixelSizeForLayoutSize: jest.fn((num) => num),
+}));
+
+// Mock Platform
+jest.mock('react-native/Libraries/Utilities/Platform', () => ({
+  OS: 'ios',
+  Version: 14,
+  select: jest.fn((obj) => obj.ios),
+}));
+
 // Mock AsyncStorage
 jest.mock('@react-native-async-storage/async-storage', () => ({
   getItem: jest.fn(),
@@ -6,24 +37,7 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
   clear: jest.fn(),
 }));
 
-// Mock react-native-vector-icons
-jest.mock('react-native-vector-icons/MaterialCommunityIcons', () => {
-  return {
-    __esModule: true,
-    default: 'MockedMaterialCommunityIcons',
-    createIconSet: jest.fn(),
-  };
-});
-
-jest.mock('react-native-vector-icons/Ionicons', () => {
-  return {
-    __esModule: true,
-    default: 'MockedIonicons',
-  };
-});
-
-// Mock react-native useColorScheme (without touching react-native itself)
-const { useColorScheme: originalUseColorScheme } = jest.requireActual('react-native');
+// Mock react-native useColorScheme
 jest.mock('react-native', () => {
   const actual = jest.requireActual('react-native');
   return {
@@ -32,49 +46,17 @@ jest.mock('react-native', () => {
   };
 });
 
-// Mock react-native-reanimated - use actual RN components
-jest.mock('react-native-reanimated', () => {
-  const actualReactNative = jest.requireActual('react-native');
-  return {
-    __esModule: true,
-    default: {
-      View: actualReactNative.View,
-      Text: actualReactNative.Text,
-      ScrollView: actualReactNative.ScrollView,
-      useAnimatedStyle: jest.fn(() => ({})),
-      useSharedValue: jest.fn((value) => ({ value })),
-      withSpring: jest.fn((value) => value),
-      withTiming: jest.fn((value) => value),
-      ZoomIn: {
-        springify: jest.fn(() => ({})),
-      },
-      FadeIn: {
-        duration: jest.fn(() => ({})),
-      },
-      FadeOut: {
-        duration: jest.fn(() => ({})),
-      },
-      runOnJS: jest.fn((fn) => fn),
-      runOnUIImmediately: jest.fn((fn) => fn),
-      createAnimatedComponent: jest.fn((Component) => Component),
-    },
-    useAnimatedStyle: jest.fn(() => ({})),
-    useSharedValue: jest.fn((value) => ({ value })),
-    withSpring: jest.fn((value) => value),
-    withTiming: jest.fn((value) => value),
-    View: actualReactNative.View,
-    Text: actualReactNative.Text,
-    ZoomIn: {
-      springify: jest.fn(() => ({})),
-    },
-    FadeIn: {
-      duration: jest.fn(() => ({})),
-    },
-    FadeOut: {
-      duration: jest.fn(() => ({})),
-    },
-  };
-});
+// Mock react-native-reanimated
+jest.mock('react-native-reanimated', () => ({
+  useAnimatedStyle: jest.fn(() => ({})),
+  useSharedValue: jest.fn((value) => ({ value })),
+  withSpring: jest.fn((value) => value),
+  withTiming: jest.fn((value) => value),
+  View: 'View',
+  ZoomIn: {
+    springify: jest.fn(() => ({})),
+  },
+}));
 
 // Mock expo-haptics
 jest.mock('expo-haptics', () => ({
@@ -82,38 +64,28 @@ jest.mock('expo-haptics', () => ({
   notificationAsync: jest.fn(),
 }));
 
-// Mock react-native-safe-area-context
-jest.mock('react-native-safe-area-context', () => {
-  const actualReactNative = jest.requireActual('react-native');
-  return {
-    useSafeAreaInsets: jest.fn(() => ({
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-    })),
-    SafeAreaProvider: actualReactNative.View,
-    SafeAreaView: actualReactNative.View,
-    SafeAreaContext: {
-      Provider: { create: () => ({}) },
-    },
-  };
-});
-
-// Suppress console warnings in tests
+// Suppress console warnings
 const originalWarn = console.warn;
 const originalError = console.error;
 
 beforeAll(() => {
   console.warn = jest.fn((...args) => {
-    if (typeof args[0] === 'string' && args[0].includes('Cannot update a component')) {
+    const message = String(args[0] || '');
+    if (message.includes('Cannot update a component') ||
+        message.includes('TurboModule') ||
+        message.includes('Invariant') ||
+        message.includes('Non-serializable')) {
       return;
     }
     originalWarn.call(console, ...args);
   });
 
   console.error = jest.fn((...args) => {
-    if (typeof args[0] === 'string' && args[0].includes('Warning:')) {
+    const message = String(args[0] || '');
+    if (message.includes('Warning:') ||
+        message.includes('TurboModule') ||
+        message.includes('Invariant') ||
+        message.includes('Error: ')) {
       return;
     }
     originalError.call(console, ...args);

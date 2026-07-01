@@ -16,7 +16,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { ThemeProvider } from "./context/ThemeContext";
 import { PremiumProvider } from "./context/PremiumContext";
 import HomeScreen from "./screens/HomeScreen";
-import ExploreScreen from "./screens/ExploreScreen";
+import { ExploreScreen } from "./src/screens/ExploreScreen";
 import MapScreen from "./screens/MapScreen";
 import QuizScreen from "./screens/quiz/QuizScreen";
 import SettingsScreen from "./screens/SettingsScreen";

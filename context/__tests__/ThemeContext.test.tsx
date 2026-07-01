@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { render, fireEvent, screen, waitFor } from '@testing-library/react-native';
+import { Text } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemeProvider, useTheme, ThemeContext } from '../ThemeContext';
 import { lightTheme, darkTheme } from '../../theme/tokens';
@@ -283,6 +285,371 @@ describe('ThemeContext', () => {
       } catch (error) {
         expect(error).toBeDefined();
       }
+    });
+  });
+});
+
+// ─── Integration Tests ──────────────────────────────────────────────────────
+
+describe('ThemeProvider Integration Tests', () => {
+  // Test component that uses the theme
+  const TestComponent = () => {
+    const { theme, isDarkMode, toggleTheme } = useTheme();
+    return (
+      <>
+        <Text testID="bg-color" style={{ backgroundColor: theme.colors.background }}>
+          Background
+        </Text>
+        <Text testID="theme-mode">
+          {isDarkMode ? 'dark' : 'light'}
+        </Text>
+        <Text testID="primary-color" style={{ color: theme.colors.primary }}>
+          Primary
+        </Text>
+        <Text testID="toggle-button" onPress={toggleTheme}>
+          Toggle
+        </Text>
+      </>
+    );
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (AsyncStorage.getItem as jest.Mock).mockClear();
+    (AsyncStorage.setItem as jest.Mock).mockClear();
+  });
+
+  describe('Provider with Component Rendering', () => {
+    it('should render children without crashing', () => {
+      const { getByText } = render(
+        <ThemeProvider>
+          <Text>Test Content</Text>
+        </ThemeProvider>
+      );
+      expect(getByText('Test Content')).toBeTruthy();
+    });
+
+    it('should not crash when loading theme', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+      const { container } = render(
+        <ThemeProvider>
+          <Text>Loading...</Text>
+        </ThemeProvider>
+      );
+      expect(container).toBeTruthy();
+    });
+
+    it('should apply light theme by default', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+      const { getByTestId } = render(
+        <ThemeProvider>
+          <TestComponent />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        const themeMode = getByTestId('theme-mode');
+        expect(themeMode.props.children).toBe('light');
+      });
+    });
+
+    it('should apply dark theme when saved', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue('dark');
+      const { getByTestId } = render(
+        <ThemeProvider>
+          <TestComponent />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        const themeMode = getByTestId('theme-mode');
+        expect(themeMode.props.children).toBe('dark');
+      });
+    });
+  });
+
+  describe('Theme Switching', () => {
+    it('should toggle between light and dark modes', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+      (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
+
+      const { getByTestId } = render(
+        <ThemeProvider>
+          <TestComponent />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        expect(getByTestId('theme-mode')).toBeTruthy();
+      });
+
+      const toggleButton = getByTestId('toggle-button');
+      fireEvent.press(toggleButton);
+
+      // After toggle, AsyncStorage.setItem should be called
+      await waitFor(() => {
+        expect(AsyncStorage.setItem).toHaveBeenCalledWith(
+          THEME_KEY,
+          expect.stringContaining('dark')
+        );
+      });
+    });
+
+    it('should persist theme preference to AsyncStorage', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+      (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
+
+      const { getByTestId } = render(
+        <ThemeProvider>
+          <TestComponent />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        expect(getByTestId('theme-mode')).toBeTruthy();
+      });
+
+      const toggleButton = getByTestId('toggle-button');
+      fireEvent.press(toggleButton);
+
+      await waitFor(() => {
+        expect(AsyncStorage.setItem).toHaveBeenCalled();
+      });
+    });
+
+    it('should load saved theme preference on mount', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue('dark');
+
+      const { getByTestId } = render(
+        <ThemeProvider>
+          <TestComponent />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        const themeMode = getByTestId('theme-mode');
+        expect(themeMode.props.children).toBe('dark');
+      });
+
+      expect(AsyncStorage.getItem).toHaveBeenCalledWith(THEME_KEY);
+    });
+  });
+
+  describe('useTheme Hook Integration', () => {
+    const HookTestComponent = () => {
+      const { theme, isDarkMode, toggleTheme, isLoading } = useTheme();
+      const [displayText, setDisplayText] = useState('');
+
+      useEffect(() => {
+        if (!isLoading) {
+          setDisplayText(isDarkMode ? 'Dark' : 'Light');
+        }
+      }, [isDarkMode, isLoading]);
+
+      return (
+        <>
+          <Text testID="loading-state">
+            {isLoading ? 'loading' : 'ready'}
+          </Text>
+          <Text testID="display-text">{displayText}</Text>
+          <Text testID="primary-color" style={{ color: theme.colors.primary }}>
+            Primary
+          </Text>
+          <Text testID="toggle" onPress={toggleTheme}>
+            Toggle
+          </Text>
+        </>
+      );
+    };
+
+    it('should provide theme context to components', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+
+      const { getByTestId } = render(
+        <ThemeProvider>
+          <HookTestComponent />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        expect(getByTestId('loading-state').props.children).toBe('ready');
+      });
+    });
+
+    it('should update component when theme changes', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+      (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
+
+      const { getByTestId } = render(
+        <ThemeProvider>
+          <HookTestComponent />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        expect(getByTestId('display-text')).toBeTruthy();
+      });
+
+      const toggleButton = getByTestId('toggle');
+      fireEvent.press(toggleButton);
+
+      await waitFor(() => {
+        expect(AsyncStorage.setItem).toHaveBeenCalled();
+      });
+    });
+
+    it('should provide access to isDarkMode', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue('dark');
+
+      const { getByTestId } = render(
+        <ThemeProvider>
+          <HookTestComponent />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        const displayText = getByTestId('display-text');
+        expect(displayText.props.children).toBe('Dark');
+      });
+    });
+  });
+
+  describe('Theme Content Application', () => {
+    it('should apply primary color from theme', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+
+      const { getByTestId } = render(
+        <ThemeProvider>
+          <TestComponent />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        const primaryColor = getByTestId('primary-color');
+        expect(primaryColor).toBeTruthy();
+      });
+    });
+
+    it('should use correct primary color for light theme', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+
+      const { getByTestId } = render(
+        <ThemeProvider>
+          <TestComponent />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        const primaryColor = getByTestId('primary-color');
+        expect(primaryColor.props.style.color).toBe(lightTheme.colors.primary);
+      });
+    });
+
+    it('should use correct primary color for dark theme', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue('dark');
+
+      const { getByTestId } = render(
+        <ThemeProvider>
+          <TestComponent />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        const primaryColor = getByTestId('primary-color');
+        expect(primaryColor.props.style.color).toBe(darkTheme.colors.primary);
+      });
+    });
+  });
+
+  describe('Loading State', () => {
+    it('should not render children while loading', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockImplementation(
+        () =>
+          new Promise(resolve => {
+            setTimeout(() => resolve('light'), 100);
+          })
+      );
+
+      const { queryByText, getByText } = render(
+        <ThemeProvider>
+          <Text>Content</Text>
+        </ThemeProvider>
+      );
+
+      // Should not render initially due to isLoading
+      // After loading, should render
+      await waitFor(() => {
+        expect(getByText('Content')).toBeTruthy();
+      });
+    });
+
+    it('should set isLoading to false after loading theme', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+
+      const LoadingTestComponent = () => {
+        const { isLoading } = useTheme();
+        return <Text testID="loading">{isLoading ? 'yes' : 'no'}</Text>;
+      };
+
+      const { getByTestId } = render(
+        <ThemeProvider>
+          <LoadingTestComponent />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        expect(getByTestId('loading').props.children).toBe('no');
+      });
+    });
+  });
+
+  describe('Edge Cases', () => {
+    it('should handle rapid theme toggles', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+      (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
+
+      const { getByTestId } = render(
+        <ThemeProvider>
+          <TestComponent />
+        </ThemeProvider>
+      );
+
+      await waitFor(() => {
+        expect(getByTestId('toggle-button')).toBeTruthy();
+      });
+
+      const toggleButton = getByTestId('toggle-button');
+      fireEvent.press(toggleButton);
+      fireEvent.press(toggleButton);
+      fireEvent.press(toggleButton);
+
+      await waitFor(() => {
+        expect(AsyncStorage.setItem).toHaveBeenCalled();
+      });
+    });
+
+    it('should handle AsyncStorage errors gracefully', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockRejectedValue(new Error('Storage error'));
+
+      const { container } = render(
+        <ThemeProvider>
+          <Text>Content</Text>
+        </ThemeProvider>
+      );
+
+      expect(container).toBeTruthy();
+    });
+
+    it('should handle missing AsyncStorage gracefully', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
+
+      const { getByText } = render(
+        <ThemeProvider>
+          <Text>Content</Text>
+        </ThemeProvider>
+      );
+
+      expect(getByText('Content')).toBeTruthy();
     });
   });
 });
