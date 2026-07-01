@@ -11,9 +11,10 @@ interface NavBarIconProps {
   onPress: () => void;
   color: string;
   accessibilityLabel?: string;
+  testID?: string;
 }
 
-export function NavBarIcon({ name, isActive, onPress, color, accessibilityLabel }: NavBarIconProps) {
+export function NavBarIcon({ name, isActive, onPress, color, accessibilityLabel, testID }: NavBarIconProps) {
   const { theme } = useTheme();
 
   const handlePress = () => {
@@ -26,6 +27,7 @@ export function NavBarIcon({ name, isActive, onPress, color, accessibilityLabel 
       onPress={handlePress}
       accessibilityRole="tab"
       accessibilityLabel={accessibilityLabel}
+      testID={testID}
       style={{ flex: 1, alignItems: 'center', padding: commonTokens.spacing.sm }}
     >
       <MaterialCommunityIcons

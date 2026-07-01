@@ -57,6 +57,7 @@ export function FloatingNavBar({
           isActive={currentRoute === item.name}
           onPress={() => onNavigate(item.name)}
           color={item.color}
+          testID={`${testID}-item-${item.name}`}
         />
       ))}
     </Animated.View>
