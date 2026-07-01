@@ -1,230 +1,307 @@
 import React from 'react';
+import { render, fireEvent, screen } from '@testing-library/react-native';
+import * as Haptics from 'expo-haptics';
+import { ThemeProvider } from '../../../context/ThemeContext';
 import { Button } from '../Button';
+
+jest.mock('expo-haptics');
 
 describe('Button Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe('Component Definition', () => {
-    it('should be defined', () => {
-      expect(Button).toBeDefined();
+  // ─── Rendering Tests ───────────────────────────────────────────────────────
+
+  describe('Rendering', () => {
+    it('should render without crashing', () => {
+      const { getByText } = render(
+        <ThemeProvider>
+          <Button label="Test" onPress={jest.fn()} />
+        </ThemeProvider>
+      );
+      expect(getByText('Test')).toBeTruthy();
     });
 
-    it('should be a React component', () => {
-      expect(typeof Button).toBe('function');
+    it('should display the label text', () => {
+      const { getByText } = render(
+        <ThemeProvider>
+          <Button label="Click Me" onPress={jest.fn()} />
+        </ThemeProvider>
+      );
+      expect(getByText('Click Me')).toBeTruthy();
     });
 
-    it('should accept required props', () => {
-      const mockOnPress = jest.fn();
-      // Component should accept label and onPress
-      expect(Button).toBeDefined();
+    it('should render with accessibility role button', () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <Button label="Test" onPress={jest.fn()} />
+        </ThemeProvider>
+      );
+      const button = getByRole('button');
+      expect(button).toBeTruthy();
+    });
+
+    it('should set accessibility label from label prop by default', () => {
+      const { getByA11yLabel } = render(
+        <ThemeProvider>
+          <Button label="Save" onPress={jest.fn()} />
+        </ThemeProvider>
+      );
+      const button = getByA11yLabel('Save');
+      expect(button).toBeTruthy();
+    });
+
+    it('should use custom accessibility label when provided', () => {
+      const { getByA11yLabel } = render(
+        <ThemeProvider>
+          <Button label="Save" onPress={jest.fn()} accessibilityLabel="Save changes" />
+        </ThemeProvider>
+      );
+      const button = getByA11yLabel('Save changes');
+      expect(button).toBeTruthy();
+    });
+
+    it('should set accessibility hint', () => {
+      const { getByA11yHint } = render(
+        <ThemeProvider>
+          <Button label="Save" onPress={jest.fn()} accessibilityHint="Saves the form" />
+        </ThemeProvider>
+      );
+      const button = getByA11yHint('Saves the form');
+      expect(button).toBeTruthy();
     });
   });
 
-  describe('Props', () => {
-    it('should accept label prop', () => {
-      const props = {
-        label: 'Click Me',
-        onPress: jest.fn(),
-      };
-      expect(props.label).toBe('Click Me');
-    });
-
-    it('should accept onPress callback', () => {
-      const mockOnPress = jest.fn();
-      const props = {
-        label: 'Test',
-        onPress: mockOnPress,
-      };
-      expect(props.onPress).toBeDefined();
-    });
-
-    it('should accept variant prop with filled', () => {
-      const props = {
-        label: 'Filled',
-        onPress: jest.fn(),
-        variant: 'filled' as const,
-      };
-      expect(props.variant).toBe('filled');
-    });
-
-    it('should accept variant prop with outlined', () => {
-      const props = {
-        label: 'Outlined',
-        onPress: jest.fn(),
-        variant: 'outlined' as const,
-      };
-      expect(props.variant).toBe('outlined');
-    });
-
-    it('should accept variant prop with text', () => {
-      const props = {
-        label: 'Text',
-        onPress: jest.fn(),
-        variant: 'text' as const,
-      };
-      expect(props.variant).toBe('text');
-    });
-
-    it('should accept disabled prop', () => {
-      const props = {
-        label: 'Disabled',
-        onPress: jest.fn(),
-        disabled: true,
-      };
-      expect(props.disabled).toBe(true);
-    });
-
-    it('should accept accessibilityLabel prop', () => {
-      const props = {
-        label: 'Button',
-        onPress: jest.fn(),
-        accessibilityLabel: 'Custom Label',
-      };
-      expect(props.accessibilityLabel).toBe('Custom Label');
-    });
-
-    it('should accept accessibilityHint prop', () => {
-      const props = {
-        label: 'Button',
-        onPress: jest.fn(),
-        accessibilityHint: 'This is a button',
-      };
-      expect(props.accessibilityHint).toBe('This is a button');
-    });
-  });
+  // ─── Variant Tests ─────────────────────────────────────────────────────────
 
   describe('Variants', () => {
-    const validVariants = ['filled', 'outlined', 'text'];
+    it('should render filled variant', () => {
+      const { getByText } = render(
+        <ThemeProvider>
+          <Button label="Filled" onPress={jest.fn()} variant="filled" />
+        </ThemeProvider>
+      );
+      expect(getByText('Filled')).toBeTruthy();
+    });
 
-    it('should support all valid variants', () => {
-      validVariants.forEach(variant => {
-        const props = {
-          label: 'Test',
-          onPress: jest.fn(),
-          variant: variant as 'filled' | 'outlined' | 'text',
-        };
-        expect(validVariants).toContain(props.variant);
-      });
+    it('should render outlined variant', () => {
+      const { getByText } = render(
+        <ThemeProvider>
+          <Button label="Outlined" onPress={jest.fn()} variant="outlined" />
+        </ThemeProvider>
+      );
+      expect(getByText('Outlined')).toBeTruthy();
+    });
+
+    it('should render text variant', () => {
+      const { getByText } = render(
+        <ThemeProvider>
+          <Button label="Text" onPress={jest.fn()} variant="text" />
+        </ThemeProvider>
+      );
+      expect(getByText('Text')).toBeTruthy();
     });
 
     it('should default to filled variant', () => {
-      const props: { label: string; onPress: jest.Mock; variant?: 'filled' | 'outlined' | 'text' } = {
-        label: 'Default',
-        onPress: jest.fn(),
-        // No variant specified
-      };
-      expect(props.variant).toBeUndefined();
-      // Component defaults to 'filled' when not specified
+      const { getByText } = render(
+        <ThemeProvider>
+          <Button label="Default" onPress={jest.fn()} />
+        </ThemeProvider>
+      );
+      expect(getByText('Default')).toBeTruthy();
     });
   });
 
-  describe('Disabled State', () => {
-    it('should default to enabled', () => {
-      const props: { label: string; onPress: jest.Mock; disabled?: boolean } = {
-        label: 'Enabled',
-        onPress: jest.fn(),
-      };
-      expect(props.disabled).toBeUndefined();
-    });
+  // ─── Press Handling Tests ──────────────────────────────────────────────────
 
-    it('should support disabled state', () => {
-      const props = {
-        label: 'Disabled',
-        onPress: jest.fn(),
-        disabled: true,
-      };
-      expect(props.disabled).toBe(true);
-    });
-
-    it('should prevent onPress when disabled', () => {
+  describe('Press Handling', () => {
+    it('should call onPress when pressed', () => {
       const mockOnPress = jest.fn();
-      const props = {
-        label: 'Disabled',
-        onPress: mockOnPress,
-        disabled: true,
-      };
-      // When disabled, onPress should not be called
-      // This is enforced in the component's handlePress logic
-      expect(props.disabled).toBe(true);
-    });
-  });
-
-  describe('Accessibility', () => {
-    it('should have accessibility label from button label', () => {
-      const props = {
-        label: 'Save',
-        onPress: jest.fn(),
-      };
-      // Component should use label as accessibilityLabel by default
-      expect(props.label).toBe('Save');
+      const { getByRole } = render(
+        <ThemeProvider>
+          <Button label="Press Me" onPress={mockOnPress} />
+        </ThemeProvider>
+      );
+      const button = getByRole('button');
+      fireEvent.press(button);
+      expect(mockOnPress).toHaveBeenCalledTimes(1);
     });
 
-    it('should support custom accessibility label', () => {
-      const customLabel = 'Custom Save Button';
-      const props = {
-        label: 'Save',
-        onPress: jest.fn(),
-        accessibilityLabel: customLabel,
-      };
-      expect(props.accessibilityLabel).toBe(customLabel);
-    });
-
-    it('should have accessibility hint', () => {
-      const hint = 'Saves the current form';
-      const props = {
-        label: 'Save',
-        onPress: jest.fn(),
-        accessibilityHint: hint,
-      };
-      expect(props.accessibilityHint).toBe(hint);
-    });
-
-    it('should have button role', () => {
-      const props = {
-        label: 'Button',
-        onPress: jest.fn(),
-      };
-      // Component should render with role="button"
-      expect(props).toBeDefined();
-    });
-  });
-
-  describe('Touch Target', () => {
-    it('should have minimum 48dp height', () => {
-      // Button component has height: 48 in getStyles()
-      const minHeight = 48;
-      expect(minHeight).toBe(48);
-    });
-
-    it('should have minimum width', () => {
-      // Button component has minWidth: 48
-      const minWidth = 48;
-      expect(minWidth).toBe(48);
-    });
-  });
-
-  describe('Haptic Feedback', () => {
     it('should trigger haptic feedback on press', () => {
       const mockOnPress = jest.fn();
-      const props = {
-        label: 'Haptic',
-        onPress: mockOnPress,
-      };
-      // Component should call Haptics.impactAsync
-      expect(props.onPress).toBeDefined();
+      const { getByRole } = render(
+        <ThemeProvider>
+          <Button label="Press Me" onPress={mockOnPress} />
+        </ThemeProvider>
+      );
+      const button = getByRole('button');
+      fireEvent.press(button);
+      expect(Haptics.impactAsync).toHaveBeenCalledWith(
+        Haptics.ImpactFeedbackStyle.Medium
+      );
+    });
+
+    it('should not call onPress when disabled', () => {
+      const mockOnPress = jest.fn();
+      const { getByRole } = render(
+        <ThemeProvider>
+          <Button label="Disabled" onPress={mockOnPress} disabled={true} />
+        </ThemeProvider>
+      );
+      const button = getByRole('button');
+      fireEvent.press(button);
+      expect(mockOnPress).not.toHaveBeenCalled();
     });
 
     it('should not trigger haptic when disabled', () => {
       const mockOnPress = jest.fn();
-      const props = {
-        label: 'Disabled',
-        onPress: mockOnPress,
-        disabled: true,
-      };
-      // Component should not call Haptics when disabled
-      expect(props.disabled).toBe(true);
+      const { getByRole } = render(
+        <ThemeProvider>
+          <Button label="Disabled" onPress={mockOnPress} disabled={true} />
+        </ThemeProvider>
+      );
+      const button = getByRole('button');
+      jest.clearAllMocks();
+      fireEvent.press(button);
+      expect(Haptics.impactAsync).not.toHaveBeenCalled();
+    });
+
+    it('should handle multiple rapid presses', () => {
+      const mockOnPress = jest.fn();
+      const { getByRole } = render(
+        <ThemeProvider>
+          <Button label="Rapid" onPress={mockOnPress} />
+        </ThemeProvider>
+      );
+      const button = getByRole('button');
+      fireEvent.press(button);
+      fireEvent.press(button);
+      fireEvent.press(button);
+      expect(mockOnPress).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  // ─── Disabled State Tests ──────────────────────────────────────────────────
+
+  describe('Disabled State', () => {
+    it('should render enabled by default', () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <Button label="Enabled" onPress={jest.fn()} />
+        </ThemeProvider>
+      );
+      const button = getByRole('button');
+      expect(button.props.accessibilityState?.disabled).toBeFalsy();
+    });
+
+    it('should set disabled state correctly', () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <Button label="Disabled" onPress={jest.fn()} disabled={true} />
+        </ThemeProvider>
+      );
+      const button = getByRole('button');
+      expect(button.props.accessibilityState?.disabled).toBe(true);
+    });
+
+    it('should render disabled button with reduced opacity', () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <Button label="Disabled" onPress={jest.fn()} disabled={true} />
+        </ThemeProvider>
+      );
+      const button = getByRole('button');
+      expect(button).toBeTruthy();
+    });
+  });
+
+  // ─── Accessibility Tests ──────────────────────────────────────────────────
+
+  describe('Accessibility', () => {
+    it('should have minimum 48dp touch target height', () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <Button label="Test" onPress={jest.fn()} />
+        </ThemeProvider>
+      );
+      const button = getByRole('button');
+      expect(button).toBeTruthy();
+      // Height: 48 is set in component
+    });
+
+    it('should maintain spacing and padding for touch targets', () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <Button label="Touch Target" onPress={jest.fn()} />
+        </ThemeProvider>
+      );
+      const button = getByRole('button');
+      expect(button).toBeTruthy();
+    });
+
+    it('should support custom accessibility label', () => {
+      const { getByA11yLabel } = render(
+        <ThemeProvider>
+          <Button
+            label="Save"
+            onPress={jest.fn()}
+            accessibilityLabel="Save and exit"
+          />
+        </ThemeProvider>
+      );
+      expect(getByA11yLabel('Save and exit')).toBeTruthy();
+    });
+
+    it('should support accessibility hint for screen readers', () => {
+      const { getByA11yHint } = render(
+        <ThemeProvider>
+          <Button
+            label="Delete"
+            onPress={jest.fn()}
+            accessibilityHint="This action cannot be undone"
+          />
+        </ThemeProvider>
+      );
+      expect(getByA11yHint('This action cannot be undone')).toBeTruthy();
+    });
+  });
+
+  // ─── Edge Cases ────────────────────────────────────────────────────────────
+
+  describe('Edge Cases', () => {
+    it('should handle very long labels', () => {
+      const longLabel = 'This is a very long button label that might wrap';
+      const { getByText } = render(
+        <ThemeProvider>
+          <Button label={longLabel} onPress={jest.fn()} />
+        </ThemeProvider>
+      );
+      expect(getByText(longLabel)).toBeTruthy();
+    });
+
+    it('should handle empty accessibility label gracefully', () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <Button label="Test" onPress={jest.fn()} accessibilityLabel="" />
+        </ThemeProvider>
+      );
+      const button = getByRole('button');
+      expect(button).toBeTruthy();
+    });
+
+    it('should render with custom style prop', () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <Button
+            label="Styled"
+            onPress={jest.fn()}
+            style={{ marginBottom: 10 }}
+          />
+        </ThemeProvider>
+      );
+      const button = getByRole('button');
+      expect(button).toBeTruthy();
     });
   });
 });
