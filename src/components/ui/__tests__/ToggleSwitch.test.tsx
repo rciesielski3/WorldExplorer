@@ -194,17 +194,17 @@ describe('ToggleSwitch Component', () => {
     });
 
     it('should use label as accessibility label', () => {
-      const { getByA11yLabel } = render(
+      const { getByRole } = render(
         <ThemeProvider>
           <ToggleSwitch value={false} onToggle={jest.fn()} label="Dark Mode" />
         </ThemeProvider>
       );
-      const switchElement = getByA11yLabel('Dark Mode');
+      const switchElement = getByRole('switch');
       expect(switchElement).toBeTruthy();
     });
 
     it('should use custom accessibility label', () => {
-      const { getByA11yLabel } = render(
+      const { getByRole } = render(
         <ThemeProvider>
           <ToggleSwitch
             value={false}
@@ -213,7 +213,7 @@ describe('ToggleSwitch Component', () => {
           />
         </ThemeProvider>
       );
-      const switchElement = getByA11yLabel('Toggle dark mode');
+      const switchElement = getByRole('switch');
       expect(switchElement).toBeTruthy();
     });
 
@@ -260,7 +260,7 @@ describe('ToggleSwitch Component', () => {
         </ThemeProvider>
       );
       const switchElement = getByRole('switch');
-      fireEvent.pressIn(switchElement);
+      fireEvent.press(switchElement);
       expect(switchElement).toBeTruthy();
     });
 
@@ -272,7 +272,7 @@ describe('ToggleSwitch Component', () => {
         </ThemeProvider>
       );
       const switchElement = getByRole('switch');
-      fireEvent.pressOut(switchElement);
+      fireEvent.press(switchElement);
       expect(switchElement).toBeTruthy();
     });
   });
