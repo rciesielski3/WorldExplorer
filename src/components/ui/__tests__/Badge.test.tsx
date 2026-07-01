@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
 import { Text } from 'react-native';
-import { ThemeProvider } from '../../../context/ThemeContext';
+import { ThemeProvider } from '../../../../context/ThemeContext';
 import { Badge } from '../Badge';
 
 describe('Badge Component', () => {
@@ -164,9 +164,8 @@ describe('Badge Component', () => {
       );
       const badge = getByText('White Text');
       expect(badge).toBeTruthy();
-      // Verify text color is set (should be white for contrast)
-      expect(badge.props.style.color).toBeDefined();
-      expect(badge.props.style.color).toBeTruthy();
+      // Verify text color is white for contrast against the colored badge background
+      expect(badge.props.style.color).toBe('#FFFFFF');
     });
 
     it('should have rounded shape', () => {
@@ -325,8 +324,8 @@ describe('Badge Component', () => {
       );
       const badge = getByText('Visible Badge');
       expect(badge).toBeTruthy();
-      // Verify the badge has text color defined for visibility
-      expect(badge.props.style.color).toBeDefined();
+      // Verify the badge has white text on a colored background and a legible font size
+      expect(badge.props.style.color).toBe('#FFFFFF');
       expect(badge.props.style.fontSize).toBeGreaterThan(0);
     });
   });
@@ -352,12 +351,12 @@ describe('Badge Component', () => {
     });
 
     it('should handle empty label gracefully', () => {
-      const { container } = render(
+      const { toJSON } = render(
         <ThemeProvider>
           <Badge label="" />
         </ThemeProvider>
       );
-      expect(container).toBeTruthy();
+      expect(toJSON()).not.toBeNull();
     });
 
     it('should render unicode characters in label', () => {

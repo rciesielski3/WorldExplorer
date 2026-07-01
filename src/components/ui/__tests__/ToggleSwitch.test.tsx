@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import * as Haptics from 'expo-haptics';
 import { ToggleSwitch } from '../ToggleSwitch';
-import { ThemeProvider } from '../../../context/ThemeContext';
+import { ThemeProvider } from '../../../../context/ThemeContext';
 
 jest.mock('expo-haptics');
 
@@ -15,12 +15,12 @@ describe('ToggleSwitch Component', () => {
 
   describe('Rendering', () => {
     it('should render without crashing', () => {
-      const { container } = render(
+      const { getByRole } = render(
         <ThemeProvider>
           <ToggleSwitch value={false} onToggle={jest.fn()} />
         </ThemeProvider>
       );
-      expect(container).toBeDefined();
+      expect(getByRole('switch')).toBeTruthy();
     });
 
     it('should render with label', () => {
@@ -33,12 +33,12 @@ describe('ToggleSwitch Component', () => {
     });
 
     it('should render without label', () => {
-      const { container } = render(
+      const { toJSON } = render(
         <ThemeProvider>
           <ToggleSwitch value={false} onToggle={jest.fn()} />
         </ThemeProvider>
       );
-      expect(container).toBeTruthy();
+      expect(toJSON()).not.toBeNull();
     });
 
     it('should render with switch role', () => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import { Input } from '../Input';
-import { ThemeProvider } from '../../../context/ThemeContext';
+import { ThemeProvider } from '../../../../context/ThemeContext';
 
 describe('Input Component', () => {
   beforeEach(() => {
@@ -12,12 +12,12 @@ describe('Input Component', () => {
 
   describe('Rendering', () => {
     it('should render without crashing', () => {
-      const { container } = render(
+      const { getByPlaceholderText } = render(
         <ThemeProvider>
           <Input placeholder="Enter text" value="" onChangeText={jest.fn()} />
         </ThemeProvider>
       );
-      expect(container).toBeDefined();
+      expect(getByPlaceholderText('Enter text')).toBeTruthy();
     });
 
     it('should display placeholder text', () => {
@@ -45,7 +45,7 @@ describe('Input Component', () => {
     });
 
     it('should render with icon', () => {
-      const { container } = render(
+      const { toJSON } = render(
         <ThemeProvider>
           <Input
             placeholder="Search"
@@ -55,16 +55,16 @@ describe('Input Component', () => {
           />
         </ThemeProvider>
       );
-      expect(container).toBeTruthy();
+      expect(toJSON()).not.toBeNull();
     });
 
     it('should render without icon', () => {
-      const { container } = render(
+      const { toJSON } = render(
         <ThemeProvider>
           <Input placeholder="Input" value="" onChangeText={jest.fn()} />
         </ThemeProvider>
       );
-      expect(container).toBeTruthy();
+      expect(toJSON()).not.toBeNull();
     });
 
     it('should render with label', () => {
@@ -272,7 +272,7 @@ describe('Input Component', () => {
 
   describe('Icon Support', () => {
     it('should render with icon', () => {
-      const { container } = render(
+      const { toJSON } = render(
         <ThemeProvider>
           <Input
             placeholder="Search"
@@ -282,22 +282,22 @@ describe('Input Component', () => {
           />
         </ThemeProvider>
       );
-      expect(container).toBeTruthy();
+      expect(toJSON()).not.toBeNull();
     });
 
     it('should render without icon', () => {
-      const { container } = render(
+      const { toJSON } = render(
         <ThemeProvider>
           <Input placeholder="Input" value="" onChangeText={jest.fn()} />
         </ThemeProvider>
       );
-      expect(container).toBeTruthy();
+      expect(toJSON()).not.toBeNull();
     });
 
     it('should support different icons', () => {
       const icons = ['magnify', 'email', 'phone', 'map'];
       icons.forEach(icon => {
-        const { container } = render(
+        const { toJSON } = render(
           <ThemeProvider>
             <Input
               placeholder="Input"
@@ -307,7 +307,7 @@ describe('Input Component', () => {
             />
           </ThemeProvider>
         );
-        expect(container).toBeTruthy();
+        expect(toJSON()).not.toBeNull();
       });
     });
 

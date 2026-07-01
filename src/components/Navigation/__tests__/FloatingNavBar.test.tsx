@@ -36,10 +36,6 @@ describe('FloatingNavBar Component', () => {
   });
 
   describe('Component Definition', () => {
-    it('should be defined', () => {
-      expect(FloatingNavBar).toBeDefined();
-    });
-
     it('should be a React component', () => {
       expect(typeof FloatingNavBar).toBe('function');
     });
@@ -62,7 +58,7 @@ describe('FloatingNavBar Component', () => {
     });
 
     it('should render all navigation items', () => {
-      const { container } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="home"
@@ -73,13 +69,14 @@ describe('FloatingNavBar Component', () => {
         </ThemeProvider>
       );
 
-      // Should render a nav bar container
-      expect(container).toBeTruthy();
-      expect(container.queryByTestId).toBeDefined();
+      // Each nav item should render its own testID under the nav bar
+      mockNavItems.forEach(item => {
+        expect(getByTestId(`nav-bar-item-${item.name}`)).toBeTruthy();
+      });
     });
 
     it('should render with correct number of items', () => {
-      const { UNSAFE_getByType } = render(
+      const { getAllByTestId } = render(
         <ThemeProvider>
           <FloatingNavBar
             currentRoute="home"
@@ -90,8 +87,11 @@ describe('FloatingNavBar Component', () => {
         </ThemeProvider>
       );
 
-      // Component should render with the specified items count
-      expect(mockNavItems).toHaveLength(5);
+      // Component should render exactly one item per entry in the items array
+      const renderedItems = mockNavItems.map(item =>
+        getAllByTestId(`nav-bar-item-${item.name}`)
+      );
+      expect(renderedItems).toHaveLength(mockNavItems.length);
     });
   });
 
@@ -132,7 +132,8 @@ describe('FloatingNavBar Component', () => {
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
       mockNavItems.forEach(item => {
-        expect(item.icon).toBeDefined();
+        expect(typeof item.icon).toBe('string');
+        expect(item.icon.length).toBeGreaterThan(0);
       });
     });
 
@@ -151,7 +152,6 @@ describe('FloatingNavBar Component', () => {
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
       mockNavItems.forEach(item => {
-        expect(item.color).toBeDefined();
         expect(item.color).toMatch(/^#[0-9A-F]{6}$/i);
       });
     });
@@ -283,9 +283,8 @@ describe('FloatingNavBar Component', () => {
         </ThemeProvider>
       );
 
-      const navBar = getByTestId('nav-bar');
-      expect(navBar).toBeTruthy();
-      expect(mockOnNavigate).toBeDefined();
+      fireEvent.press(getByTestId('nav-bar-item-explore'));
+      expect(mockOnNavigate).toHaveBeenCalledWith('explore');
     });
 
     it('should pass correct route name to callback', () => {
@@ -320,9 +319,14 @@ describe('FloatingNavBar Component', () => {
         </ThemeProvider>
       );
 
-      const navBar = getByTestId('nav-bar');
-      expect(navBar).toBeTruthy();
-      expect(mockOnNavigate).toBeDefined();
+      fireEvent.press(getByTestId('nav-bar-item-explore'));
+      fireEvent.press(getByTestId('nav-bar-item-map'));
+      fireEvent.press(getByTestId('nav-bar-item-quiz'));
+
+      expect(mockOnNavigate).toHaveBeenCalledTimes(3);
+      expect(mockOnNavigate).toHaveBeenNthCalledWith(1, 'explore');
+      expect(mockOnNavigate).toHaveBeenNthCalledWith(2, 'map');
+      expect(mockOnNavigate).toHaveBeenNthCalledWith(3, 'quiz');
     });
   });
 
@@ -375,7 +379,9 @@ describe('FloatingNavBar Component', () => {
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
-      expect(navBar.props.style).toBeDefined();
+      // Component spreads theme.shadows.lg (elevation 8) onto the nav bar
+      expect(navBar.props.style.elevation).toBe(8);
+      expect(navBar.props.style.shadowOpacity).toBe(0.2);
     });
 
     it('should have flexDirection row', () => {
@@ -428,7 +434,8 @@ describe('FloatingNavBar Component', () => {
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
-      expect(navBar.props.style.backgroundColor).toBeDefined();
+      // Background color is derived from theme.colors.surface with an opacity suffix
+      expect(navBar.props.style.backgroundColor).toMatch(/^#[0-9A-Fa-f]{6}F2$/);
     });
 
     it('should respond to dark mode', () => {
@@ -479,7 +486,8 @@ describe('FloatingNavBar Component', () => {
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
-      expect(navBar.props.style.backgroundColor).toBeDefined();
+      // Background color includes the same opacity suffix regardless of color scheme
+      expect(navBar.props.style.backgroundColor).toMatch(/F2$/);
     });
   });
 
@@ -498,7 +506,9 @@ describe('FloatingNavBar Component', () => {
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
-      expect(navBar.props.style.bottom).toBeDefined();
+      // Component positions itself at insets.bottom + 16, so bottom must be at least 16
+      expect(typeof navBar.props.style.bottom).toBe('number');
+      expect(navBar.props.style.bottom).toBeGreaterThanOrEqual(16);
     });
 
     it('should position with proper margins', () => {
