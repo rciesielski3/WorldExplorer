@@ -3,7 +3,17 @@ import { render, fireEvent } from '@testing-library/react-native';
 import { TopBar } from '../TopBar';
 import { ThemeProvider } from '../../../../context/ThemeContext';
 
-const TopBarWrapper = ({ ...props }: any) => (
+interface TopBarProps {
+  title?: string;
+  showAppName?: boolean;
+  onSettingsPress?: () => void;
+  showBack?: boolean;
+  onBackPress?: () => void;
+  gradientColors?: [string, string];
+  testID?: string;
+}
+
+const TopBarWrapper: React.FC<Partial<TopBarProps>> = (props) => (
   <ThemeProvider>
     <TopBar {...props} />
   </ThemeProvider>

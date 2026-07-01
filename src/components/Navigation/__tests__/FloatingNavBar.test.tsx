@@ -3,9 +3,22 @@ import { render, fireEvent } from '@testing-library/react-native';
 import { FloatingNavBar } from '../FloatingNavBar';
 import { ThemeProvider } from '../../../../context/ThemeContext';
 
-const FloatingNavBarWrapper = ({ ...props }: any) => (
+interface NavItem {
+  name: string;
+  icon: string;
+  color: string;
+}
+
+interface FloatingNavBarProps {
+  currentRoute: string;
+  onNavigate: (routeName: string) => void;
+  items: NavItem[];
+  testID?: string;
+}
+
+const FloatingNavBarWrapper: React.FC<Partial<FloatingNavBarProps>> = (props) => (
   <ThemeProvider>
-    <FloatingNavBar {...props} />
+    <FloatingNavBar {...props} currentRoute={props.currentRoute || 'home'} onNavigate={props.onNavigate || (() => {})} items={props.items || []} />
   </ThemeProvider>
 );
 

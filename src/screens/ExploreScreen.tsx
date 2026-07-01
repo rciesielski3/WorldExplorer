@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeIn, SlideInUp } from 'react-native-reanimated';
+import { NativeStackNavigationProp } from '@react-navigation/stack';
 
 import { useTheme } from '../../context/ThemeContext';
 import { commonTokens } from '../../theme/tokens';
@@ -27,11 +28,17 @@ import {
   getSearchableCountryText,
 } from '../../utils/countries';
 import { FLAG_ASSETS } from '../../utils/flagAssets';
+import { logger } from '../../utils/logger';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
+type RootStackParamList = {
+  Explore: undefined;
+  CountryDetails: { country: Country };
+};
+
 type ExploreScreenProps = {
-  navigation: any;
+  navigation: NativeStackNavigationProp<RootStackParamList, 'Explore'>;
 };
 
 type RegionFilter = {
@@ -248,7 +255,14 @@ export const ExploreScreen = ({ navigation }: ExploreScreenProps) => {
         setCountries(data);
       })
       .catch((error) => {
-        console.error('Error fetching countries:', error);
+        logger.error('Failed to fetch countries for explore screen', {
+          context: 'ExploreScreen',
+          timestamp: new Date().toISOString(),
+          metadata: {
+            action: 'loadCountries',
+            error: error instanceof Error ? error.message : String(error),
+          },
+        });
       })
       .finally(() => {
         setLoading(false);
