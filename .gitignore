@@ -68,3 +68,10 @@ theme/
 .env.local
 .DS_Store
 docs/superpowers/
+
+# Local development - agent/meta files
+.commit-msg
+CODE_REVIEW_SUMMARY.md
+commit_retry_changes.sh
+docs/superpowers/
+.superpowers/
