@@ -2,31 +2,50 @@
 global.__DEV__ = false;
 
 // Mock PixelRatio FIRST (before anything that might use it)
+//
+// NOTE: React Native's real modules are authored as `export default X` and
+// compiled by Babel to CommonJS, so consumers do
+// `require('./PixelRatio').default` (see StyleSheet.js, which immediately
+// calls `.roundToNearestPixel()` on that value). A mock factory that returns
+// the mock shape directly - without a `.default` property - makes `.default`
+// resolve to `undefined`, producing
+// "Cannot read properties of undefined (reading 'roundToNearestPixel')".
+// Mirror the real `__esModule`/`default` shape so both ESM `import` and CJS
+// `.default` access resolve to the same mock object.
 jest.mock('react-native/Libraries/Utilities/PixelRatio', () => ({
-  get: jest.fn(() => 2),
-  getFontScale: jest.fn(() => 1),
-  roundToNearestPixel: jest.fn((num) => Math.round(num)),
-  getPixelSizeForLayoutSize: jest.fn((num) => Math.round(num * 2)),
+  __esModule: true,
+  default: {
+    get: jest.fn(() => 2),
+    getFontScale: jest.fn(() => 1),
+    roundToNearestPixel: jest.fn((num) => Math.round(num)),
+    getPixelSizeForLayoutSize: jest.fn((num) => Math.round(num * 2)),
+  },
 }));
 
 // Mock Dimensions
 jest.mock('react-native/Libraries/Utilities/Dimensions', () => ({
-  get: jest.fn(() => ({
-    width: 375,
-    height: 812,
-    scale: 2,
-    fontScale: 1,
-  })),
-  addEventListener: jest.fn(),
-  removeEventListener: jest.fn(),
-  setUseNativeDriver: jest.fn(),
+  __esModule: true,
+  default: {
+    get: jest.fn(() => ({
+      width: 375,
+      height: 812,
+      scale: 2,
+      fontScale: 1,
+    })),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    setUseNativeDriver: jest.fn(),
+  },
 }));
 
 // Mock Platform
 jest.mock('react-native/Libraries/Utilities/Platform', () => ({
-  OS: 'ios',
-  Version: 14,
-  select: jest.fn((obj) => obj.ios),
+  __esModule: true,
+  default: {
+    OS: 'ios',
+    Version: 14,
+    select: jest.fn((obj) => obj.ios),
+  },
 }));
 
 // Mock AsyncStorage
