@@ -14,6 +14,7 @@ import { getStyles } from "../../styles";
 import AdBanner from "../src/components/AdBanner";
 import { fetchCountries, getLocalizedCountryName } from "../../utils/countries";
 import { FLAG_ASSETS } from "../../utils/flagAssets";
+import { logger } from "../../utils/logger";
 
 const {
   answerQuestion,
@@ -56,7 +57,14 @@ const QuizScreen = ({ route, navigation }) => {
         }
       })
       .catch((error) => {
-        console.error("Error fetching countries:", error);
+        logger.error("Failed to fetch countries for quiz", {
+          context: "QuizScreen",
+          timestamp: new Date().toISOString(),
+          metadata: {
+            action: "loadQuestions",
+            error: error instanceof Error ? error.message : String(error),
+          },
+        });
         if (isMounted) {
           setLoading(false);
         }

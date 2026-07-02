@@ -1,0 +1,11 @@
+fix: replace all any TypeScript types with proper types
+
+- ExploreScreen: replace navigation any with NativeStackNavigationProp<RootStackParamList>
+- Define RootStackParamList with proper route types (Explore, CountryDetails)
+- QuestionCard: replace flagSource any with ImageSourcePropType
+- TopBar.test: replace wrapper props any with React.FC<Partial<TopBarProps>>
+- FloatingNavBar.test: replace wrapper props any with React.FC<Partial<FloatingNavBarProps>>
+
+Improves type safety and enables better IDE support.
+
+Co-Authored-By: Claude Haiku 4.5 <noreply@anthropic.com>

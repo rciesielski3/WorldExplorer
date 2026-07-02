@@ -5,6 +5,8 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '@react-native-vector-icons/material-community-icons': '<rootDir>/jest.mocks/icon.js',
     '@react-native-vector-icons/ionicons': '<rootDir>/jest.mocks/icon.js',
+    '^react-native-vector-icons/MaterialCommunityIcons$': '<rootDir>/jest.mocks/icon.js',
+    '^react-native-vector-icons/Ionicons$': '<rootDir>/jest.mocks/icon.js',
   },
   testMatch: [
     '**/__tests__/**/*.test.[jt]s?(x)',

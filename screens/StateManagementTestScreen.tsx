@@ -29,6 +29,7 @@ import EmptyStateCard from '../src/components/ui/EmptyStateCard';
 import type { ApiError } from '../types/errors';
 import { createApiError, ERRORS } from '../types/errors';
 import { spacing, radius, typography, darkTheme, lightTheme, type ThemeColors } from '../theme/tokens';
+import { logger } from '../utils/logger';
 
 interface TestState {
   displayedError: ApiError | null;
@@ -131,7 +132,10 @@ const StateManagementTestScreen: React.FC = () => {
   const colors = theme.isDarkMode ? darkTheme.colors : lightTheme.colors;
 
   useEffect(() => {
-    console.log('StateManagementTestScreen mounted - testing error handling patterns');
+    logger.info('StateManagementTestScreen mounted - testing error handling patterns', {
+      context: 'StateManagementTestScreen',
+      timestamp: new Date().toISOString(),
+    });
   }, []);
 
   const handleRetry = async () => {

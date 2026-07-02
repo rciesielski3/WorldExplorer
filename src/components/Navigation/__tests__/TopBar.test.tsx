@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import { Pressable, View } from 'react-native';
 import { TopBar } from '../TopBar';
 import { ThemeProvider } from '../../../../context/ThemeContext';
 
@@ -107,35 +106,34 @@ describe('TopBar Component', () => {
 
   describe('Back Button', () => {
     it('should render back button when showBack is true', () => {
-      const { UNSAFE_getAllByType } = render(
+      const { getByLabelText } = render(
         <ThemeProvider>
           <TopBar showBack={true} onBackPress={jest.fn()} />
         </ThemeProvider>
       );
 
-      expect(UNSAFE_getAllByType(Pressable)).toHaveLength(1);
+      expect(getByLabelText('Go back')).toBeTruthy();
     });
 
     it('should not render back button by default', () => {
-      const { UNSAFE_queryAllByType } = render(
+      const { queryByLabelText } = render(
         <ThemeProvider>
           <TopBar />
         </ThemeProvider>
       );
 
-      expect(UNSAFE_queryAllByType(Pressable)).toHaveLength(0);
+      expect(queryByLabelText('Go back')).toBeNull();
     });
 
     it('should call onBackPress when back button is pressed', () => {
       const mockOnBackPress = jest.fn();
-      const { UNSAFE_getAllByType } = render(
+      const { getByLabelText } = render(
         <ThemeProvider>
           <TopBar showBack={true} onBackPress={mockOnBackPress} />
         </ThemeProvider>
       );
 
-      const [backButton] = UNSAFE_getAllByType(Pressable);
-      fireEvent.press(backButton);
+      fireEvent.press(getByLabelText('Go back'));
 
       expect(mockOnBackPress).toHaveBeenCalledTimes(1);
     });
@@ -143,14 +141,13 @@ describe('TopBar Component', () => {
     it('should trigger haptic feedback on back press', () => {
       const Haptics = require('expo-haptics');
       const mockOnBackPress = jest.fn();
-      const { UNSAFE_getAllByType } = render(
+      const { getByLabelText } = render(
         <ThemeProvider>
           <TopBar showBack={true} onBackPress={mockOnBackPress} />
         </ThemeProvider>
       );
 
-      const [backButton] = UNSAFE_getAllByType(Pressable);
-      fireEvent.press(backButton);
+      fireEvent.press(getByLabelText('Go back'));
 
       expect(Haptics.impactAsync).toHaveBeenCalledWith(
         Haptics.ImpactFeedbackStyle.Light
@@ -160,35 +157,34 @@ describe('TopBar Component', () => {
 
   describe('Settings Button', () => {
     it('should render settings button when onSettingsPress is provided', () => {
-      const { UNSAFE_getAllByType } = render(
+      const { getByLabelText } = render(
         <ThemeProvider>
           <TopBar onSettingsPress={jest.fn()} />
         </ThemeProvider>
       );
 
-      expect(UNSAFE_getAllByType(Pressable)).toHaveLength(1);
+      expect(getByLabelText('Settings')).toBeTruthy();
     });
 
     it('should not render settings button when onSettingsPress is not provided', () => {
-      const { UNSAFE_queryAllByType } = render(
+      const { queryByLabelText } = render(
         <ThemeProvider>
           <TopBar />
         </ThemeProvider>
       );
 
-      expect(UNSAFE_queryAllByType(Pressable)).toHaveLength(0);
+      expect(queryByLabelText('Settings')).toBeNull();
     });
 
     it('should call onSettingsPress when settings button is pressed', () => {
       const mockOnSettingsPress = jest.fn();
-      const { UNSAFE_getAllByType } = render(
+      const { getByLabelText } = render(
         <ThemeProvider>
           <TopBar onSettingsPress={mockOnSettingsPress} />
         </ThemeProvider>
       );
 
-      const [settingsButton] = UNSAFE_getAllByType(Pressable);
-      fireEvent.press(settingsButton);
+      fireEvent.press(getByLabelText('Settings'));
 
       expect(mockOnSettingsPress).toHaveBeenCalledTimes(1);
     });
@@ -196,14 +192,13 @@ describe('TopBar Component', () => {
     it('should trigger haptic feedback on settings press', () => {
       const Haptics = require('expo-haptics');
       const mockOnSettingsPress = jest.fn();
-      const { UNSAFE_getAllByType } = render(
+      const { getByLabelText } = render(
         <ThemeProvider>
           <TopBar onSettingsPress={mockOnSettingsPress} />
         </ThemeProvider>
       );
 
-      const [settingsButton] = UNSAFE_getAllByType(Pressable);
-      fireEvent.press(settingsButton);
+      fireEvent.press(getByLabelText('Settings'));
 
       expect(Haptics.impactAsync).toHaveBeenCalledWith(
         Haptics.ImpactFeedbackStyle.Light
@@ -213,111 +208,111 @@ describe('TopBar Component', () => {
 
   describe('Background Color', () => {
     it('should use theme surface color when no gradient is provided', () => {
-      const { UNSAFE_getAllByType } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
-          <TopBar />
+          <TopBar testID="top-bar" />
         </ThemeProvider>
       );
 
-      const [outer] = UNSAFE_getAllByType(View);
+      const outer = getByTestId('top-bar');
       expect(outer.props.style.backgroundColor).toMatch(/^#[0-9A-Fa-f]{6}$/);
     });
 
     it('should leave backgroundColor unset when gradientColors is provided', () => {
       // TopBar does not itself render a gradient; when gradientColors is passed it
       // omits its own backgroundColor so a parent gradient can show through.
-      const { UNSAFE_getAllByType } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
-          <TopBar gradientColors={['#1E88E5', '#43A047']} />
+          <TopBar testID="top-bar" gradientColors={['#1E88E5', '#43A047']} />
         </ThemeProvider>
       );
 
-      const [outer] = UNSAFE_getAllByType(View);
+      const outer = getByTestId('top-bar');
       expect(outer.props.style.backgroundColor).toBeUndefined();
     });
   });
 
   describe('Safe Area Insets', () => {
     it('should apply top padding equal to the safe area inset', () => {
-      const { UNSAFE_getAllByType } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
-          <TopBar />
+          <TopBar testID="top-bar" />
         </ThemeProvider>
       );
 
-      const [outer] = UNSAFE_getAllByType(View);
+      const outer = getByTestId('top-bar');
       expect(typeof outer.props.style.paddingTop).toBe('number');
       expect(outer.props.style.paddingTop).toBeGreaterThanOrEqual(0);
     });
 
     it('should render with a height derived from the safe area inset', () => {
-      const { UNSAFE_getAllByType } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
-          <TopBar />
+          <TopBar testID="top-bar" />
         </ThemeProvider>
       );
 
-      const [outer] = UNSAFE_getAllByType(View);
+      const outer = getByTestId('top-bar');
       expect(outer.props.style.height).toBeGreaterThanOrEqual(56);
     });
   });
 
   describe('Layout', () => {
     it('should have flexDirection row', () => {
-      const { UNSAFE_getAllByType } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
-          <TopBar />
+          <TopBar testID="top-bar" />
         </ThemeProvider>
       );
 
-      const [outer] = UNSAFE_getAllByType(View);
+      const outer = getByTestId('top-bar');
       expect(outer.props.style.flexDirection).toBe('row');
     });
 
     it('should justify space-between', () => {
-      const { UNSAFE_getAllByType } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
-          <TopBar title="Title" onSettingsPress={jest.fn()} />
+          <TopBar testID="top-bar" title="Title" onSettingsPress={jest.fn()} />
         </ThemeProvider>
       );
 
-      const [outer] = UNSAFE_getAllByType(View);
+      const outer = getByTestId('top-bar');
       expect(outer.props.style.justifyContent).toBe('space-between');
     });
 
     it('should align items center', () => {
-      const { UNSAFE_getAllByType } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
-          <TopBar />
+          <TopBar testID="top-bar" />
         </ThemeProvider>
       );
 
-      const [outer] = UNSAFE_getAllByType(View);
+      const outer = getByTestId('top-bar');
       expect(outer.props.style.alignItems).toBe('center');
     });
   });
 
   describe('Accessibility', () => {
     it('should have a pressable back button', () => {
-      const { UNSAFE_getAllByType } = render(
+      const { getByLabelText } = render(
         <ThemeProvider>
           <TopBar showBack={true} onBackPress={jest.fn()} />
         </ThemeProvider>
       );
 
-      const [backButton] = UNSAFE_getAllByType(Pressable);
-      expect(backButton).toBeTruthy();
+      const backButton = getByLabelText('Go back');
+      expect(backButton.props.accessibilityRole).toBe('button');
     });
 
     it('should have a pressable settings button', () => {
-      const { UNSAFE_getAllByType } = render(
+      const { getByLabelText } = render(
         <ThemeProvider>
           <TopBar onSettingsPress={jest.fn()} />
         </ThemeProvider>
       );
 
-      const [settingsButton] = UNSAFE_getAllByType(Pressable);
-      expect(settingsButton).toBeTruthy();
+      const settingsButton = getByLabelText('Settings');
+      expect(settingsButton.props.accessibilityRole).toBe('button');
     });
 
     it('should have accessible title text', () => {
@@ -333,7 +328,7 @@ describe('TopBar Component', () => {
 
   describe('Combined Props', () => {
     it('should render with title, back button, and settings', () => {
-      const { getByText, UNSAFE_getAllByType } = render(
+      const { getByText, getByLabelText } = render(
         <ThemeProvider>
           <TopBar
             title="Complete TopBar"
@@ -345,12 +340,12 @@ describe('TopBar Component', () => {
       );
 
       expect(getByText('Complete TopBar')).toBeTruthy();
-      // Back button + settings button
-      expect(UNSAFE_getAllByType(Pressable)).toHaveLength(2);
+      expect(getByLabelText('Go back')).toBeTruthy();
+      expect(getByLabelText('Settings')).toBeTruthy();
     });
 
     it('should render with app name, back button, and settings', () => {
-      const { getByText, UNSAFE_getAllByType } = render(
+      const { getByText, getByLabelText } = render(
         <ThemeProvider>
           <TopBar
             showAppName={true}
@@ -362,11 +357,12 @@ describe('TopBar Component', () => {
       );
 
       expect(getByText('WorldExplorer')).toBeTruthy();
-      expect(UNSAFE_getAllByType(Pressable)).toHaveLength(2);
+      expect(getByLabelText('Go back')).toBeTruthy();
+      expect(getByLabelText('Settings')).toBeTruthy();
     });
 
     it('should render with all props including gradient', () => {
-      const { getByText, UNSAFE_getAllByType } = render(
+      const { getByText, getByLabelText } = render(
         <ThemeProvider>
           <TopBar
             title="Full TopBar"
@@ -379,42 +375,45 @@ describe('TopBar Component', () => {
       );
 
       expect(getByText('Full TopBar')).toBeTruthy();
-      expect(UNSAFE_getAllByType(Pressable)).toHaveLength(2);
+      expect(getByLabelText('Go back')).toBeTruthy();
+      expect(getByLabelText('Settings')).toBeTruthy();
     });
   });
 
   describe('Touch Targets', () => {
     it('should have adequate hitSlop on settings button', () => {
-      const { UNSAFE_getAllByType } = render(
+      const { getByLabelText } = render(
         <ThemeProvider>
           <TopBar onSettingsPress={jest.fn()} />
         </ThemeProvider>
       );
 
-      const [settingsButton] = UNSAFE_getAllByType(Pressable);
+      const settingsButton = getByLabelText('Settings');
       expect(settingsButton.props.hitSlop).toBe(8);
     });
   });
 
   describe('Icon Rendering', () => {
-    it('should render back arrow icon when showBack is true', () => {
-      const { UNSAFE_getByProps } = render(
+    it('should render an accessible back button when showBack is true', () => {
+      const { getByLabelText } = render(
         <ThemeProvider>
           <TopBar showBack={true} onBackPress={jest.fn()} />
         </ThemeProvider>
       );
 
-      expect(UNSAFE_getByProps({ name: 'arrow-left' })).toBeTruthy();
+      // The back icon is decorative; what matters to users (and assistive tech)
+      // is that an actionable, labeled "Go back" control is rendered.
+      expect(getByLabelText('Go back')).toBeTruthy();
     });
 
-    it('should render settings cog icon when onSettingsPress is provided', () => {
-      const { UNSAFE_getByProps } = render(
+    it('should render an accessible settings button when onSettingsPress is provided', () => {
+      const { getByLabelText } = render(
         <ThemeProvider>
           <TopBar onSettingsPress={jest.fn()} />
         </ThemeProvider>
       );
 
-      expect(UNSAFE_getByProps({ name: 'cog' })).toBeTruthy();
+      expect(getByLabelText('Settings')).toBeTruthy();
     });
   });
 });

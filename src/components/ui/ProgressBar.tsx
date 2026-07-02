@@ -7,9 +7,10 @@ import { commonTokens } from '../../../theme/tokens';
 interface ProgressBarProps {
   progress: number;
   color?: string;
+  testID?: string;
 }
 
-export function ProgressBar({ progress, color }: ProgressBarProps) {
+export function ProgressBar({ progress, color, testID }: ProgressBarProps) {
   const { theme } = useTheme();
   const animatedWidth = useSharedValue(0);
 

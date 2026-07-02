@@ -27,6 +27,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { commonTokens } from '../../theme/tokens';
 import { Button } from '../../src/components/ui/Button';
 import { Card } from '../../src/components/ui/Card';
+import { logger } from '../../utils/logger';
 
 interface QuizResultsRouteParams {
   score: number;
@@ -85,7 +86,14 @@ export function QuizResultsScreen() {
         title: t('quizShareTitle', { defaultValue: 'My Quiz Score' }),
       });
     } catch (error) {
-      console.error('Error sharing score:', error);
+      logger.warn('Failed to share quiz score', {
+        context: 'QuizResultsScreen',
+        timestamp: new Date().toISOString(),
+        metadata: {
+          score: scorePercentage,
+          error: error instanceof Error ? error.message : String(error),
+        },
+      });
     }
   };
 

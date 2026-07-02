@@ -215,8 +215,8 @@ describe('Card Component', () => {
         </ThemeProvider>
       );
       const card = getByTestId('animated-card');
-      fireEvent.pressIn(card);
-      fireEvent.pressOut(card);
+      fireEvent(card, 'pressIn');
+      fireEvent(card, 'pressOut');
       expect(card).toBeTruthy();
     });
 
@@ -277,12 +277,12 @@ describe('Card Component', () => {
 
   describe('Edge Cases', () => {
     it('should handle empty children gracefully', () => {
-      const { container } = render(
+      const { toJSON } = render(
         <ThemeProvider>
-          <Card />
+          <Card>{null}</Card>
         </ThemeProvider>
       );
-      expect(container).toBeTruthy();
+      expect(toJSON()).not.toBeNull();
     });
 
     it('should handle very long text content', () => {

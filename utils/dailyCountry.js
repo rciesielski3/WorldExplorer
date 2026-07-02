@@ -1,24 +1,41 @@
+interface Country {
+  code3: string;
+  translations?: {
+    en?: {
+      name: string;
+    };
+  };
+  flagPath: string;
+  capital: string;
+  lat: number;
+  lng: number;
+  languages: string[];
+  currencies: string[];
+}
+
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
-const hasCountryDetails = (country) =>
-  Boolean(
-    country?.code3 &&
-    country?.translations?.en?.name &&
-    country?.flagPath &&
-    country?.capital &&
-    typeof country?.lat === "number" &&
-    typeof country?.lng === "number" &&
-    country?.languages?.length &&
-    country?.currencies?.length,
+const hasCountryDetails = (country: unknown): country is Country => {
+  const c = country as Record<string, unknown>;
+  return Boolean(
+    c?.code3 &&
+    c?.translations?.en?.name &&
+    c?.flagPath &&
+    c?.capital &&
+    typeof c?.lat === "number" &&
+    typeof c?.lng === "number" &&
+    (c?.languages as unknown[])?.length &&
+    (c?.currencies as unknown[])?.length,
   );
+};
 
-const getDayIndex = (date = new Date()) =>
+const getDayIndex = (date: Date = new Date()): number =>
   Math.floor(
     Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()) /
       DAY_IN_MS,
   );
 
-const getDailyCountry = (countries, date = new Date()) => {
+const getDailyCountry = (countries: unknown[], date: Date = new Date()): Country | null => {
   const eligibleCountries = Array.isArray(countries)
     ? countries.filter(hasCountryDetails)
     : [];
@@ -30,8 +47,9 @@ const getDailyCountry = (countries, date = new Date()) => {
   return eligibleCountries[getDayIndex(date) % eligibleCountries.length];
 };
 
-module.exports = {
+export {
   getDailyCountry,
   getDayIndex,
   hasCountryDetails,
+  type Country,
 };

@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react-native';
-import { View } from 'react-native';
 import { ProgressBar } from '../ProgressBar';
 import { ThemeProvider } from '../../../../context/ThemeContext';
 
@@ -222,13 +221,13 @@ describe('ProgressBar Component', () => {
   describe('Theme Integration', () => {
     it('should use theme surface variant for background', async () => {
       // backgroundColor: theme.colors.surfaceVariant
-      const { UNSAFE_getAllByType } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
-          <ProgressBar progress={0.5} />
+          <ProgressBar progress={0.5} testID="progress-bar" />
         </ThemeProvider>
       );
       await waitFor(() => {
-        const [track] = UNSAFE_getAllByType(View);
+        const track = getByTestId('progress-bar');
         expect(track.props.style.backgroundColor).toBeTruthy();
       });
     });
@@ -257,13 +256,13 @@ describe('ProgressBar Component', () => {
 
     it('should have proper overflow handling', async () => {
       // Container has overflow: 'hidden' to clip fill
-      const { UNSAFE_getAllByType } = render(
+      const { getByTestId } = render(
         <ThemeProvider>
-          <ProgressBar progress={0.5} />
+          <ProgressBar progress={0.5} testID="progress-bar" />
         </ThemeProvider>
       );
       await waitFor(() => {
-        const [track] = UNSAFE_getAllByType(View);
+        const track = getByTestId('progress-bar');
         expect(track.props.style.overflow).toBe('hidden');
       });
     });

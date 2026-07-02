@@ -9,7 +9,6 @@ import {
   Pressable,
 } from "react-native";
 import { useTranslation } from "react-i18next";
-import * as Haptics from "expo-haptics";
 
 import { useTheme } from "../../context/ThemeContext";
 import { commonTokens } from "../../theme/tokens";
@@ -21,6 +20,8 @@ import { FloatingNavBar } from "../../src/components/Navigation/FloatingNavBar";
 import AdBanner from "../../src/components/AdBanner";
 import { fetchCountries, getLocalizedCountryName } from "../../utils/countries";
 import { FLAG_ASSETS } from "../../utils/flagAssets";
+import { logger } from "../../utils/logger";
+import { triggerMediumHaptic } from "../../utils/haptics";
 
 const {
   answerQuestion,
@@ -78,7 +79,11 @@ const QuizScreen = ({ route, navigation }: any) => {
         }
       })
       .catch((error) => {
-        console.error("Error fetching countries:", error);
+        logger.error("Error fetching countries", {
+          context: "QuizScreen",
+          timestamp: new Date().toISOString(),
+          metadata: { error: error?.message },
+        });
         if (isMounted) {
           setLoading(false);
         }
@@ -204,7 +209,7 @@ const QuizScreen = ({ route, navigation }: any) => {
     }
 
     // Haptic feedback for answer selection
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    triggerMediumHaptic();
 
     setSelectedAnswer(answer);
     setQuestions((prevQuestions) =>
@@ -557,7 +562,14 @@ const QuizScreen = ({ route, navigation }: any) => {
                         setLoading(false);
                       })
                       .catch((error) => {
-                        console.error("Error fetching countries:", error);
+                        logger.error("Failed to fetch countries for quiz retry", {
+                          context: "QuizScreen",
+                          timestamp: new Date().toISOString(),
+                          metadata: {
+                            action: "retryQuiz",
+                            error: error instanceof Error ? error.message : String(error),
+                          },
+                        });
                         setLoading(false);
                       });
                   }}

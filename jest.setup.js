@@ -1,6 +1,14 @@
 // Global setup
 global.__DEV__ = false;
 
+// Mock PixelRatio FIRST (before anything that might use it)
+jest.mock('react-native/Libraries/Utilities/PixelRatio', () => ({
+  get: jest.fn(() => 2),
+  getFontScale: jest.fn(() => 1),
+  roundToNearestPixel: jest.fn((num) => Math.round(num)),
+  getPixelSizeForLayoutSize: jest.fn((num) => Math.round(num * 2)),
+}));
+
 // Mock Dimensions
 jest.mock('react-native/Libraries/Utilities/Dimensions', () => ({
   get: jest.fn(() => ({
@@ -12,14 +20,6 @@ jest.mock('react-native/Libraries/Utilities/Dimensions', () => ({
   addEventListener: jest.fn(),
   removeEventListener: jest.fn(),
   setUseNativeDriver: jest.fn(),
-}));
-
-// Mock PixelRatio
-jest.mock('react-native/Libraries/Utilities/PixelRatio', () => ({
-  get: jest.fn(() => 2),
-  getFontScale: jest.fn(() => 1),
-  roundToNearestPixel: jest.fn((num) => num),
-  getPixelSizeForLayoutSize: jest.fn((num) => num),
 }));
 
 // Mock Platform
@@ -38,12 +38,15 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 }));
 
 // Mock react-native useColorScheme
+// NOTE: We intentionally avoid `{ ...actual }` here. Spreading forces every
+// lazy getter on the react-native module object (e.g. ActivityIndicator) to
+// evaluate eagerly, which pulls in StyleSheet.js before PixelRatio's mock is
+// fully wired up and crashes every RN component test. Mutating the actual
+// module in place preserves its lazy getters.
 jest.mock('react-native', () => {
   const actual = jest.requireActual('react-native');
-  return {
-    ...actual,
-    useColorScheme: jest.fn(() => 'light'),
-  };
+  actual.useColorScheme = jest.fn(() => 'light');
+  return actual;
 });
 
 // Mock react-native-reanimated

@@ -9,14 +9,16 @@ import { ActivityIndicator } from "react-native";
 import { useTranslation } from "react-i18next";
 import mobileAds from "react-native-google-mobile-ads";
 import "./i18n";
+import { logger } from "./utils/logger";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
+import { ErrorBoundary } from "./src/components/ErrorBoundary";
 import { ThemeProvider } from "./context/ThemeContext";
 import { PremiumProvider } from "./context/PremiumContext";
 import HomeScreen from "./screens/HomeScreen";
-import { ExploreScreen } from "./src/screens/ExploreScreen";
+import ExploreScreen from "./screens/ExploreScreen";
 import MapScreen from "./screens/MapScreen";
 import QuizScreen from "./screens/quiz/QuizScreen";
 import SettingsScreen from "./screens/SettingsScreen";
@@ -35,14 +37,25 @@ export default function App() {
 
   React.useEffect(() => {
     if (fontError) {
-      console.warn("Fonts failed to load:", fontError);
+      logger.warn("Fonts failed to load", {
+        context: "App",
+        timestamp: new Date().toISOString(),
+        metadata: { error: fontError?.message },
+      });
     }
   }, [fontError]);
 
   React.useEffect(() => {
     mobileAds()
       .initialize()
-      .catch((error) => console.warn("AdMob initialization failed", error));
+      .catch((error) => {
+        logger.warn("AdMob initialization failed", {
+          context: "App",
+          timestamp: new Date().toISOString(),
+          metadata: { error: error?.message },
+        });
+        // App continues without ads if initialization fails
+      });
   }, []);
 
   if (!fontsLoaded && !fontError) {
@@ -55,57 +68,55 @@ export default function App() {
     );
   }
 
-  if (fontError) {
-    console.warn("Fonts failed to load:", fontError);
-  }
-
   return (
-    <PremiumProvider>
-      <ThemeProvider>
-        <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName="Home"
-            screenOptions={{ headerShown: false }}
-          >
-            <Stack.Screen
-              name="Home"
-              component={HomeScreen}
-              options={{ title: "World Explorer" }}
-            />
-            <Stack.Screen
-              name="Explore"
-              component={ExploreScreen}
-              options={{ title: t("explore") }}
-            />
-            <Stack.Screen
-              name="Map"
-              component={MapScreen}
-              options={{ title: t("map") }}
-            />
-            <Stack.Screen
-              name="Quiz"
-              component={QuizScreen}
-              options={{ title: t("quiz") }}
-            />
-            <Stack.Screen
-              name="QuizResults"
-              component={QuizResultsScreen}
-              options={{ title: t("yourScore") }}
-            />
-            <Stack.Screen
-              name="Settings"
-              component={SettingsScreen}
-              options={{ title: t("settings") }}
-            />
-            <Stack.Screen
-              name="CountryDetails"
-              component={CountryDetailsScreen}
-              options={{ title: t("countryDetails") }}
-            />
-          </Stack.Navigator>
-          <Toast />
-        </NavigationContainer>
-      </ThemeProvider>
-    </PremiumProvider>
+    <ErrorBoundary>
+      <PremiumProvider>
+        <ThemeProvider>
+          <NavigationContainer>
+            <Stack.Navigator
+              initialRouteName="Home"
+              screenOptions={{ headerShown: false }}
+            >
+              <Stack.Screen
+                name="Home"
+                component={HomeScreen}
+                options={{ title: "World Explorer" }}
+              />
+              <Stack.Screen
+                name="Explore"
+                component={ExploreScreen}
+                options={{ title: t("explore") }}
+              />
+              <Stack.Screen
+                name="Map"
+                component={MapScreen}
+                options={{ title: t("map") }}
+              />
+              <Stack.Screen
+                name="Quiz"
+                component={QuizScreen}
+                options={{ title: t("quiz") }}
+              />
+              <Stack.Screen
+                name="QuizResults"
+                component={QuizResultsScreen}
+                options={{ title: t("yourScore") }}
+              />
+              <Stack.Screen
+                name="Settings"
+                component={SettingsScreen}
+                options={{ title: t("settings") }}
+              />
+              <Stack.Screen
+                name="CountryDetails"
+                component={CountryDetailsScreen}
+                options={{ title: t("countryDetails") }}
+              />
+            </Stack.Navigator>
+            <Toast />
+          </NavigationContainer>
+        </ThemeProvider>
+      </PremiumProvider>
+    </ErrorBoundary>
   );
 }

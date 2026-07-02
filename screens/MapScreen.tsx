@@ -10,13 +10,14 @@ import {
 } from "react-native";
 import MapView, { Marker, Callout } from "react-native-maps";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import { FLAG_ASSETS } from "../utils/flagAssets";
+import { logger } from "../utils/logger";
+import { triggerLightHaptic } from "../utils/haptics";
 
 const { width, height } = Dimensions.get("window");
 
@@ -164,7 +165,7 @@ const FAB = ({
   theme: any;
 }) => {
   const handlePress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    triggerLightHaptic();
     onPress();
   };
 
