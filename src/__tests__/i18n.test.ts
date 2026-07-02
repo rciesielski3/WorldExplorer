@@ -45,7 +45,7 @@ describe('i18n Completeness', () => {
   });
 
   describe('Key Consistency Across Locales', () => {
-    let localeData: { [key: string]: Record<string, any> } = {};
+    let localeData: { [key: string]: Record<string, string> } = {};
 
     beforeAll(() => {
       locales.forEach(locale => {
@@ -116,7 +116,7 @@ describe('i18n Completeness', () => {
   });
 
   describe('Key Tokens Used in App', () => {
-    let localeData: { [key: string]: Record<string, any> } = {};
+    let localeData: { [key: string]: Record<string, string> } = {};
 
     beforeAll(() => {
       locales.forEach(locale => {
@@ -258,7 +258,7 @@ describe('i18n Completeness', () => {
   });
 
   describe('Translation Content', () => {
-    let localeData: { [key: string]: Record<string, any> } = {};
+    let localeData: { [key: string]: Record<string, string> } = {};
 
     beforeAll(() => {
       locales.forEach(locale => {
@@ -315,7 +315,7 @@ describe('i18n Completeness', () => {
   });
 
   describe('Key Naming Conventions', () => {
-    let localeData: { [key: string]: Record<string, any> } = {};
+    let localeData: { [key: string]: Record<string, string> } = {};
 
     beforeAll(() => {
       const filePath = path.join(localesDir, 'en.json');
@@ -343,8 +343,8 @@ describe('i18n Completeness', () => {
   });
 
   describe('Additional Locales - Portuguese (if exists)', () => {
-    let ptData: Record<string, any> | null = null;
-    let enData: Record<string, any> | null = null;
+    let ptData: Record<string, string> | null = null;
+    let enData: Record<string, string> | null = null;
 
     beforeAll(() => {
       const enPath = path.join(localesDir, 'en.json');
@@ -397,8 +397,8 @@ describe('i18n Completeness', () => {
   });
 
   describe('Additional Locales - Italian (if exists)', () => {
-    let itData: Record<string, any> | null = null;
-    let enData: Record<string, any> | null = null;
+    let itData: Record<string, string> | null = null;
+    let enData: Record<string, string> | null = null;
 
     beforeAll(() => {
       const enPath = path.join(localesDir, 'en.json');
