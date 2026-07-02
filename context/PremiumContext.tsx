@@ -1,6 +1,12 @@
 import React, { ReactNode } from "react";
 import { Platform } from "react-native";
-import Purchases, { LOG_LEVEL, PurchasesPackage, CustomerInfo } from "react-native-purchases";
+import Purchases, {
+  LOG_LEVEL,
+  PurchasesPackage,
+  CustomerInfo,
+  PurchasesOfferings,
+  PurchasesError,
+} from "react-native-purchases";
 
 const PREMIUM_ENABLED = process.env.EXPO_PUBLIC_PREMIUM_ENABLED === "true";
 const PREMIUM_ENTITLEMENT_ID =
@@ -46,20 +52,33 @@ const PremiumContext = React.createContext<PremiumContextType>({
 const hasPremiumEntitlement = (customerInfo: CustomerInfo): boolean =>
   Boolean(customerInfo?.entitlements?.active?.[PREMIUM_ENTITLEMENT_ID]);
 
-const getPremiumPackage = (offerings: any): PurchasesPackage | null => {
+const getPremiumPackage = (
+  offerings: PurchasesOfferings | null | undefined
+): PurchasesPackage | null => {
   const currentOffering = offerings?.current;
   const availablePackages = currentOffering?.availablePackages || [];
 
   return (
     availablePackages.find(
-      (offeringPackage: any) =>
-        offeringPackage?.storeProduct?.identifier === PREMIUM_PRODUCT_ID
+      (offeringPackage: PurchasesPackage) =>
+        offeringPackage?.product?.identifier === PREMIUM_PRODUCT_ID
     ) ||
     currentOffering?.lifetime ||
     availablePackages[0] ||
     null
   );
 };
+
+const isPurchasesError = (error: unknown): error is PurchasesError =>
+  typeof error === "object" && error !== null && "message" in error;
+
+const getErrorMessage = (error: unknown, fallback: string): string =>
+  isPurchasesError(error) && typeof error.message === "string" && error.message
+    ? error.message
+    : fallback;
+
+const isUserCancelledError = (error: unknown): boolean =>
+  isPurchasesError(error) && Boolean(error.userCancelled);
 
 const getRevenueCatApiKey = (): string | undefined => {
   if (Platform.OS !== "android" && Platform.OS !== "ios") {
@@ -95,9 +114,9 @@ export const PremiumProvider: React.FC<PremiumProviderProps> = ({ children }) =>
       const customerInfo = await Purchases.getCustomerInfo();
       applyCustomerInfo(customerInfo);
       setError(null);
-    } catch (refreshError: any) {
+    } catch (refreshError: unknown) {
       setError(
-        refreshError?.message || "RevenueCat customer info refresh failed."
+        getErrorMessage(refreshError, "RevenueCat customer info refresh failed.")
       );
     }
   }, [applyCustomerInfo, isConfigured]);
@@ -111,9 +130,9 @@ export const PremiumProvider: React.FC<PremiumProviderProps> = ({ children }) =>
       const offerings = await Purchases.getOfferings();
       setPremiumPackage(getPremiumPackage(offerings));
       setError(null);
-    } catch (offeringsError: any) {
+    } catch (offeringsError: unknown) {
       setPremiumPackage(null);
-      setError(offeringsError?.message || "RevenueCat offerings load failed.");
+      setError(getErrorMessage(offeringsError, "RevenueCat offerings load failed."));
     }
   }, [isConfigured]);
 
@@ -137,9 +156,9 @@ export const PremiumProvider: React.FC<PremiumProviderProps> = ({ children }) =>
       applyCustomerInfo(customerInfo);
       setError(null);
       return hasPremiumEntitlement(customerInfo);
-    } catch (purchaseError: any) {
-      if (!purchaseError?.userCancelled) {
-        setError(purchaseError?.message || "Premium purchase failed.");
+    } catch (purchaseError: unknown) {
+      if (!isUserCancelledError(purchaseError)) {
+        setError(getErrorMessage(purchaseError, "Premium purchase failed."));
       }
 
       return false;
@@ -163,8 +182,8 @@ export const PremiumProvider: React.FC<PremiumProviderProps> = ({ children }) =>
       applyCustomerInfo(customerInfo);
       setError(null);
       return hasPremiumEntitlement(customerInfo);
-    } catch (restoreError: any) {
-      setError(restoreError?.message || "Premium restore failed.");
+    } catch (restoreError: unknown) {
+      setError(getErrorMessage(restoreError, "Premium restore failed."));
       return false;
     } finally {
       setIsRestoring(false);
@@ -213,17 +232,17 @@ export const PremiumProvider: React.FC<PremiumProviderProps> = ({ children }) =>
           if (isMounted) {
             setPremiumPackage(getPremiumPackage(offerings));
           }
-        } catch (offeringsError: any) {
+        } catch (offeringsError: unknown) {
           if (isMounted) {
             setPremiumPackage(null);
             setError(
-              offeringsError?.message || "RevenueCat offerings load failed."
+              getErrorMessage(offeringsError, "RevenueCat offerings load failed.")
             );
           }
         }
-      } catch (configurationError: any) {
+      } catch (configurationError: unknown) {
         if (isMounted) {
-          setError(configurationError?.message || "RevenueCat setup failed.");
+          setError(getErrorMessage(configurationError, "RevenueCat setup failed."));
         }
       } finally {
         if (isMounted) {

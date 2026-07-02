@@ -19,6 +19,7 @@ import { getStyles } from "../styles";
 import { FLAG_ASSETS } from "../utils/flagAssets";
 import { logger } from "../utils/logger";
 import { triggerLightHaptic } from "../utils/haptics";
+import { getLocalizedCountryName } from "../utils/countries";
 import type { RootStackParamList } from "../types/navigation";
 
 const { width, height } = Dimensions.get("window");
@@ -62,11 +63,15 @@ interface CountryData {
 
 type MapScreenProps = StackScreenProps<RootStackParamList, "Map">;
 
-const getInitialRouteData = (route: MapScreenProps["route"], fallbackName: string) => {
+const getInitialRouteData = (
+  route: MapScreenProps["route"],
+  fallbackName: string,
+  language: string
+) => {
   const rawCountry = route?.params?.country;
   const country: CountryData | undefined = rawCountry
     ? {
-        name: rawCountry.translations?.en?.name ?? fallbackName,
+        name: getLocalizedCountryName(rawCountry, language) ?? fallbackName,
         capital: rawCountry.capital,
         region: rawCountry.region,
         flagPath: rawCountry.flagPath,
@@ -231,13 +236,14 @@ const TopBar = ({
 
 const MapScreen: React.FC<MapScreenProps> = ({ route, navigation }) => {
   const { theme } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
   const mapRef = useRef<MapView>(null);
 
   const { country, latitude, longitude, countryName } = getInitialRouteData(
     route,
-    t("worldMap")
+    t("worldMap"),
+    i18n.language
   );
 
   const initialRegion = useMemo(

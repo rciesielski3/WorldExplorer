@@ -29,14 +29,14 @@ export async function retryWithBackoff<T>(
 
   let lastError: Error | null = null;
 
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       return await fn();
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
 
       // If this was the last attempt, throw the error
-      if (attempt === maxRetries - 1) {
+      if (attempt === maxRetries) {
         throw lastError;
       }
 
