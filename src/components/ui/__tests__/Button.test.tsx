@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react-native';
 import * as Haptics from 'expo-haptics';
-import { ThemeProvider } from '../../../context/ThemeContext';
+import { ThemeProvider } from '../../../../context/ThemeContext';
 import { Button } from '../Button';
 
 jest.mock('expo-haptics');

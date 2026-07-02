@@ -24,6 +24,7 @@ export function ProgressBar({ progress, color, testID }: ProgressBarProps) {
 
   return (
     <View
+      testID={testID}
       style={{
         width: '100%',
         height: 4,

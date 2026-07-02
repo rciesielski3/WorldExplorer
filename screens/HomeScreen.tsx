@@ -10,26 +10,19 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { StackScreenProps } from "@react-navigation/stack";
 
-import { ThemeContext } from "../context/ThemeContext";
+import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import { getDailyCountry } from "../utils/dailyCountry";
-import { fetchCountries, getLocalizedCountryName } from "../utils/countries";
+import {
+  fetchCountries,
+  getLocalizedCountryName,
+  type Country,
+} from "../utils/countries";
 import { FLAG_ASSETS } from "../utils/flagAssets";
 import LottieView from "lottie-react-native";
 import { logger } from "../utils/logger";
-
-interface Country {
-  code3: string;
-  translations?: { en?: { name: string } };
-  flagPath: string;
-  capital: string;
-  lat: number;
-  lng: number;
-  languages: string[];
-  currencies: string[];
-}
 
 type RootStackParamList = {
   Home: undefined;
@@ -41,7 +34,7 @@ type RootStackParamList = {
   QuizResults: { score: number };
 };
 
-type HomeScreenProps = NativeStackScreenProps<RootStackParamList, "Home">;
+type HomeScreenProps = StackScreenProps<RootStackParamList, "Home">;
 
 interface HomeAction {
   key: string;
@@ -57,7 +50,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const [isDailyCountryLoading, setIsDailyCountryLoading] =
     React.useState<boolean>(true);
 
-  const { theme } = React.useContext(ThemeContext);
+  const { theme } = useTheme();
   const styles = getStyles(theme);
 
   const HOME_ACTIONS: HomeAction[] = [

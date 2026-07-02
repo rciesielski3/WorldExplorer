@@ -11,32 +11,20 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { StackScreenProps } from "@react-navigation/stack";
 
-import { ThemeContext } from "../context/ThemeContext";
+import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import AdBanner from "../src/components/AdBanner";
 import {
   fetchCountries,
   getLocalizedCountryName,
   getSearchableCountryText,
+  type Country,
 } from "../utils/countries";
 import { FLAG_ASSETS } from "../utils/flagAssets";
 import { formatPopulation } from "../utils/formatters";
 import { logger } from "../utils/logger";
-
-interface Country {
-  code3: string;
-  translations?: { en?: { name: string } };
-  flagPath: string;
-  capital: string;
-  lat: number;
-  lng: number;
-  languages: string[];
-  currencies: string[];
-  region?: string;
-  population?: number;
-}
 
 type RootStackParamList = {
   Home: undefined;
@@ -48,7 +36,7 @@ type RootStackParamList = {
   QuizResults: { score: number };
 };
 
-type ExploreScreenProps = NativeStackScreenProps<RootStackParamList, "Explore">;
+type ExploreScreenProps = StackScreenProps<RootStackParamList, "Explore">;
 
 interface RegionFilter {
   key: string;
@@ -70,7 +58,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState<string>("");
   const [selectedRegion, setSelectedRegion] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState<boolean>(true);
-  const { theme } = React.useContext(ThemeContext);
+  const { theme } = useTheme();
 
   const { t, i18n } = useTranslation();
   const styles = getStyles(theme);
@@ -102,7 +90,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
     });
   }, [countries, searchQuery, selectedRegion]);
 
-  const renderSkeletonRows = (): JSX.Element => (
+  const renderSkeletonRows = (): React.JSX.Element => (
     <View>
       {Array.from({ length: 7 }).map((_, index) => (
         <View key={index} style={styles.skeletonRow}>
@@ -116,7 +104,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
     </View>
   );
 
-  const renderItem = ({ item }: { item: Country }): JSX.Element => {
+  const renderItem = ({ item }: { item: Country }): React.JSX.Element => {
     const metadata = [
       item.capital,
       item.region,

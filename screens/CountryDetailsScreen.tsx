@@ -11,9 +11,9 @@ import {
 import MapView, { Marker } from "react-native-maps";
 import { useTranslation } from "react-i18next";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { StackScreenProps } from "@react-navigation/stack";
 
-import { ThemeContext } from "../context/ThemeContext";
+import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import AdBanner from "../src/components/AdBanner";
 import { FLAG_ASSETS } from "../utils/flagAssets";
@@ -66,7 +66,7 @@ type RootStackParamList = {
   QuizResults: { score: number };
 };
 
-type CountryDetailsScreenProps = NativeStackScreenProps<
+type CountryDetailsScreenProps = StackScreenProps<
   RootStackParamList,
   "CountryDetails"
 >;
@@ -86,7 +86,7 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
   route,
   navigation,
 }) => {
-  const { theme } = React.useContext(ThemeContext);
+  const { theme } = useTheme();
   const { t } = useTranslation();
   const styles = getStyles(theme);
   const [activeTab, setActiveTab] = React.useState<string>("info");
@@ -135,7 +135,7 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
     });
   };
 
-  const renderStatGrid = (items: Stat[]): JSX.Element => (
+  const renderStatGrid = (items: Stat[]): React.JSX.Element => (
     <View style={styles.countryStatGridContainer}>
       <View style={styles.countryStatGrid}>
         {items.map((item) => (
@@ -156,7 +156,7 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
     title: string,
     value: string,
     icon?: string
-  ): JSX.Element => (
+  ): React.JSX.Element => (
     <View style={styles.countryInfoCard}>
       <View style={styles.countryInfoCardHeader}>
         {icon && (

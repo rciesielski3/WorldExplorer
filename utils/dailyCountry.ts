@@ -1,22 +1,9 @@
-interface Country {
-  code3: string;
-  translations?: {
-    en?: {
-      name: string;
-    };
-  };
-  flagPath: string;
-  capital: string;
-  lat: number;
-  lng: number;
-  languages: string[];
-  currencies: string[];
-}
+import type { Country } from "./countries";
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
 const hasCountryDetails = (country: unknown): country is Country => {
-  const c = country as Record<string, unknown>;
+  const c = country as Partial<Country> | null | undefined;
   return Boolean(
     c?.code3 &&
     c?.translations?.en?.name &&
