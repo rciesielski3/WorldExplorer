@@ -4,6 +4,12 @@ import { Text } from 'react-native';
 import { ThemeProvider } from '../../../../context/ThemeContext';
 import { Card } from '../Card';
 
+// NOTE: ThemeProvider renders a SplashScreen placeholder while it loads the
+// persisted theme preference from AsyncStorage, and only mounts `children`
+// once that resolves. We use the `findBy*` (async, auto-retrying) queries
+// instead of `getBy*` so assertions wait for the real Card content to mount
+// rather than racing the splash screen.
+
 describe('Card Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -12,30 +18,30 @@ describe('Card Component', () => {
   // ─── Rendering Tests ───────────────────────────────────────────────────────
 
   describe('Rendering', () => {
-    it('should render without crashing', () => {
-      const { getByText } = render(
+    it('should render without crashing', async () => {
+      const { findByText } = render(
         <ThemeProvider>
           <Card>
             <Text>Card Content</Text>
           </Card>
         </ThemeProvider>
       );
-      expect(getByText('Card Content')).toBeTruthy();
+      expect(await findByText('Card Content')).toBeTruthy();
     });
 
-    it('should display children content', () => {
-      const { getByText } = render(
+    it('should display children content', async () => {
+      const { findByText } = render(
         <ThemeProvider>
           <Card>
             <Text>Test Content</Text>
           </Card>
         </ThemeProvider>
       );
-      expect(getByText('Test Content')).toBeTruthy();
+      expect(await findByText('Test Content')).toBeTruthy();
     });
 
-    it('should render multiple children', () => {
-      const { getByText } = render(
+    it('should render multiple children', async () => {
+      const { findByText } = render(
         <ThemeProvider>
           <Card>
             <Text>First Line</Text>
@@ -43,110 +49,110 @@ describe('Card Component', () => {
           </Card>
         </ThemeProvider>
       );
-      expect(getByText('First Line')).toBeTruthy();
-      expect(getByText('Second Line')).toBeTruthy();
+      expect(await findByText('First Line')).toBeTruthy();
+      expect(await findByText('Second Line')).toBeTruthy();
     });
 
-    it('should render with default elevation', () => {
-      const { getByText } = render(
+    it('should render with default elevation', async () => {
+      const { findByText } = render(
         <ThemeProvider>
           <Card>
             <Text>Card with default elevation</Text>
           </Card>
         </ThemeProvider>
       );
-      expect(getByText('Card with default elevation')).toBeTruthy();
+      expect(await findByText('Card with default elevation')).toBeTruthy();
     });
   });
 
   // ─── Elevation Tests ───────────────────────────────────────────────────────
 
   describe('Elevation Variants', () => {
-    it('should render with small elevation', () => {
-      const { getByText } = render(
+    it('should render with small elevation', async () => {
+      const { findByText } = render(
         <ThemeProvider>
           <Card elevation="sm">
             <Text>Small elevation</Text>
           </Card>
         </ThemeProvider>
       );
-      expect(getByText('Small elevation')).toBeTruthy();
+      expect(await findByText('Small elevation')).toBeTruthy();
     });
 
-    it('should render with medium elevation', () => {
-      const { getByText } = render(
+    it('should render with medium elevation', async () => {
+      const { findByText } = render(
         <ThemeProvider>
           <Card elevation="md">
             <Text>Medium elevation</Text>
           </Card>
         </ThemeProvider>
       );
-      expect(getByText('Medium elevation')).toBeTruthy();
+      expect(await findByText('Medium elevation')).toBeTruthy();
     });
 
-    it('should render with large elevation', () => {
-      const { getByText } = render(
+    it('should render with large elevation', async () => {
+      const { findByText } = render(
         <ThemeProvider>
           <Card elevation="lg">
             <Text>Large elevation</Text>
           </Card>
         </ThemeProvider>
       );
-      expect(getByText('Large elevation')).toBeTruthy();
+      expect(await findByText('Large elevation')).toBeTruthy();
     });
   });
 
   // ─── Press Handling Tests ──────────────────────────────────────────────────
 
   describe('Press Handling', () => {
-    it('should render without onPress handler', () => {
-      const { getByText } = render(
+    it('should render without onPress handler', async () => {
+      const { findByText } = render(
         <ThemeProvider>
           <Card>
             <Text>Non-interactive card</Text>
           </Card>
         </ThemeProvider>
       );
-      expect(getByText('Non-interactive card')).toBeTruthy();
+      expect(await findByText('Non-interactive card')).toBeTruthy();
     });
 
-    it('should call onPress when card is pressed', () => {
+    it('should call onPress when card is pressed', async () => {
       const mockOnPress = jest.fn();
-      const { getByTestId } = render(
+      const { findByTestId } = render(
         <ThemeProvider>
           <Card onPress={mockOnPress} testID="pressable-card">
             <Text>Pressable Card</Text>
           </Card>
         </ThemeProvider>
       );
-      const card = getByTestId('pressable-card');
+      const card = await findByTestId('pressable-card');
       fireEvent.press(card);
       expect(mockOnPress).toHaveBeenCalledTimes(1);
     });
 
-    it('should not trigger press when no onPress handler', () => {
+    it('should not trigger press when no onPress handler', async () => {
       const mockOnPress = jest.fn();
-      const { getByText } = render(
+      const { findByText } = render(
         <ThemeProvider>
           <Card>
             <Text>Non-interactive</Text>
           </Card>
         </ThemeProvider>
       );
-      expect(getByText('Non-interactive')).toBeTruthy();
+      expect(await findByText('Non-interactive')).toBeTruthy();
       expect(mockOnPress).not.toHaveBeenCalled();
     });
 
-    it('should handle multiple presses on interactive card', () => {
+    it('should handle multiple presses on interactive card', async () => {
       const mockOnPress = jest.fn();
-      const { getByTestId } = render(
+      const { findByTestId } = render(
         <ThemeProvider>
           <Card onPress={mockOnPress} testID="clickable-card">
             <Text>Clickable</Text>
           </Card>
         </ThemeProvider>
       );
-      const card = getByTestId('clickable-card');
+      const card = await findByTestId('clickable-card');
       fireEvent.press(card);
       fireEvent.press(card);
       fireEvent.press(card);
@@ -157,86 +163,86 @@ describe('Card Component', () => {
   // ─── Styling Tests ─────────────────────────────────────────────────────────
 
   describe('Styling', () => {
-    it('should apply custom style prop', () => {
-      const { getByText } = render(
+    it('should apply custom style prop', async () => {
+      const { findByText } = render(
         <ThemeProvider>
           <Card style={{ marginTop: 20 }}>
             <Text>Styled Card</Text>
           </Card>
         </ThemeProvider>
       );
-      expect(getByText('Styled Card')).toBeTruthy();
+      expect(await findByText('Styled Card')).toBeTruthy();
     });
 
-    it('should have border radius', () => {
-      const { getByText } = render(
+    it('should have border radius', async () => {
+      const { findByText } = render(
         <ThemeProvider>
           <Card>
             <Text>Rounded Card</Text>
           </Card>
         </ThemeProvider>
       );
-      expect(getByText('Rounded Card')).toBeTruthy();
+      expect(await findByText('Rounded Card')).toBeTruthy();
     });
 
-    it('should have padding', () => {
-      const { getByText } = render(
+    it('should have padding', async () => {
+      const { findByText } = render(
         <ThemeProvider>
           <Card>
             <Text>Padded Card</Text>
           </Card>
         </ThemeProvider>
       );
-      expect(getByText('Padded Card')).toBeTruthy();
+      expect(await findByText('Padded Card')).toBeTruthy();
     });
 
-    it('should have background color from theme', () => {
-      const { getByText } = render(
+    it('should have background color from theme', async () => {
+      const { findByText } = render(
         <ThemeProvider>
           <Card>
             <Text>Themed Card</Text>
           </Card>
         </ThemeProvider>
       );
-      expect(getByText('Themed Card')).toBeTruthy();
+      expect(await findByText('Themed Card')).toBeTruthy();
     });
   });
 
   // ─── Animation Tests ───────────────────────────────────────────────────────
 
   describe('Animations', () => {
-    it('should animate on press', () => {
+    it('should animate on press', async () => {
       const mockOnPress = jest.fn();
-      const { getByTestId } = render(
+      const { findByTestId } = render(
         <ThemeProvider>
           <Card onPress={mockOnPress} testID="animated-card">
             <Text>Animated Card</Text>
           </Card>
         </ThemeProvider>
       );
-      const card = getByTestId('animated-card');
+      const card = await findByTestId('animated-card');
       fireEvent(card, 'pressIn');
       fireEvent(card, 'pressOut');
       expect(card).toBeTruthy();
     });
 
-    it('should handle pressIn without onPress', () => {
-      const { getByText } = render(
+    it('should handle pressIn without onPress', async () => {
+      const { findByText } = render(
         <ThemeProvider>
           <Card>
             <Text>Non-interactive</Text>
           </Card>
         </ThemeProvider>
       );
-      expect(getByText('Non-interactive')).toBeTruthy();
+      expect(await findByText('Non-interactive')).toBeTruthy();
     });
   });
 
   // ─── Content Flexibility Tests ─────────────────────────────────────────────
 
   describe('Content Flexibility', () => {
-    it('should render complex nested content', () => {
-      const { getByText } = render(
+    it('should render complex nested content', async () => {
+      const { findByText } = render(
         <ThemeProvider>
           <Card>
             <Text>Title</Text>
@@ -245,72 +251,73 @@ describe('Card Component', () => {
           </Card>
         </ThemeProvider>
       );
-      expect(getByText('Title')).toBeTruthy();
-      expect(getByText('Subtitle')).toBeTruthy();
-      expect(getByText('Description text')).toBeTruthy();
+      expect(await findByText('Title')).toBeTruthy();
+      expect(await findByText('Subtitle')).toBeTruthy();
+      expect(await findByText('Description text')).toBeTruthy();
     });
 
-    it('should render with single text child', () => {
-      const { getByText } = render(
+    it('should render with single text child', async () => {
+      const { findByText } = render(
         <ThemeProvider>
           <Card>
             <Text>Single</Text>
           </Card>
         </ThemeProvider>
       );
-      expect(getByText('Single')).toBeTruthy();
+      expect(await findByText('Single')).toBeTruthy();
     });
 
-    it('should render with only text content', () => {
-      const { getByText } = render(
+    it('should render with only text content', async () => {
+      const { findByText } = render(
         <ThemeProvider>
           <Card>
             <Text>Plain text content</Text>
           </Card>
         </ThemeProvider>
       );
-      expect(getByText('Plain text content')).toBeTruthy();
+      expect(await findByText('Plain text content')).toBeTruthy();
     });
   });
 
   // ─── Edge Cases ────────────────────────────────────────────────────────────
 
   describe('Edge Cases', () => {
-    it('should handle empty children gracefully', () => {
-      const { toJSON } = render(
+    it('should handle empty children gracefully', async () => {
+      const { findByTestId } = render(
         <ThemeProvider>
           <Card>{null}</Card>
         </ThemeProvider>
       );
-      expect(toJSON()).not.toBeNull();
+      // Card falls back to its default testID ("card") when none is provided.
+      expect(await findByTestId('card')).toBeTruthy();
     });
 
-    it('should handle very long text content', () => {
+    it('should handle very long text content', async () => {
       const longText = 'This is a very long text content that should be rendered properly in the card component. '.repeat(
         3
       );
-      const { getByText } = render(
+      const { findByText } = render(
         <ThemeProvider>
           <Card>
             <Text>{longText}</Text>
           </Card>
         </ThemeProvider>
       );
-      expect(getByText(longText)).toBeTruthy();
+      expect(await findByText(longText)).toBeTruthy();
     });
 
-    it('should render with all elevation levels', () => {
+    it('should render with all elevation levels', async () => {
       const elevations: Array<'sm' | 'md' | 'lg'> = ['sm', 'md', 'lg'];
-      elevations.forEach(elevation => {
-        const { getByText } = render(
+      for (const elevation of elevations) {
+        const { findByText } = render(
           <ThemeProvider>
             <Card elevation={elevation}>
               <Text>{`Card with ${elevation} elevation`}</Text>
             </Card>
           </ThemeProvider>
         );
-        expect(getByText(`Card with ${elevation} elevation`)).toBeTruthy();
-      });
+        expect(await findByText(`Card with ${elevation} elevation`)).toBeTruthy();
+      }
     });
   });
 });

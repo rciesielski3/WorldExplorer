@@ -15,33 +15,23 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import { getDailyCountry } from "../utils/dailyCountry";
-import {
-  fetchCountries,
-  getLocalizedCountryName,
-  type Country,
-} from "../utils/countries";
+import { fetchCountries, getLocalizedCountryName } from "../utils/countries";
 import { FLAG_ASSETS } from "../utils/flagAssets";
 import LottieView from "lottie-react-native";
 import { logger } from "../utils/logger";
-
-type RootStackParamList = {
-  Home: undefined;
-  Explore: undefined;
-  Map: { latitude: number; longitude: number; countryName: string; country: Country };
-  Quiz: { country: Country };
-  CountryDetails: { country: Country };
-  Settings: undefined;
-  QuizResults: { score: number };
-};
+import type { Country } from "../utils/countries";
+import type { RootStackParamList } from "../types/navigation";
 
 type HomeScreenProps = StackScreenProps<RootStackParamList, "Home">;
+
+type HomeActionScreen = "Explore" | "Map" | "Quiz" | "Settings";
 
 interface HomeAction {
   key: string;
   icon: string;
   label: string;
   subtitle: string;
-  screen: keyof RootStackParamList;
+  screen: HomeActionScreen;
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {

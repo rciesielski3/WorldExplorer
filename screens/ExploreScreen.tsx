@@ -25,16 +25,7 @@ import {
 import { FLAG_ASSETS } from "../utils/flagAssets";
 import { formatPopulation } from "../utils/formatters";
 import { logger } from "../utils/logger";
-
-type RootStackParamList = {
-  Home: undefined;
-  Explore: undefined;
-  Map: { latitude: number; longitude: number; countryName: string; country: Country };
-  Quiz: { country: Country };
-  CountryDetails: { country: Country };
-  Settings: undefined;
-  QuizResults: { score: number };
-};
+import type { RootStackParamList } from "../types/navigation";
 
 type ExploreScreenProps = StackScreenProps<RootStackParamList, "Explore">;
 

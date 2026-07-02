@@ -7,7 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../../../context/ThemeContext';
 
 interface RetryErrorBannerProps {
   visible: boolean;

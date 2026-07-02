@@ -23,23 +23,8 @@ import {
   formatCurrencies,
   formatLanguages,
 } from "../utils/formatters";
-
-interface Country {
-  code3: string;
-  translations?: { en?: { name: string } };
-  flagPath: string;
-  capital: string;
-  lat: number;
-  lng: number;
-  languages: string[];
-  currencies: string[];
-  region?: string;
-  subregion?: string;
-  area?: number;
-  timezones?: string[];
-  borders?: string[];
-  population?: number;
-}
+import { type Country } from "../utils/countries";
+import type { RootStackParamList } from "../types/navigation";
 
 interface Coordinates {
   latitude: number;
@@ -55,16 +40,6 @@ interface DetailTab {
   key: string;
   labelKey: string;
 }
-
-type RootStackParamList = {
-  Home: undefined;
-  Explore: undefined;
-  Map: { latitude: number; longitude: number; countryName: string; country: Country };
-  Quiz: { country: Country };
-  CountryDetails: { country: Country };
-  Settings: undefined;
-  QuizResults: { score: number };
-};
 
 type CountryDetailsScreenProps = StackScreenProps<
   RootStackParamList,

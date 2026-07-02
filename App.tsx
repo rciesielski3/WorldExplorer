@@ -24,8 +24,9 @@ import QuizScreen from "./screens/quiz/QuizScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import CountryDetailsScreen from "./screens/CountryDetailsScreen";
 import QuizResultsScreen from "./screens/quiz/QuizResultsScreen";
+import type { RootStackParamList } from "./types/navigation";
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
 
 export default function App() {
   const { t } = useTranslation();
