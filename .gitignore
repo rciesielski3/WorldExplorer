@@ -5,8 +5,10 @@
 .env
 .env.*
 .env*.local
+!.env.example
 key.properties
 credentials.json
+firebase-service-account*.json
 *.keystore
 *.jks
 !android/app/debug.keystore

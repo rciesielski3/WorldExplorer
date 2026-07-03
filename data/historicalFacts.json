@@ -1,0 +1,54 @@
+{
+  "facts": {
+    "US": [
+      "The United States declared independence on July 4, 1776, from British rule.",
+      "The US is home to the world's largest economy with a GDP of over $25 trillion.",
+      "The Statue of Liberty was a gift from France to commemorate Franco-American alliance in 1886."
+    ],
+    "GB": [
+      "The United Kingdom consists of England, Scotland, Wales, and Northern Ireland.",
+      "Big Ben, officially called the Great Bell, is located in the Palace of Westminster.",
+      "London is the capital and one of the oldest major settlements in the world, founded by Romans."
+    ],
+    "FR": [
+      "France is the most visited country in the world, with over 90 million international visitors annually.",
+      "The Eiffel Tower was built for the 1889 World's Fair and was originally intended to be temporary.",
+      "France is home to the Louvre Museum, the world's most visited art museum with the Mona Lisa."
+    ],
+    "DE": [
+      "Germany is located in central Europe and shares borders with 9 different countries.",
+      "The Berlin Wall fell in 1989, symbolizing the end of the Cold War and reunification of Germany.",
+      "Germany is the largest economy in Europe and a global leader in manufacturing and engineering."
+    ],
+    "JP": [
+      "Japan is an island nation in East Asia composed of four main islands: Honshu, Hokkaido, Kyushu, and Shikoku.",
+      "Tokyo is the capital and world's largest metropolitan area with over 37 million residents.",
+      "Japan has the world's fastest trains - the Shinkansen bullet trains travel at speeds up to 320 km/h."
+    ],
+    "IN": [
+      "India is the world's most populous country with over 1.4 billion people and 22 official languages.",
+      "The Taj Mahal is one of the Seven Wonders of the World, built as a mausoleum by Emperor Shah Jahan.",
+      "India's Bollywood film industry produces the most movies globally, more than Hollywood or any other industry."
+    ],
+    "BR": [
+      "Brazil is the largest country in South America and the fifth largest country in the world.",
+      "The Amazon Rainforest, located primarily in Brazil, produces about 20% of the world's oxygen.",
+      "Brazil hosted the 2014 FIFA World Cup and the 2016 Summer Olympics in Rio de Janeiro."
+    ],
+    "AU": [
+      "Australia is the smallest continent and the largest island in the world.",
+      "The Great Barrier Reef is the world's largest coral reef system and spans over 2,300 kilometers.",
+      "Australia has unique wildlife found nowhere else on Earth, including kangaroos, koalas, and platypuses."
+    ],
+    "CA": [
+      "Canada is the second-largest country by land area, spanning six time zones across North America.",
+      "Niagara Falls, located on the border with the USA, is one of the most powerful waterfalls in the world.",
+      "Canada is a bilingual country with English and French as official languages since 1969."
+    ],
+    "MX": [
+      "Mexico is home to the ancient Aztec civilization and Tenochtitlan, one of the world's largest cities in the 1500s.",
+      "The Mesoamerican Barrier Reef System is the world's second-largest reef system after the Great Barrier Reef.",
+      "Mexico City is built on the site of the ancient Aztec capital and is one of the world's largest metropolitan areas."
+    ]
+  }
+}
