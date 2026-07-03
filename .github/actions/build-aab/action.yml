@@ -20,6 +20,9 @@ inputs:
   key-password:
     description: Key password
     required: true
+  maps-api-key:
+    description: Google Maps API key injected into the release build via MAPS_API_KEY manifest placeholder
+    required: true
 
 runs:
   using: composite
@@ -53,7 +56,7 @@ runs:
         ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_KEY_PASSWORD: ${{ inputs.key-password }}
       run: |
         chmod +x gradlew
-        ./gradlew bundleRelease --no-daemon --no-build-cache -x lint
+        ./gradlew bundleRelease --no-daemon --no-build-cache -x lint -PMAPS_API_KEY="${{ inputs.maps-api-key }}"
 
     - name: Verify AAB Output
       shell: bash
