@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Haptics from 'expo-haptics';
 
-import { ThemeContext } from '../../../context/ThemeContext';
-import { spacing, radius, typography, darkTheme, lightTheme, type ThemeColors } from '../../../theme/tokens';
+import { useTheme } from '../../../context/ThemeContext';
+import { spacing, radius, typography, type ThemeColors, darkTheme, lightTheme } from '../../../theme/tokens';
 
 interface EmptyStateCardProps {
   icon?: string;
@@ -47,12 +47,8 @@ const EmptyStateCard: React.FC<EmptyStateCardProps> = ({
   showAction = true,
   testID = 'empty-state-card',
 }) => {
-  const themeContext = useContext(ThemeContext);
-  if (!themeContext) {
-    throw new Error('EmptyStateCard must be used within ThemeProvider');
-  }
-  const { theme } = themeContext;
-  const colors = theme.isDarkMode ? darkTheme.colors : lightTheme.colors;
+  const { theme } = useTheme();
+  const colors = theme.colors;
 
   const handleActionPress = async () => {
     await Haptics.selectionAsync();

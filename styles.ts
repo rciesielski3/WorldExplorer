@@ -1,6 +1,17 @@
 import { StyleSheet } from "react-native";
 
-export const getStyles = (theme) =>
+interface Theme {
+  isDarkMode: boolean;
+  colors: {
+    text: string;
+    button: string;
+    buttonText: string;
+    card: string;
+    border: string;
+  };
+}
+
+export const getStyles = (theme: Theme) =>
   StyleSheet.create({
     containerButtons: {
       padding: 16,

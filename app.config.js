@@ -13,7 +13,7 @@ module.exports = {
     slug: "WorldExplorer",
     sdkVersion: "53.0.0",
     platforms: ["android"],
-    version: "1.2.8",
+    version: "2.0.2",
     orientation: "portrait",
     icon: "./assets/world.png",
     userInterfaceStyle: "light",
@@ -25,7 +25,7 @@ module.exports = {
     },
     android: {
       package: "com.adateo.WorldExplorer",
-      versionCode: 134,
+      versionCode: 141,
       permissions: [
         "com.google.android.gms.permission.AD_ID",
         "com.android.vending.BILLING",

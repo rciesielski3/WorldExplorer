@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, ImageSourcePropType } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from '../../../context/ThemeContext';
 import { commonTokens } from '../../../theme/tokens';
@@ -10,7 +10,7 @@ interface QuestionCardProps {
   question: string;
   questionType: 'flag' | 'capital' | 'country';
   difficulty?: 'easy' | 'medium' | 'hard';
-  flagSource?: any; // Image source for flag question
+  flagSource?: ImageSourcePropType;
 }
 
 const difficultyConfig = {

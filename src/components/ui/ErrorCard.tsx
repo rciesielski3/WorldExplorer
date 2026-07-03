@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as Haptics from 'expo-haptics';
 
-import { ThemeContext } from '../../../context/ThemeContext';
+import { useTheme } from '../../../context/ThemeContext';
 import type { ApiError } from '../../../types/errors';
-import { spacing, radius, typography, darkTheme, lightTheme, type ThemeColors } from '../../../theme/tokens';
+import { spacing, radius, typography, type ThemeColors, darkTheme, lightTheme } from '../../../theme/tokens';
 
 interface ErrorCardProps {
   error: ApiError;
@@ -45,12 +45,8 @@ const ErrorCard: React.FC<ErrorCardProps> = ({
   showDismissButton = false,
   testID = 'error-card',
 }) => {
-  const themeContext = useContext(ThemeContext);
-  if (!themeContext) {
-    throw new Error('ErrorCard must be used within ThemeProvider');
-  }
-  const { theme } = themeContext;
-  const colors = theme.isDarkMode ? darkTheme.colors : lightTheme.colors;
+  const { theme } = useTheme();
+  const colors = theme.colors;
   const isRetryable = error.retryable && showRetryButton;
 
   const handleRetryPress = async () => {

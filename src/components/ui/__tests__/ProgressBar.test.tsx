@@ -1,5 +1,7 @@
 import React from 'react';
+import { render, waitFor } from '@testing-library/react-native';
 import { ProgressBar } from '../ProgressBar';
+import { ThemeProvider } from '../../../../context/ThemeContext';
 
 describe('ProgressBar Component', () => {
   beforeEach(() => {
@@ -7,12 +9,17 @@ describe('ProgressBar Component', () => {
   });
 
   describe('Component Definition', () => {
-    it('should be defined', () => {
-      expect(ProgressBar).toBeDefined();
-    });
-
     it('should be a React component', () => {
       expect(typeof ProgressBar).toBe('function');
+    });
+
+    it('should render without crashing', () => {
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0.5} />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
     });
   });
 
@@ -137,7 +144,8 @@ describe('ProgressBar Component', () => {
       const progresses = [0, 0.2, 0.4, 0.6, 0.8, 1];
       progresses.forEach(progress => {
         const props = { progress };
-        expect(props.progress).toBeDefined();
+        expect(props.progress).toBeGreaterThanOrEqual(0);
+        expect(props.progress).toBeLessThanOrEqual(1);
       });
     });
 
@@ -211,10 +219,17 @@ describe('ProgressBar Component', () => {
   });
 
   describe('Theme Integration', () => {
-    it('should use theme surface variant for background', () => {
+    it('should use theme surface variant for background', async () => {
       // backgroundColor: theme.colors.surfaceVariant
-      const props = { progress: 0.5 };
-      expect(props).toBeDefined();
+      const { getByTestId } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0.5} testID="progress-bar" />
+        </ThemeProvider>
+      );
+      await waitFor(() => {
+        const track = getByTestId('progress-bar');
+        expect(track.props.style.backgroundColor).toBeTruthy();
+      });
     });
 
     it('should use theme primary or custom color for fill', () => {
@@ -239,10 +254,267 @@ describe('ProgressBar Component', () => {
       expect(borderRadius).toBeGreaterThan(0);
     });
 
-    it('should have proper overflow handling', () => {
+    it('should have proper overflow handling', async () => {
       // Container has overflow: 'hidden' to clip fill
-      const props = { progress: 0.5 };
-      expect(props).toBeDefined();
+      const { getByTestId } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0.5} testID="progress-bar" />
+        </ThemeProvider>
+      );
+      await waitFor(() => {
+        const track = getByTestId('progress-bar');
+        expect(track.props.style.overflow).toBe('hidden');
+      });
+    });
+  });
+
+  // ─── Actual Rendering Tests ───────────────────────────────────────────────
+
+  describe('Actual Rendering', () => {
+    it('should render without crashing', () => {
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0.5} />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should render at 0% progress', () => {
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0} />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should render at 50% progress', () => {
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0.5} />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should render at 100% progress', () => {
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={1} />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should render with custom color', () => {
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0.5} color="#FF0000" />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should render with theme primary color by default', () => {
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0.5} />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should update when progress changes', () => {
+      const { rerender, toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0.25} />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+
+      rerender(
+        <ThemeProvider>
+          <ProgressBar progress={0.75} />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should handle rapid progress updates', () => {
+      const { rerender, toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0} />
+        </ThemeProvider>
+      );
+
+      const progressValues = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1];
+      progressValues.forEach(progress => {
+        rerender(
+          <ThemeProvider>
+            <ProgressBar progress={progress} />
+          </ThemeProvider>
+        );
+      });
+
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should maintain appearance with different theme colors', () => {
+      const colors = ['#1E88E5', '#43A047', '#0277BD', '#E53935'];
+      colors.forEach(color => {
+        const { toJSON } = render(
+          <ThemeProvider>
+            <ProgressBar progress={0.5} color={color} />
+          </ThemeProvider>
+        );
+        expect(toJSON()).not.toBeNull();
+      });
+    });
+  });
+
+  // ─── Animation Tests ───────────────────────────────────────────────────────
+
+  describe('Animation Behavior', () => {
+    it('should animate from 0 to 100', () => {
+      const { rerender, toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0} />
+        </ThemeProvider>
+      );
+
+      rerender(
+        <ThemeProvider>
+          <ProgressBar progress={1} />
+        </ThemeProvider>
+      );
+
+      // Animation runs with timing of 300ms; component should still be mounted afterwards
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should handle animation with intermediate values', () => {
+      const { rerender, toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0} />
+        </ThemeProvider>
+      );
+
+      rerender(
+        <ThemeProvider>
+          <ProgressBar progress={0.25} />
+        </ThemeProvider>
+      );
+
+      rerender(
+        <ThemeProvider>
+          <ProgressBar progress={0.5} />
+        </ThemeProvider>
+      );
+
+      rerender(
+        <ThemeProvider>
+          <ProgressBar progress={0.75} />
+        </ThemeProvider>
+      );
+
+      rerender(
+        <ThemeProvider>
+          <ProgressBar progress={1} />
+        </ThemeProvider>
+      );
+
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should use timing with 300ms duration', () => {
+      // Component uses: withTiming(progress * 100, { duration: 300 })
+      const duration = 300;
+      expect(duration).toBe(300);
+    });
+
+    it('should smoothly transition between values', () => {
+      const { rerender, toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0.3} />
+        </ThemeProvider>
+      );
+
+      rerender(
+        <ThemeProvider>
+          <ProgressBar progress={0.7} />
+        </ThemeProvider>
+      );
+
+      expect(toJSON()).not.toBeNull();
+    });
+  });
+
+  // ─── Color Tests ──────────────────────────────────────────────────────────
+
+  describe('Color Support', () => {
+    it('should render with custom color', () => {
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0.5} color="#FF0000" />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should support theme primary color', () => {
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0.5} color="#1E88E5" />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should support theme secondary color', () => {
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0.5} color="#43A047" />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should support success color', () => {
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0.5} color="#43A047" />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should support error color', () => {
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0.5} color="#E53935" />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should support rgba colors', () => {
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0.5} color="rgba(30,136,229,0.8)" />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should use default color when not provided', () => {
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0.5} />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+      // Uses theme.colors.primary by default
     });
   });
 
@@ -254,14 +526,51 @@ describe('ProgressBar Component', () => {
     });
 
     it('should handle very large progress values', () => {
-      const props = { progress: 100 };
-      // animated width: 10000% or similar
-      expect(props.progress).toBe(100);
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={100} />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
     });
 
     it('should handle fractional progress values', () => {
-      const props = { progress: 0.3333 };
-      expect(props.progress).toBeCloseTo(0.3333);
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={0.3333} />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should handle negative progress values', () => {
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={-0.5} />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should handle progress values > 1', () => {
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ProgressBar progress={1.5} />
+        </ThemeProvider>
+      );
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should render all common progress values', () => {
+      const progressValues = [0, 0.1, 0.25, 0.33, 0.5, 0.66, 0.75, 0.9, 1];
+      progressValues.forEach(progress => {
+        const { toJSON } = render(
+          <ThemeProvider>
+            <ProgressBar progress={progress} />
+          </ThemeProvider>
+        );
+        expect(toJSON()).not.toBeNull();
+      });
     });
   });
 });

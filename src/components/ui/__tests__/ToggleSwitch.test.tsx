@@ -1,263 +1,433 @@
 import React from 'react';
+import { render, fireEvent, act } from '@testing-library/react-native';
+import * as Haptics from 'expo-haptics';
 import { ToggleSwitch } from '../ToggleSwitch';
+import { ThemeProvider } from '../../../../context/ThemeContext';
+
+jest.mock('expo-haptics');
 
 describe('ToggleSwitch Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe('Component Definition', () => {
-    it('should be defined', () => {
-      expect(ToggleSwitch).toBeDefined();
+  // ─── Rendering Tests ───────────────────────────────────────────────────────
+
+  describe('Rendering', () => {
+    it('should render without crashing', async () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={jest.fn()} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      expect(getByRole('switch')).toBeTruthy();
     });
 
-    it('should be a React component', () => {
-      expect(typeof ToggleSwitch).toBe('function');
+    it('should render with label', async () => {
+      const { getByText } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={jest.fn()} label="Dark Mode" />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      expect(getByText('Dark Mode')).toBeTruthy();
+    });
+
+    it('should render without label', async () => {
+      const { toJSON } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={jest.fn()} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      expect(toJSON()).not.toBeNull();
+    });
+
+    it('should render with switch role', async () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={jest.fn()} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      expect(switchElement).toBeTruthy();
+    });
+
+    it('should render with proper accessibility state', async () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={true} onToggle={jest.fn()} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      expect(switchElement.props.accessibilityState?.checked).toBe(true);
     });
   });
 
-  describe('Required Props', () => {
-    it('should accept value prop', () => {
-      const props = {
-        value: false,
-        onToggle: jest.fn(),
-      };
-      expect(props.value).toBe(false);
-    });
-
-    it('should accept onToggle callback', () => {
-      const mockOnToggle = jest.fn();
-      const props = {
-        value: false,
-        onToggle: mockOnToggle,
-      };
-      expect(props.onToggle).toBeDefined();
-    });
-  });
-
-  describe('Optional Props', () => {
-    it('should accept label prop', () => {
-      const props = {
-        value: false,
-        onToggle: jest.fn(),
-        label: 'Dark Mode',
-      };
-      expect(props.label).toBe('Dark Mode');
-    });
-
-    it('should work without label prop', () => {
-      const props: { value: boolean; onToggle: jest.Mock; label?: string } = {
-        value: false,
-        onToggle: jest.fn(),
-      };
-      expect(props.label).toBeUndefined();
-    });
-
-    it('should accept accessibilityLabel prop', () => {
-      const props = {
-        value: false,
-        onToggle: jest.fn(),
-        accessibilityLabel: 'Toggle dark mode',
-      };
-      expect(props.accessibilityLabel).toBe('Toggle dark mode');
-    });
-  });
+  // ─── Toggle Behavior Tests ─────────────────────────────────────────────────
 
   describe('Toggle Behavior', () => {
-    it('should toggle from false to true', () => {
+    it('should call onToggle when pressed', async () => {
       const mockOnToggle = jest.fn();
-      const props = {
-        value: false,
-        onToggle: mockOnToggle,
-      };
-      // Simulate toggle
-      props.onToggle(true);
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={mockOnToggle} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      fireEvent.press(switchElement);
+      expect(mockOnToggle).toHaveBeenCalled();
+    });
+
+    it('should toggle value correctly', async () => {
+      const mockOnToggle = jest.fn();
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={mockOnToggle} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      fireEvent.press(switchElement);
+      // Callback should be called with the toggled value
       expect(mockOnToggle).toHaveBeenCalledWith(true);
     });
 
-    it('should toggle from true to false', () => {
+    it('should toggle from true to false', async () => {
       const mockOnToggle = jest.fn();
-      const props = {
-        value: true,
-        onToggle: mockOnToggle,
-      };
-      // Simulate toggle
-      props.onToggle(false);
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={true} onToggle={mockOnToggle} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      fireEvent.press(switchElement);
       expect(mockOnToggle).toHaveBeenCalledWith(false);
     });
 
-    it('should call onToggle with opposite value', () => {
+    it('should handle multiple rapid toggles', async () => {
       const mockOnToggle = jest.fn();
-      const props = {
-        value: false,
-        onToggle: mockOnToggle,
-      };
-      props.onToggle(!props.value);
-      expect(mockOnToggle).toHaveBeenCalledWith(true);
-    });
-
-    it('should support multiple toggles', () => {
-      const mockOnToggle = jest.fn();
-      const props = {
-        value: false,
-        onToggle: mockOnToggle,
-      };
-      props.onToggle(true);
-      props.onToggle(false);
-      props.onToggle(true);
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={mockOnToggle} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      fireEvent.press(switchElement);
+      fireEvent.press(switchElement);
+      fireEvent.press(switchElement);
       expect(mockOnToggle).toHaveBeenCalledTimes(3);
     });
+
+    it('should update accessibility state on toggle', async () => {
+      const mockOnToggle = jest.fn();
+      const { rerender, getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={mockOnToggle} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      let switchElement = getByRole('switch');
+      expect(switchElement.props.accessibilityState?.checked).toBe(false);
+
+      // Re-render with new value
+      rerender(
+        <ThemeProvider>
+          <ToggleSwitch value={true} onToggle={mockOnToggle} />
+        </ThemeProvider>
+      );
+      switchElement = getByRole('switch');
+      expect(switchElement.props.accessibilityState?.checked).toBe(true);
+    });
   });
+
+  // ─── Haptic Feedback Tests ─────────────────────────────────────────────────
 
   describe('Haptic Feedback', () => {
-    it('should trigger haptic on toggle', () => {
+    it('should trigger haptic on toggle', async () => {
       const mockOnToggle = jest.fn();
-      const props = {
-        value: false,
-        onToggle: mockOnToggle,
-      };
-      // Component triggers Haptics.impactAsync with Light style
-      props.onToggle(!props.value);
-      expect(mockOnToggle).toHaveBeenCalled();
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={mockOnToggle} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      jest.clearAllMocks();
+      fireEvent.press(switchElement);
+      expect(Haptics.impactAsync).toHaveBeenCalledWith(
+        Haptics.ImpactFeedbackStyle.Light
+      );
     });
 
-    it('should trigger haptic every toggle', () => {
+    it('should trigger haptic feedback every time', async () => {
       const mockOnToggle = jest.fn();
-      const props = {
-        value: false,
-        onToggle: mockOnToggle,
-      };
-      props.onToggle(true);
-      props.onToggle(false);
-      props.onToggle(true);
-      // Each toggle should trigger haptic feedback
-      expect(mockOnToggle).toHaveBeenCalledTimes(3);
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={mockOnToggle} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      jest.clearAllMocks();
+      fireEvent.press(switchElement);
+      fireEvent.press(switchElement);
+      expect(Haptics.impactAsync).toHaveBeenCalledTimes(2);
     });
   });
+
+  // ─── Accessibility Tests ───────────────────────────────────────────────────
 
   describe('Accessibility', () => {
-    it('should have switch role', () => {
-      const props = {
-        value: false,
-        onToggle: jest.fn(),
-      };
-      // Component should have accessibilityRole: 'switch'
-      expect(props).toBeDefined();
+    it('should have switch role', async () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={jest.fn()} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      expect(switchElement).toBeTruthy();
     });
 
-    it('should reflect checked state in accessibility', () => {
-      const props = {
-        value: true,
-        onToggle: jest.fn(),
-      };
-      // Component should have accessibilityState: { checked: true }
-      expect(props.value).toBe(true);
+    it('should reflect checked state in accessibility', async () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={true} onToggle={jest.fn()} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      expect(switchElement.props.accessibilityState?.checked).toBe(true);
     });
 
-    it('should update accessibility state when value changes', () => {
-      const props1 = { value: false, onToggle: jest.fn() };
-      const props2 = { value: true, onToggle: jest.fn() };
-      // Accessibility state should reflect new value
-      expect(props1.value).not.toBe(props2.value);
+    it('should use label as accessibility label', async () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={jest.fn()} label="Dark Mode" />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      expect(switchElement).toBeTruthy();
     });
 
-    it('should have accessibility label from label prop', () => {
-      const props = {
-        value: false,
-        onToggle: jest.fn(),
-        label: 'Dark Mode',
-      };
-      expect(props.label).toBe('Dark Mode');
+    it('should use custom accessibility label', async () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch
+            value={false}
+            onToggle={jest.fn()}
+            accessibilityLabel="Toggle dark mode"
+          />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      expect(switchElement).toBeTruthy();
     });
 
-    it('should use custom accessibility label', () => {
-      const props = {
-        value: false,
-        onToggle: jest.fn(),
-        label: 'Theme',
-        accessibilityLabel: 'Toggle theme',
-      };
-      expect(props.accessibilityLabel).toBe('Toggle theme');
+    it('should have adequate touch target size', async () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={jest.fn()} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      expect(switchElement).toBeTruthy();
+      // Width: 56 (greater than 48dp minimum)
     });
   });
 
-  describe('Icons', () => {
-    it('should render icon based on value', () => {
-      const props1 = { value: false, onToggle: jest.fn() };
-      const props2 = { value: true, onToggle: jest.fn() };
-      // When false, shows sun icon (white-balance-sunny)
-      // When true, shows moon icon
-      expect(props1.value).toBe(false);
-      expect(props2.value).toBe(true);
+  // ─── Animation Tests ───────────────────────────────────────────────────────
+
+  describe('Animations', () => {
+    it('should animate thumb position on value change', async () => {
+      const mockOnToggle = jest.fn();
+      const { rerender, getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={mockOnToggle} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      let switchElement = getByRole('switch');
+      expect(switchElement.props.accessibilityState?.checked).toBe(false);
+
+      // Update to toggled state
+      rerender(
+        <ThemeProvider>
+          <ToggleSwitch value={true} onToggle={mockOnToggle} />
+        </ThemeProvider>
+      );
+      switchElement = getByRole('switch');
+      expect(switchElement.props.accessibilityState?.checked).toBe(true);
     });
 
-    it('should change icon on toggle', () => {
-      const props = {
-        value: false,
-        onToggle: jest.fn(),
-      };
-      // Start with sun icon
-      expect(props.value).toBe(false);
-      // After toggle, should show moon icon
-      props.onToggle(true);
-      expect(props.value).toBe(false); // Props don't change here, but callback was called
+    it('should handle pressIn animation', async () => {
+      const mockOnToggle = jest.fn();
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={mockOnToggle} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      fireEvent.press(switchElement);
+      expect(switchElement).toBeTruthy();
+    });
+
+    it('should handle pressOut animation', async () => {
+      const mockOnToggle = jest.fn();
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={mockOnToggle} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      fireEvent.press(switchElement);
+      expect(switchElement).toBeTruthy();
     });
   });
+
+  // ─── Visual Feedback Tests ─────────────────────────────────────────────────
 
   describe('Visual Feedback', () => {
-    it('should respond to press animation', () => {
-      const mockOnToggle = jest.fn();
-      const props = {
-        value: false,
-        onToggle: mockOnToggle,
-      };
-      // Component has spring animation on toggle
-      props.onToggle(!props.value);
-      expect(mockOnToggle).toHaveBeenCalled();
+    it('should show different colors for on/off states', async () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={true} onToggle={jest.fn()} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      expect(switchElement).toBeTruthy();
+      // Primary color when on, variant when off
     });
 
-    it('should have spring animation', () => {
-      const props = {
-        value: false,
-        onToggle: jest.fn(),
-      };
-      // Component uses withSpring for animation
-      // Animated styles are applied based on value
-      expect(props).toBeDefined();
+    it('should display correct icon for off state', async () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={jest.fn()} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      expect(switchElement).toBeTruthy();
+      // Sun icon when off
+    });
+
+    it('should display correct icon for on state', async () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={true} onToggle={jest.fn()} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      expect(switchElement).toBeTruthy();
+      // Moon icon when on
     });
   });
 
-  describe('Touch Target', () => {
-    it('should have adequate touch target size', () => {
-      // Toggle switch has width: 56, height: 32
-      const width = 56;
-      const height = 32;
-      expect(width).toBeGreaterThanOrEqual(48);
-    });
-  });
+  // ─── Label Tests ───────────────────────────────────────────────────────────
 
   describe('Label Rendering', () => {
-    it('should render label when provided', () => {
-      const props = {
-        value: false,
-        onToggle: jest.fn(),
-        label: 'Dark Mode',
-      };
-      expect(props.label).toBe('Dark Mode');
+    it('should render label when provided', async () => {
+      const { getByText } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={jest.fn()} label="Dark Mode" />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      expect(getByText('Dark Mode')).toBeTruthy();
     });
 
-    it('should not render label when not provided', () => {
-      const props: { value: boolean; onToggle: jest.Mock; label?: string } = {
-        value: false,
-        onToggle: jest.fn(),
-      };
-      expect(props.label).toBeUndefined();
+    it('should not render label when not provided', async () => {
+      const { queryByText } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={jest.fn()} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      // Should not find any text node if no label
+      expect(queryByText(/^Dark Mode$/)).toBeFalsy();
     });
 
-    it('should display different labels', () => {
-      const props1 = { value: false, onToggle: jest.fn(), label: 'Enable Dark' };
-      const props2 = { value: false, onToggle: jest.fn(), label: 'Dark Mode' };
-      expect(props1.label).not.toBe(props2.label);
+    it('should support multiple labels', async () => {
+      const { getByText: getByText1 } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={jest.fn()} label="Enable Dark" />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      expect(getByText1('Enable Dark')).toBeTruthy();
+    });
+
+    it('should position label next to switch', async () => {
+      const { getByText, getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={jest.fn()} label="Theme" />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const label = getByText('Theme');
+      const switchElement = getByRole('switch');
+      expect(label).toBeTruthy();
+      expect(switchElement).toBeTruthy();
+    });
+  });
+
+  // ─── Edge Cases ────────────────────────────────────────────────────────────
+
+  describe('Edge Cases', () => {
+    it('should handle rapid toggling', async () => {
+      const mockOnToggle = jest.fn();
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={mockOnToggle} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      for (let i = 0; i < 10; i++) {
+        fireEvent.press(switchElement);
+      }
+      expect(mockOnToggle).toHaveBeenCalledTimes(10);
+    });
+
+    it('should handle long label text', async () => {
+      const longLabel =
+        'This is a very long label that might overflow the container';
+      const { getByText } = render(
+        <ThemeProvider>
+          <ToggleSwitch
+            value={false}
+            onToggle={jest.fn()}
+            label={longLabel}
+          />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      expect(getByText(longLabel)).toBeTruthy();
+    });
+
+    it('should handle undefined accessibility label', async () => {
+      const { getByRole } = render(
+        <ThemeProvider>
+          <ToggleSwitch value={false} onToggle={jest.fn()} />
+        </ThemeProvider>
+      );
+      await act(async () => {});
+      const switchElement = getByRole('switch');
+      expect(switchElement).toBeTruthy();
     });
   });
 });

@@ -10,13 +10,17 @@ import {
 } from "react-native";
 import MapView, { Marker, Callout } from "react-native-maps";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { StackScreenProps } from "@react-navigation/stack";
 
 import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import { FLAG_ASSETS } from "../utils/flagAssets";
+import { logger } from "../utils/logger";
+import { triggerLightHaptic } from "../utils/haptics";
+import { getLocalizedCountryName } from "../utils/countries";
+import type { RootStackParamList } from "../types/navigation";
 
 const { width, height } = Dimensions.get("window");
 
@@ -57,22 +61,24 @@ interface CountryData {
   lng?: number;
 }
 
-interface RouteParams {
-  country?: CountryData;
-  latitude?: number;
-  longitude?: number;
-  countryName?: string;
-}
+type MapScreenProps = StackScreenProps<RootStackParamList, "Map">;
 
-interface MapScreenProps {
-  route: {
-    params?: RouteParams;
-  };
-  navigation: any;
-}
-
-const getInitialRouteData = (route: MapScreenProps["route"], fallbackName: string) => {
-  const country = route?.params?.country;
+const getInitialRouteData = (
+  route: MapScreenProps["route"],
+  fallbackName: string,
+  language: string
+) => {
+  const rawCountry = route?.params?.country;
+  const country: CountryData | undefined = rawCountry
+    ? {
+        name: getLocalizedCountryName(rawCountry, language) ?? fallbackName,
+        capital: rawCountry.capital,
+        region: rawCountry.region,
+        flagPath: rawCountry.flagPath,
+        lat: rawCountry.lat,
+        lng: rawCountry.lng,
+      }
+    : undefined;
   const latitude = route?.params?.latitude ?? country?.lat ?? 51.9194;
   const longitude = route?.params?.longitude ?? country?.lng ?? 19.1451;
   const countryName =
@@ -164,7 +170,7 @@ const FAB = ({
   theme: any;
 }) => {
   const handlePress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    triggerLightHaptic();
     onPress();
   };
 
@@ -230,13 +236,14 @@ const TopBar = ({
 
 const MapScreen: React.FC<MapScreenProps> = ({ route, navigation }) => {
   const { theme } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
   const mapRef = useRef<MapView>(null);
 
   const { country, latitude, longitude, countryName } = getInitialRouteData(
     route,
-    t("worldMap")
+    t("worldMap"),
+    i18n.language
   );
 
   const initialRegion = useMemo(

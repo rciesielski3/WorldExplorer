@@ -11,68 +11,60 @@ import {
 import MapView, { Marker } from "react-native-maps";
 import { useTranslation } from "react-i18next";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { StackScreenProps } from "@react-navigation/stack";
 
-import { ThemeContext } from "../context/ThemeContext";
+import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import AdBanner from "../src/components/AdBanner";
 import { FLAG_ASSETS } from "../utils/flagAssets";
+import {
+  formatNumber,
+  formatPopulation,
+  formatCurrencies,
+  formatLanguages,
+} from "../utils/formatters";
+import { type Country } from "../utils/countries";
+import type { RootStackParamList } from "../types/navigation";
 
-const DETAIL_TABS = [
+interface Coordinates {
+  latitude: number;
+  longitude: number;
+}
+
+interface Stat {
+  label: string;
+  value: string;
+}
+
+interface DetailTab {
+  key: string;
+  labelKey: string;
+}
+
+type CountryDetailsScreenProps = StackScreenProps<
+  RootStackParamList,
+  "CountryDetails"
+>;
+
+const DETAIL_TABS: DetailTab[] = [
   { key: "info", labelKey: "countryInfo" },
   { key: "stats", labelKey: "countryStats" },
   { key: "map", labelKey: "countryMap" },
 ];
 
-const formatNumber = (value) => {
-  if (!Number.isFinite(value)) {
-    return null;
-  }
-
-  return value.toLocaleString();
-};
-
-const formatPopulation = (population) => {
-  if (!Number.isFinite(population)) {
-    return null;
-  }
-
-  if (population >= 1_000_000) {
-    return `${(population / 1_000_000).toFixed(1)}M`;
-  }
-
-  if (population >= 1_000) {
-    return `${Math.round(population / 1_000)}K`;
-  }
-
-  return population.toLocaleString();
-};
-
-const formatCurrencies = (currencies) => {
-  if (!currencies?.length) {
-    return null;
-  }
-
-  return currencies.join(", ");
-};
-
-const formatLanguages = (languages) => {
-  if (!languages?.length) {
-    return null;
-  }
-
-  return languages.join(", ");
-};
-
-const getCoordinates = (country) => ({
+const getCoordinates = (country: Country | undefined): Coordinates => ({
   latitude: country?.lat ?? 0,
   longitude: country?.lng ?? 0,
 });
 
-const CountryDetailsScreen = ({ route, navigation }) => {
-  const { theme } = React.useContext(ThemeContext);
+const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
+  route,
+  navigation,
+}) => {
+  const { theme } = useTheme();
   const { t } = useTranslation();
   const styles = getStyles(theme);
-  const [activeTab, setActiveTab] = React.useState("info");
+  const [activeTab, setActiveTab] = React.useState<string>("info");
 
   const { country } = route.params;
   const coordinates = getCoordinates(country);
@@ -85,14 +77,14 @@ const CountryDetailsScreen = ({ route, navigation }) => {
     .filter(Boolean)
     .join(" · ");
 
-  const infoStats = [
+  const infoStats: Stat[] = [
     { label: t("capital"), value: capital },
     { label: t("population"), value: population },
     { label: t("currency"), value: currencies },
     { label: t("languages"), value: languages },
   ];
 
-  const extendedStats = [
+  const extendedStats: Stat[] = [
     { label: t("region"), value: country.region ?? t("noData") },
     { label: t("subregion"), value: country.subregion ?? t("noData") },
     {
@@ -109,7 +101,7 @@ const CountryDetailsScreen = ({ route, navigation }) => {
     },
   ];
 
-  const handleShowOnMap = () => {
+  const handleShowOnMap = (): void => {
     navigation.navigate("Map", {
       latitude: coordinates.latitude,
       longitude: coordinates.longitude,
@@ -118,7 +110,7 @@ const CountryDetailsScreen = ({ route, navigation }) => {
     });
   };
 
-  const renderStatGrid = (items) => (
+  const renderStatGrid = (items: Stat[]): React.JSX.Element => (
     <View style={styles.countryStatGridContainer}>
       <View style={styles.countryStatGrid}>
         {items.map((item) => (
@@ -135,12 +127,16 @@ const CountryDetailsScreen = ({ route, navigation }) => {
     </View>
   );
 
-  const renderInfoCard = (title, value, icon) => (
+  const renderInfoCard = (
+    title: string,
+    value: string,
+    icon?: string
+  ): React.JSX.Element => (
     <View style={styles.countryInfoCard}>
       <View style={styles.countryInfoCardHeader}>
         {icon && (
           <MaterialCommunityIcons
-            name={icon}
+            name={icon as any}
             size={20}
             color={theme.colors.button}
             style={styles.countryInfoCardIcon}
@@ -152,11 +148,11 @@ const CountryDetailsScreen = ({ route, navigation }) => {
     </View>
   );
 
-  const handleNavigateToSettings = () => {
+  const handleNavigateToSettings = (): void => {
     navigation.navigate("Settings");
   };
 
-  const handleNavigateToQuiz = () => {
+  const handleNavigateToQuiz = (): void => {
     navigation.navigate("Quiz", { country });
   };
 
@@ -259,7 +255,7 @@ const CountryDetailsScreen = ({ route, navigation }) => {
               {renderInfoCard(
                 t("area"),
                 `${formatNumber(country.area) ?? t("noData")} km²`,
-                "map",
+                "map"
               )}
               {renderInfoCard(t("languages"), languages, "translate")}
             </View>

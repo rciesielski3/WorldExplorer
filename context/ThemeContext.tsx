@@ -10,6 +10,8 @@ import React, {
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { lightTheme, darkTheme, type Theme } from '../theme/tokens';
+import { logger } from '../utils/logger';
+import { SplashScreen } from '../components/SplashScreen';
 
 // ─── Storage key ───────────────────────────────────────────────────────────
 
@@ -66,7 +68,11 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
         }
       } catch (err) {
         if (!mounted) return;
-        console.warn('[ThemeProvider] Failed to load theme preference:', err);
+        logger.warn('Failed to load theme preference from AsyncStorage', {
+          context: 'ThemeProvider',
+          timestamp: new Date().toISOString(),
+          metadata: { error: err instanceof Error ? err.message : String(err) },
+        });
         setIsDarkMode(systemScheme === 'dark');
       } finally {
         if (mounted) setIsLoading(false);
@@ -94,7 +100,14 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     try {
       await AsyncStorage.setItem(THEME_STORAGE_KEY, next ? 'dark' : 'light');
     } catch (err) {
-      console.warn('[ThemeProvider] Failed to save theme preference:', err);
+      logger.warn('Failed to save theme preference to AsyncStorage', {
+        context: 'ThemeProvider',
+        timestamp: new Date().toISOString(),
+        metadata: {
+          preference: next ? 'dark' : 'light',
+          error: err instanceof Error ? err.message : String(err),
+        },
+      });
     }
   }, [isDarkMode]);
 
@@ -117,9 +130,9 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     isLoading,
   };
 
-  // Render nothing while loading to prevent theme flash
+  // Display splash screen while loading to prevent theme flash
   if (isLoading) {
-    return null;
+    return <SplashScreen />;
   }
 
   return (

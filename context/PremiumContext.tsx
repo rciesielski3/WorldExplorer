@@ -1,6 +1,12 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { Platform } from "react-native";
-import Purchases, { LOG_LEVEL } from "react-native-purchases";
+import Purchases, {
+  LOG_LEVEL,
+  PurchasesPackage,
+  CustomerInfo,
+  PurchasesOfferings,
+  PurchasesError,
+} from "react-native-purchases";
 
 const PREMIUM_ENABLED = process.env.EXPO_PUBLIC_PREMIUM_ENABLED === "true";
 const PREMIUM_ENTITLEMENT_ID =
@@ -9,12 +15,27 @@ const PREMIUM_PRODUCT_ID =
   process.env.EXPO_PUBLIC_REVENUECAT_PREMIUM_PRODUCT_ID ||
   "worldexplorer_premium_lifetime";
 
-const REVENUECAT_API_KEYS = {
+const REVENUECAT_API_KEYS: Record<string, string | undefined> = {
   android: process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY,
   ios: process.env.EXPO_PUBLIC_REVENUECAT_IOS_API_KEY,
 };
 
-const PremiumContext = React.createContext({
+interface PremiumContextType {
+  isPremium: boolean;
+  isConfigured: boolean;
+  isEnabled: boolean;
+  isLoading: boolean;
+  isPurchasing: boolean;
+  isRestoring: boolean;
+  error: string | null;
+  premiumPackage: PurchasesPackage | null;
+  purchasePremium: () => Promise<boolean>;
+  refreshCustomerInfo: () => Promise<void>;
+  refreshOfferings?: () => Promise<void>;
+  restorePurchases: () => Promise<boolean>;
+}
+
+const PremiumContext = React.createContext<PremiumContextType>({
   isPremium: false,
   isConfigured: false,
   isEnabled: false,
@@ -28,17 +49,19 @@ const PremiumContext = React.createContext({
   restorePurchases: async () => false,
 });
 
-const hasPremiumEntitlement = (customerInfo) =>
+const hasPremiumEntitlement = (customerInfo: CustomerInfo): boolean =>
   Boolean(customerInfo?.entitlements?.active?.[PREMIUM_ENTITLEMENT_ID]);
 
-const getPremiumPackage = (offerings) => {
+const getPremiumPackage = (
+  offerings: PurchasesOfferings | null | undefined
+): PurchasesPackage | null => {
   const currentOffering = offerings?.current;
   const availablePackages = currentOffering?.availablePackages || [];
 
   return (
     availablePackages.find(
-      (offeringPackage) =>
-        offeringPackage?.storeProduct?.identifier === PREMIUM_PRODUCT_ID
+      (offeringPackage: PurchasesPackage) =>
+        offeringPackage?.product?.identifier === PREMIUM_PRODUCT_ID
     ) ||
     currentOffering?.lifetime ||
     availablePackages[0] ||
@@ -46,7 +69,18 @@ const getPremiumPackage = (offerings) => {
   );
 };
 
-const getRevenueCatApiKey = () => {
+const isPurchasesError = (error: unknown): error is PurchasesError =>
+  typeof error === "object" && error !== null && "message" in error;
+
+const getErrorMessage = (error: unknown, fallback: string): string =>
+  isPurchasesError(error) && typeof error.message === "string" && error.message
+    ? error.message
+    : fallback;
+
+const isUserCancelledError = (error: unknown): boolean =>
+  isPurchasesError(error) && Boolean(error.userCancelled);
+
+const getRevenueCatApiKey = (): string | undefined => {
   if (Platform.OS !== "android" && Platform.OS !== "ios") {
     return undefined;
   }
@@ -54,16 +88,20 @@ const getRevenueCatApiKey = () => {
   return REVENUECAT_API_KEYS[Platform.OS];
 };
 
-export const PremiumProvider = ({ children }) => {
+interface PremiumProviderProps {
+  children: ReactNode;
+}
+
+export const PremiumProvider: React.FC<PremiumProviderProps> = ({ children }) => {
   const [isPremium, setIsPremium] = React.useState(false);
   const [isConfigured, setIsConfigured] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(PREMIUM_ENABLED);
   const [isPurchasing, setIsPurchasing] = React.useState(false);
   const [isRestoring, setIsRestoring] = React.useState(false);
-  const [premiumPackage, setPremiumPackage] = React.useState(null);
-  const [error, setError] = React.useState(null);
+  const [premiumPackage, setPremiumPackage] = React.useState<PurchasesPackage | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
 
-  const applyCustomerInfo = React.useCallback((customerInfo) => {
+  const applyCustomerInfo = React.useCallback((customerInfo: CustomerInfo) => {
     setIsPremium(hasPremiumEntitlement(customerInfo));
   }, []);
 
@@ -76,9 +114,9 @@ export const PremiumProvider = ({ children }) => {
       const customerInfo = await Purchases.getCustomerInfo();
       applyCustomerInfo(customerInfo);
       setError(null);
-    } catch (refreshError) {
+    } catch (refreshError: unknown) {
       setError(
-        refreshError?.message || "RevenueCat customer info refresh failed."
+        getErrorMessage(refreshError, "RevenueCat customer info refresh failed.")
       );
     }
   }, [applyCustomerInfo, isConfigured]);
@@ -92,9 +130,9 @@ export const PremiumProvider = ({ children }) => {
       const offerings = await Purchases.getOfferings();
       setPremiumPackage(getPremiumPackage(offerings));
       setError(null);
-    } catch (offeringsError) {
+    } catch (offeringsError: unknown) {
       setPremiumPackage(null);
-      setError(offeringsError?.message || "RevenueCat offerings load failed.");
+      setError(getErrorMessage(offeringsError, "RevenueCat offerings load failed."));
     }
   }, [isConfigured]);
 
@@ -118,9 +156,9 @@ export const PremiumProvider = ({ children }) => {
       applyCustomerInfo(customerInfo);
       setError(null);
       return hasPremiumEntitlement(customerInfo);
-    } catch (purchaseError) {
-      if (!purchaseError?.userCancelled) {
-        setError(purchaseError?.message || "Premium purchase failed.");
+    } catch (purchaseError: unknown) {
+      if (!isUserCancelledError(purchaseError)) {
+        setError(getErrorMessage(purchaseError, "Premium purchase failed."));
       }
 
       return false;
@@ -144,8 +182,8 @@ export const PremiumProvider = ({ children }) => {
       applyCustomerInfo(customerInfo);
       setError(null);
       return hasPremiumEntitlement(customerInfo);
-    } catch (restoreError) {
-      setError(restoreError?.message || "Premium restore failed.");
+    } catch (restoreError: unknown) {
+      setError(getErrorMessage(restoreError, "Premium restore failed."));
       return false;
     } finally {
       setIsRestoring(false);
@@ -168,7 +206,7 @@ export const PremiumProvider = ({ children }) => {
       return undefined;
     }
 
-    const customerInfoListener = (customerInfo) => {
+    const customerInfoListener = (customerInfo: CustomerInfo) => {
       if (isMounted) {
         applyCustomerInfo(customerInfo);
       }
@@ -194,17 +232,17 @@ export const PremiumProvider = ({ children }) => {
           if (isMounted) {
             setPremiumPackage(getPremiumPackage(offerings));
           }
-        } catch (offeringsError) {
+        } catch (offeringsError: unknown) {
           if (isMounted) {
             setPremiumPackage(null);
             setError(
-              offeringsError?.message || "RevenueCat offerings load failed."
+              getErrorMessage(offeringsError, "RevenueCat offerings load failed.")
             );
           }
         }
-      } catch (configurationError) {
+      } catch (configurationError: unknown) {
         if (isMounted) {
-          setError(configurationError?.message || "RevenueCat setup failed.");
+          setError(getErrorMessage(configurationError, "RevenueCat setup failed."));
         }
       } finally {
         if (isMounted) {

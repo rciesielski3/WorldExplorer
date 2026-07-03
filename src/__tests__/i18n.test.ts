@@ -3,7 +3,12 @@ import path from 'path';
 
 describe('i18n Completeness', () => {
   const localesDir = path.join(__dirname, '../../locales');
-  const locales = ['en', 'es', 'fr', 'de', 'pl'];
+  // Core locales
+  const coreLocales = ['en', 'es', 'fr', 'de', 'pl'];
+  // Additional supported locales (if they exist)
+  const additionalLocales = ['pt', 'it'];
+  const allLocales = [...coreLocales, ...additionalLocales];
+  const locales = coreLocales;
 
   describe('Locale Files Existence', () => {
     it('should have all required locale files', () => {
@@ -40,7 +45,7 @@ describe('i18n Completeness', () => {
   });
 
   describe('Key Consistency Across Locales', () => {
-    let localeData: { [key: string]: Record<string, any> } = {};
+    let localeData: { [key: string]: Record<string, string> } = {};
 
     beforeAll(() => {
       locales.forEach(locale => {
@@ -111,7 +116,7 @@ describe('i18n Completeness', () => {
   });
 
   describe('Key Tokens Used in App', () => {
-    let localeData: { [key: string]: Record<string, any> } = {};
+    let localeData: { [key: string]: Record<string, string> } = {};
 
     beforeAll(() => {
       locales.forEach(locale => {
@@ -253,7 +258,7 @@ describe('i18n Completeness', () => {
   });
 
   describe('Translation Content', () => {
-    let localeData: { [key: string]: Record<string, any> } = {};
+    let localeData: { [key: string]: Record<string, string> } = {};
 
     beforeAll(() => {
       locales.forEach(locale => {
@@ -310,7 +315,7 @@ describe('i18n Completeness', () => {
   });
 
   describe('Key Naming Conventions', () => {
-    let localeData: { [key: string]: Record<string, any> } = {};
+    let localeData: { [key: string]: Record<string, string> } = {};
 
     beforeAll(() => {
       const filePath = path.join(localesDir, 'en.json');
@@ -333,6 +338,161 @@ describe('i18n Completeness', () => {
     it('should not have special characters in keys', () => {
       Object.keys(localeData.en).forEach(key => {
         expect(/^[a-zA-Z0-9_]*$/.test(key)).toBe(true);
+      });
+    });
+  });
+
+  describe('Additional Locales - Portuguese (if exists)', () => {
+    let ptData: Record<string, string> | null = null;
+    let enData: Record<string, string> | null = null;
+
+    beforeAll(() => {
+      const enPath = path.join(localesDir, 'en.json');
+      const enContent = fs.readFileSync(enPath, 'utf-8');
+      enData = JSON.parse(enContent);
+
+      const ptPath = path.join(localesDir, 'pt.json');
+      if (fs.existsSync(ptPath)) {
+        const ptContent = fs.readFileSync(ptPath, 'utf-8');
+        ptData = JSON.parse(ptContent);
+      }
+    });
+
+    it('should have Portuguese locale file if PT localization is planned', () => {
+      const ptPath = path.join(localesDir, 'pt.json');
+      // Optional: Portuguese may not exist yet
+      if (fs.existsSync(ptPath)) {
+        expect(ptData).toBeDefined();
+      }
+    });
+
+    it('should have all keys in Portuguese if locale exists', () => {
+      if (ptData && enData) {
+        const enKeys = Object.keys(enData).sort();
+        const ptKeys = Object.keys(ptData).sort();
+        expect(ptKeys).toEqual(enKeys);
+      }
+    });
+
+    it('should have non-empty Portuguese translations', () => {
+      if (ptData) {
+        Object.entries(ptData).forEach(([key, value]) => {
+          expect(typeof value).toBe('string');
+          expect(value).toBeTruthy();
+        });
+      }
+    });
+
+    it('should preserve placeholders in Portuguese', () => {
+      if (ptData && enData) {
+        Object.entries(enData).forEach(([key, enValue]) => {
+          if ((enValue as string).includes('{{')) {
+            if (!ptData) return;
+            const ptValue = ptData[key];
+            expect(ptValue).toContain('{{');
+          }
+        });
+      }
+    });
+  });
+
+  describe('Additional Locales - Italian (if exists)', () => {
+    let itData: Record<string, string> | null = null;
+    let enData: Record<string, string> | null = null;
+
+    beforeAll(() => {
+      const enPath = path.join(localesDir, 'en.json');
+      const enContent = fs.readFileSync(enPath, 'utf-8');
+      enData = JSON.parse(enContent);
+
+      const itPath = path.join(localesDir, 'it.json');
+      if (fs.existsSync(itPath)) {
+        const itContent = fs.readFileSync(itPath, 'utf-8');
+        itData = JSON.parse(itContent);
+      }
+    });
+
+    it('should have Italian locale file if IT localization is planned', () => {
+      const itPath = path.join(localesDir, 'it.json');
+      // Optional: Italian may not exist yet
+      if (fs.existsSync(itPath)) {
+        expect(itData).toBeDefined();
+      }
+    });
+
+    it('should have all keys in Italian if locale exists', () => {
+      if (itData && enData) {
+        const enKeys = Object.keys(enData).sort();
+        const itKeys = Object.keys(itData).sort();
+        expect(itKeys).toEqual(enKeys);
+      }
+    });
+
+    it('should have non-empty Italian translations', () => {
+      if (itData) {
+        Object.entries(itData).forEach(([key, value]) => {
+          expect(typeof value).toBe('string');
+          expect(value).toBeTruthy();
+        });
+      }
+    });
+
+    it('should preserve placeholders in Italian', () => {
+      if (itData && enData) {
+        Object.entries(enData).forEach(([key, enValue]) => {
+          if ((enValue as string).includes('{{')) {
+            if (!itData) return;
+            const itValue = itData[key];
+            expect(itValue).toContain('{{');
+          }
+        });
+      }
+    });
+  });
+
+  describe('All Available Locales', () => {
+    it('should have at least 5 core locales', () => {
+      const requiredLocales = ['en', 'es', 'fr', 'de', 'pl'];
+      requiredLocales.forEach(locale => {
+        const filePath = path.join(localesDir, `${locale}.json`);
+        expect(fs.existsSync(filePath)).toBe(true);
+      });
+    });
+
+    it('should have consistent structure across all locales', () => {
+      const allLocalesInDir = fs
+        .readdirSync(localesDir)
+        .filter(file => file.endsWith('.json'))
+        .map(file => file.replace('.json', ''));
+
+      const firstLocale = allLocalesInDir[0];
+      const firstPath = path.join(localesDir, `${firstLocale}.json`);
+      const firstContent = fs.readFileSync(firstPath, 'utf-8');
+      const firstData = JSON.parse(firstContent);
+      const firstKeys = Object.keys(firstData).sort();
+
+      allLocalesInDir.forEach(locale => {
+        const filePath = path.join(localesDir, `${locale}.json`);
+        const content = fs.readFileSync(filePath, 'utf-8');
+        const data = JSON.parse(content);
+        const keys = Object.keys(data).sort();
+
+        expect(keys).toEqual(firstKeys);
+      });
+    });
+
+    it('should validate all locale files are valid JSON', () => {
+      const allLocalesInDir = fs
+        .readdirSync(localesDir)
+        .filter(file => file.endsWith('.json'));
+
+      allLocalesInDir.forEach(file => {
+        const filePath = path.join(localesDir, file);
+        const content = fs.readFileSync(filePath, 'utf-8');
+
+        expect(() => {
+          JSON.parse(content);
+        }).not.toThrow();
       });
     });
   });

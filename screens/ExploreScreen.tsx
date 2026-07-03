@@ -11,18 +11,31 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { StackScreenProps } from "@react-navigation/stack";
 
-import { ThemeContext } from "../context/ThemeContext";
+import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import AdBanner from "../src/components/AdBanner";
 import {
   fetchCountries,
   getLocalizedCountryName,
   getSearchableCountryText,
+  type Country,
 } from "../utils/countries";
 import { FLAG_ASSETS } from "../utils/flagAssets";
+import { formatPopulation } from "../utils/formatters";
+import { logger } from "../utils/logger";
+import type { RootStackParamList } from "../types/navigation";
 
-const REGION_FILTERS = [
+type ExploreScreenProps = StackScreenProps<RootStackParamList, "Explore">;
+
+interface RegionFilter {
+  key: string;
+  labelKey: string;
+  value: string | null;
+}
+
+const REGION_FILTERS: RegionFilter[] = [
   { key: "all", labelKey: "allCountries", value: null },
   { key: "europe", labelKey: "regionEurope", value: "Europe" },
   { key: "asia", labelKey: "regionAsia", value: "Asia" },
@@ -31,38 +44,28 @@ const REGION_FILTERS = [
   { key: "oceania", labelKey: "regionOceania", value: "Oceania" },
 ];
 
-const formatPopulation = (population) => {
-  if (!Number.isFinite(population)) {
-    return null;
-  }
-
-  if (population >= 1_000_000) {
-    return `${Math.round(population / 1_000_000)}M`;
-  }
-
-  if (population >= 1_000) {
-    return `${Math.round(population / 1_000)}K`;
-  }
-
-  return population.toLocaleString();
-};
-
-const ExploreScreen = ({ navigation }) => {
-  const [countries, setCountries] = React.useState([]);
-  const [searchQuery, setSearchQuery] = React.useState("");
-  const [selectedRegion, setSelectedRegion] = React.useState(null);
-  const [loading, setLoading] = React.useState(true);
-  const { theme } = React.useContext(ThemeContext);
+const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
+  const [countries, setCountries] = React.useState<Country[]>([]);
+  const [searchQuery, setSearchQuery] = React.useState<string>("");
+  const [selectedRegion, setSelectedRegion] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const { theme } = useTheme();
 
   const { t, i18n } = useTranslation();
   const styles = getStyles(theme);
 
   React.useEffect(() => {
     fetchCountries()
-      .then((countriesData) => {
+      .then((countriesData: Country[]) => {
         setCountries(countriesData);
       })
-      .catch((error) => console.error("Error fetching countries:", error))
+      .catch((error: Error) => {
+        logger.error("Error fetching countries", {
+          context: "ExploreScreen",
+          timestamp: new Date().toISOString(),
+          metadata: { error: error?.message },
+        });
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -78,7 +81,7 @@ const ExploreScreen = ({ navigation }) => {
     });
   }, [countries, searchQuery, selectedRegion]);
 
-  const renderSkeletonRows = () => (
+  const renderSkeletonRows = (): React.JSX.Element => (
     <View>
       {Array.from({ length: 7 }).map((_, index) => (
         <View key={index} style={styles.skeletonRow}>
@@ -92,7 +95,7 @@ const ExploreScreen = ({ navigation }) => {
     </View>
   );
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item }: { item: Country }): React.JSX.Element => {
     const metadata = [
       item.capital,
       item.region,

@@ -6,11 +6,12 @@ import {
   TouchableOpacity,
   Linking,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import * as Haptics from 'expo-haptics';
 import packageJson from '../package.json';
 
 import { useTheme } from '../context/ThemeContext';
@@ -21,6 +22,8 @@ import { TopBar } from '../src/components/Navigation/TopBar';
 import { FloatingNavBar } from '../src/components/Navigation/FloatingNavBar';
 import { commonTokens } from '../theme/tokens';
 import { Picker } from '@react-native-picker/picker';
+import { logger } from '../utils/logger';
+import { triggerLightHaptic, triggerMediumHaptic } from '../utils/haptics';
 
 const CONTACT_URL = 'https://rciesielski.dev/contact';
 
@@ -57,32 +60,66 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
   const handleLanguageChange = (value: string) => {
     setLanguage(value);
     i18n.changeLanguage(value);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    triggerLightHaptic();
   };
 
   const handleThemeToggle = async () => {
-    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    await triggerLightHaptic();
     theme.toggleTheme();
   };
 
   const handleSoundToggle = () => {
     setSoundEnabled(!soundEnabled);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    triggerLightHaptic();
   };
 
   const handleHapticsToggle = () => {
     setHapticsEnabled(!hapticsEnabled);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    triggerLightHaptic();
   };
 
   const handleResetData = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    // TODO: Implement data reset functionality
-    alert(t('resetData'));
+    triggerMediumHaptic();
+    Alert.alert(
+      t('resetData'),
+      'This will clear all app data including preferences. This cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {
+            // User cancelled reset
+          },
+          style: 'cancel',
+        },
+        {
+          text: 'Reset',
+          onPress: async () => {
+            try {
+              // Clear all stored data
+              await AsyncStorage.clear();
+              Alert.alert('Success', 'All app data has been cleared. Please restart the app.');
+              // In a production app, you might reload the app here using expo-updates
+              // or similar reload mechanism
+            } catch (error) {
+              logger.error('Failed to reset app data', {
+                context: 'SettingsScreen',
+                timestamp: new Date().toISOString(),
+                metadata: {
+                  action: 'resetData',
+                  error: error instanceof Error ? error.message : String(error),
+                },
+              });
+              Alert.alert('Error', 'Failed to reset app data. Please try again.');
+            }
+          },
+          style: 'destructive',
+        },
+      ]
+    );
   };
 
   const handleContactPress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    triggerLightHaptic();
     Linking.openURL(CONTACT_URL);
   };
 

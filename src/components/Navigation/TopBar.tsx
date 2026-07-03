@@ -13,6 +13,7 @@ interface TopBarProps {
   showBack?: boolean;
   onBackPress?: () => void;
   gradientColors?: [string, string];
+  testID?: string;
 }
 
 export function TopBar({
@@ -22,6 +23,7 @@ export function TopBar({
   showBack = false,
   onBackPress,
   gradientColors,
+  testID,
 }: TopBarProps) {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
@@ -38,6 +40,7 @@ export function TopBar({
 
   return (
     <View
+      testID={testID}
       style={{
         paddingTop: insets.top,
         paddingHorizontal: commonTokens.spacing.md,
@@ -52,7 +55,12 @@ export function TopBar({
       {/* Left Content */}
       <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
         {showBack && (
-          <Pressable onPress={handleBackPress} style={{ marginRight: commonTokens.spacing.md }}>
+          <Pressable
+            onPress={handleBackPress}
+            style={{ marginRight: commonTokens.spacing.md }}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+          >
             <MaterialCommunityIcons
               name="arrow-left"
               size={24}
@@ -74,7 +82,12 @@ export function TopBar({
 
       {/* Right Content */}
       {onSettingsPress && (
-        <Pressable onPress={handleSettingsPress} hitSlop={8}>
+        <Pressable
+          onPress={handleSettingsPress}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel="Settings"
+        >
           <MaterialCommunityIcons
             name="cog"
             size={24}
