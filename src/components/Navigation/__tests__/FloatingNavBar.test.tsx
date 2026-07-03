@@ -1,7 +1,16 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
+import { render, fireEvent, act } from '@testing-library/react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { FloatingNavBar } from '../FloatingNavBar';
 import { ThemeProvider } from '../../../../context/ThemeContext';
+
+// FloatingNavBar calls useSafeAreaInsets(), which throws unless there is a
+// SafeAreaProvider ancestor, so every render is wrapped with one and given
+// fixed test metrics (no native measurement is available under Jest).
+const TEST_SAFE_AREA_METRICS = {
+  frame: { x: 0, y: 0, width: 375, height: 812 },
+  insets: { top: 44, left: 0, right: 0, bottom: 34 },
+};
 
 interface NavItem {
   name: string;
@@ -15,12 +24,6 @@ interface FloatingNavBarProps {
   items: NavItem[];
   testID?: string;
 }
-
-const FloatingNavBarWrapper: React.FC<Partial<FloatingNavBarProps>> = (props) => (
-  <ThemeProvider>
-    <FloatingNavBar {...props} currentRoute={props.currentRoute || 'home'} onNavigate={props.onNavigate || (() => {})} items={props.items || []} />
-  </ThemeProvider>
-);
 
 describe('FloatingNavBar Component', () => {
   const mockNavItems = [
@@ -36,38 +39,44 @@ describe('FloatingNavBar Component', () => {
   });
 
   describe('Component Definition', () => {
-    it('should be a React component', () => {
+    it('should be a React component', async () => {
       expect(typeof FloatingNavBar).toBe('function');
     });
   });
 
   describe('Rendering', () => {
-    it('should render without crashing', () => {
+    it('should render without crashing', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       expect(getByTestId('nav-bar')).toBeTruthy();
     });
 
-    it('should render all navigation items', () => {
+    it('should render all navigation items', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       // Each nav item should render its own testID under the nav bar
       mockNavItems.forEach(item => {
@@ -75,17 +84,20 @@ describe('FloatingNavBar Component', () => {
       });
     });
 
-    it('should render with correct number of items', () => {
+    it('should render with correct number of items', async () => {
       const { getAllByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       // Component should render exactly one item per entry in the items array
       const renderedItems = mockNavItems.map(item =>
@@ -96,38 +108,44 @@ describe('FloatingNavBar Component', () => {
   });
 
   describe('Navigation Items', () => {
-    it('should accept items array prop', () => {
+    it('should accept items array prop', async () => {
       const customItems = [
         { name: 'tab1', icon: 'home', color: '#FF0000' },
         { name: 'tab2', icon: 'search', color: '#00FF00' },
       ];
 
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="tab1"
-            onNavigate={jest.fn()}
-            items={customItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="tab1"
+              onNavigate={jest.fn()}
+              items={customItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       expect(getByTestId('nav-bar')).toBeTruthy();
       expect(customItems).toHaveLength(2);
     });
 
-    it('should render items with correct icons', () => {
+    it('should render items with correct icons', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
@@ -137,17 +155,20 @@ describe('FloatingNavBar Component', () => {
       });
     });
 
-    it('should render items with correct colors', () => {
+    it('should render items with correct colors', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
@@ -156,18 +177,21 @@ describe('FloatingNavBar Component', () => {
       });
     });
 
-    it('should handle variable number of items', () => {
+    it('should handle variable number of items', async () => {
       const twoItems = mockNavItems.slice(0, 2);
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={twoItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={twoItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
@@ -176,129 +200,152 @@ describe('FloatingNavBar Component', () => {
   });
 
   describe('Current Route', () => {
-    it('should accept currentRoute prop', () => {
+    it('should accept currentRoute prop', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       expect(getByTestId('nav-bar')).toBeTruthy();
     });
 
-    it('should highlight home route when active', () => {
+    it('should highlight home route when active', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
     });
 
-    it('should highlight explore route when active', () => {
+    it('should highlight explore route when active', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="explore"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="explore"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
     });
 
-    it('should update active state when route changes', () => {
+    it('should update active state when route changes', async () => {
       const { rerender, getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       let navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
 
       rerender(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="explore"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="explore"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
 
       navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
     });
 
-    it('should handle invalid route gracefully', () => {
+    it('should handle invalid route gracefully', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="nonexistent"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="nonexistent"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       expect(getByTestId('nav-bar')).toBeTruthy();
     });
   });
 
   describe('Navigation Callbacks', () => {
-    it('should call onNavigate when item is pressed', () => {
+    it('should call onNavigate when item is pressed', async () => {
       const mockOnNavigate = jest.fn();
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={mockOnNavigate}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={mockOnNavigate}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       fireEvent.press(getByTestId('nav-bar-item-explore'));
       expect(mockOnNavigate).toHaveBeenCalledWith('explore');
     });
 
-    it('should pass correct route name to callback', () => {
+    it('should pass correct route name to callback', async () => {
       const mockOnNavigate = jest.fn();
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={mockOnNavigate}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={mockOnNavigate}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
@@ -306,18 +353,21 @@ describe('FloatingNavBar Component', () => {
       expect(typeof mockOnNavigate).toBe('function');
     });
 
-    it('should handle multiple navigation calls', () => {
+    it('should handle multiple navigation calls', async () => {
       const mockOnNavigate = jest.fn();
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={mockOnNavigate}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={mockOnNavigate}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       fireEvent.press(getByTestId('nav-bar-item-explore'));
       fireEvent.press(getByTestId('nav-bar-item-map'));
@@ -331,51 +381,60 @@ describe('FloatingNavBar Component', () => {
   });
 
   describe('Styling', () => {
-    it('should have floating position', () => {
+    it('should have floating position', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
       expect(navBar.props.style.position).toBe('absolute');
     });
 
-    it('should have border radius', () => {
+    it('should have border radius', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
       expect(navBar.props.style.borderRadius).toBe(28);
     });
 
-    it('should have shadow elevation', () => {
+    it('should have shadow elevation', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
@@ -384,34 +443,40 @@ describe('FloatingNavBar Component', () => {
       expect(navBar.props.style.shadowOpacity).toBe(0.2);
     });
 
-    it('should have flexDirection row', () => {
+    it('should have flexDirection row', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
       expect(navBar.props.style.flexDirection).toBe('row');
     });
 
-    it('should space items evenly', () => {
+    it('should space items evenly', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
@@ -420,17 +485,20 @@ describe('FloatingNavBar Component', () => {
   });
 
   describe('Theme Integration', () => {
-    it('should use theme colors', () => {
+    it('should use theme colors', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
@@ -438,33 +506,39 @@ describe('FloatingNavBar Component', () => {
       expect(navBar.props.style.backgroundColor).toMatch(/^#[0-9A-Fa-f]{6}F2$/);
     });
 
-    it('should respond to dark mode', () => {
+    it('should respond to dark mode', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
     });
 
-    it('should have proper background opacity in dark mode', () => {
+    it('should have proper background opacity in dark mode', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
@@ -472,17 +546,20 @@ describe('FloatingNavBar Component', () => {
       expect(navBar.props.style.backgroundColor).toMatch(/F2$/);
     });
 
-    it('should have proper background opacity in light mode', () => {
+    it('should have proper background opacity in light mode', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
@@ -492,17 +569,20 @@ describe('FloatingNavBar Component', () => {
   });
 
   describe('Safe Area Integration', () => {
-    it('should respect bottom safe area inset', () => {
+    it('should respect bottom safe area inset', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
@@ -511,17 +591,20 @@ describe('FloatingNavBar Component', () => {
       expect(navBar.props.style.bottom).toBeGreaterThanOrEqual(16);
     });
 
-    it('should position with proper margins', () => {
+    it('should position with proper margins', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
@@ -531,33 +614,39 @@ describe('FloatingNavBar Component', () => {
   });
 
   describe('Accessibility', () => {
-    it('should be keyboard navigable', () => {
+    it('should be keyboard navigable', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
     });
 
-    it('should have accessible nav items', () => {
+    it('should have accessible nav items', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
@@ -565,34 +654,40 @@ describe('FloatingNavBar Component', () => {
   });
 
   describe('Touch Targets', () => {
-    it('should have adequate touch target size for each item', () => {
+    it('should have adequate touch target size for each item', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
       expect(navBar.props.style.height).toBe(56);
     });
 
-    it('should be easy to tap on each nav item', () => {
+    it('should be easy to tap on each nav item', async () => {
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={jest.fn()}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
@@ -601,22 +696,25 @@ describe('FloatingNavBar Component', () => {
   });
 
   describe('Custom Colors', () => {
-    it('should render items with custom colors', () => {
+    it('should render items with custom colors', async () => {
       const customItems = [
         { name: 'custom1', icon: 'star', color: '#FF6B6B' },
         { name: 'custom2', icon: 'heart', color: '#4ECDC4' },
       ];
 
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="custom1"
-            onNavigate={jest.fn()}
-            items={customItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="custom1"
+              onNavigate={jest.fn()}
+              items={customItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
@@ -627,26 +725,29 @@ describe('FloatingNavBar Component', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle single item', () => {
+    it('should handle single item', async () => {
       const singleItem = [{ name: 'only', icon: 'home', color: '#1E88E5' }];
 
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="only"
-            onNavigate={jest.fn()}
-            items={singleItem}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="only"
+              onNavigate={jest.fn()}
+              items={singleItem}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
       expect(singleItem).toHaveLength(1);
     });
 
-    it('should handle many items', () => {
+    it('should handle many items', async () => {
       const manyItems = Array.from({ length: 10 }, (_, i) => ({
         name: `item${i}`,
         icon: 'home',
@@ -654,47 +755,55 @@ describe('FloatingNavBar Component', () => {
       }));
 
       const { getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="item0"
-            onNavigate={jest.fn()}
-            items={manyItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="item0"
+              onNavigate={jest.fn()}
+              items={manyItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
       expect(manyItems).toHaveLength(10);
     });
 
-    it('should handle rapid navigation changes', () => {
+    it('should handle rapid navigation changes', async () => {
       const mockOnNavigate = jest.fn();
       const { rerender, getByTestId } = render(
-        <ThemeProvider>
-          <FloatingNavBar
-            currentRoute="home"
-            onNavigate={mockOnNavigate}
-            items={mockNavItems}
-            testID="nav-bar"
-          />
-        </ThemeProvider>
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={mockOnNavigate}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
       );
+      await act(async () => {});
 
       let navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
 
       mockNavItems.forEach(item => {
         rerender(
-          <ThemeProvider>
-            <FloatingNavBar
-              currentRoute={item.name}
-              onNavigate={mockOnNavigate}
-              items={mockNavItems}
-              testID="nav-bar"
-            />
-          </ThemeProvider>
+          <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+            <ThemeProvider>
+              <FloatingNavBar
+                currentRoute={item.name}
+                onNavigate={mockOnNavigate}
+                items={mockNavItems}
+                testID="nav-bar"
+              />
+            </ThemeProvider>
+          </SafeAreaProvider>
         );
         navBar = getByTestId('nav-bar');
         expect(navBar).toBeTruthy();

@@ -15,6 +15,7 @@
     "web": "expo start --web",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:node": "node --test screens/quiz/quizSession.test.js",
     "postinstall": "patch-package"
   },
   "dependencies": {

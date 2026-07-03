@@ -320,23 +320,25 @@ describe('ThemeProvider Integration Tests', () => {
   });
 
   describe('Provider with Component Rendering', () => {
-    it('should render children without crashing', () => {
-      const { getByText } = render(
+    it('should render children without crashing', async () => {
+      const { findByText } = render(
         <ThemeProvider>
           <Text>Test Content</Text>
         </ThemeProvider>
       );
-      expect(getByText('Test Content')).toBeTruthy();
+      // ThemeProvider shows a splash placeholder until the persisted theme
+      // preference resolves, so wait for the real children to mount.
+      expect(await findByText('Test Content')).toBeTruthy();
     });
 
     it('should not crash when loading theme', async () => {
       (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
-      const { getByText } = render(
+      const { findByText } = render(
         <ThemeProvider>
           <Text>Loading...</Text>
         </ThemeProvider>
       );
-      expect(getByText('Loading...')).toBeTruthy();
+      expect(await findByText('Loading...')).toBeTruthy();
     });
 
     it('should apply light theme by default', async () => {
@@ -631,25 +633,25 @@ describe('ThemeProvider Integration Tests', () => {
     it('should handle AsyncStorage errors gracefully', async () => {
       (AsyncStorage.getItem as jest.Mock).mockRejectedValue(new Error('Storage error'));
 
-      const { getByText } = render(
+      const { findByText } = render(
         <ThemeProvider>
           <Text>Content</Text>
         </ThemeProvider>
       );
 
-      expect(getByText('Content')).toBeTruthy();
+      expect(await findByText('Content')).toBeTruthy();
     });
 
     it('should handle missing AsyncStorage gracefully', async () => {
       (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
 
-      const { getByText } = render(
+      const { findByText } = render(
         <ThemeProvider>
           <Text>Content</Text>
         </ThemeProvider>
       );
 
-      expect(getByText('Content')).toBeTruthy();
+      expect(await findByText('Content')).toBeTruthy();
     });
   });
 });

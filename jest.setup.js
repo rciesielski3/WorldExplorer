@@ -49,11 +49,20 @@ jest.mock('react-native/Libraries/Utilities/Platform', () => ({
 }));
 
 // Mock AsyncStorage
+//
+// NOTE: Resolve every method to a settled Promise (not a bare `jest.fn()`,
+// which returns `undefined`). Consumers like ThemeContext's `useEffect` do
+// `await AsyncStorage.getItem(...)`; awaiting `undefined` still yields a
+// microtask, but tests that call `render()` and immediately run synchronous
+// queries (`getBy*`) don't flush that microtask, so they observe the
+// provider's loading/splash state instead of the settled one. Returning an
+// already-resolved Promise here keeps behavior async (a consumer still needs
+// `await`/`act`) while matching the real module's contract.
 jest.mock('@react-native-async-storage/async-storage', () => ({
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+  getItem: jest.fn(() => Promise.resolve(null)),
+  setItem: jest.fn(() => Promise.resolve()),
+  removeItem: jest.fn(() => Promise.resolve()),
+  clear: jest.fn(() => Promise.resolve()),
 }));
 
 // Mock react-native useColorScheme
