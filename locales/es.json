@@ -94,5 +94,10 @@
   "premiumDescription": "Elimina los anuncios de World Explorer.",
   "buyPremium": "Comprar Premium",
   "restorePurchases": "Restaurar",
-  "loading": "Cargando..."
+  "loading": "Cargando...",
+  "compareCountries": "Comparar países",
+  "addCountry": "Añadir país",
+  "selectCountry": "Seleccionar país",
+  "searchCountries": "Buscar países...",
+  "comparisonStat": "Dato"
 }

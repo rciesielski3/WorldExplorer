@@ -94,5 +94,10 @@
   "premiumDescription": "Remove ads from World Explorer.",
   "buyPremium": "Buy Premium",
   "restorePurchases": "Restore",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "compareCountries": "Compare Countries",
+  "addCountry": "Add Country",
+  "selectCountry": "Select Country",
+  "searchCountries": "Search countries...",
+  "comparisonStat": "Stat"
 }

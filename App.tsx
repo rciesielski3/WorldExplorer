@@ -24,6 +24,7 @@ import QuizScreen from "./screens/quiz/QuizScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import CountryDetailsScreen from "./screens/CountryDetailsScreen";
 import QuizResultsScreen from "./screens/quiz/QuizResultsScreen";
+import { ComparisonScreen } from "./screens/ComparisonScreen";
 import type { RootStackParamList } from "./types/navigation";
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -112,6 +113,11 @@ export default function App() {
                 name="CountryDetails"
                 component={CountryDetailsScreen}
                 options={{ title: t("countryDetails") }}
+              />
+              <Stack.Screen
+                name="Comparison"
+                component={ComparisonScreen}
+                options={{ title: t("compareCountries") }}
               />
             </Stack.Navigator>
             <Toast />

@@ -29,7 +29,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     onSearch('');
   };
 
-  const isDark = theme.dark;
+  const isDark = theme.isDarkMode;
   const textColor = isDark ? '#fff' : '#000';
   const backgroundColor = isDark ? '#2a2a2a' : '#f0f0f0';
 

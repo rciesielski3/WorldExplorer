@@ -94,5 +94,10 @@
   "premiumDescription": "Usuń reklamy z World Explorer.",
   "buyPremium": "Kup Premium",
   "restorePurchases": "Przywróć",
-  "loading": "Ładowanie..."
+  "loading": "Ładowanie...",
+  "compareCountries": "Porównaj kraje",
+  "addCountry": "Dodaj kraj",
+  "selectCountry": "Wybierz kraj",
+  "searchCountries": "Szukaj krajów...",
+  "comparisonStat": "Kategoria"
 }
