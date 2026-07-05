@@ -683,6 +683,14 @@ export const getStyles = (theme: Theme) =>
     cardContent: {
       flex: 1,
     },
+    compareButton: {
+      padding: 8,
+      marginRight: 4,
+      minWidth: 44,
+      minHeight: 44,
+      alignItems: "center",
+      justifyContent: "center",
+    },
     countryCard: {
       flexDirection: "row",
       alignItems: "center",
