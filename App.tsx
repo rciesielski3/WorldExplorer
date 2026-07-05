@@ -17,6 +17,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { ErrorBoundary } from "./src/components/ErrorBoundary";
 import { ThemeProvider } from "./context/ThemeContext";
 import { PremiumProvider } from "./context/PremiumContext";
+import { FavoritesProvider } from "./context/FavoritesContext";
 import HomeScreen from "./screens/HomeScreen";
 import ExploreScreen from "./screens/ExploreScreen";
 import MapScreen from "./screens/MapScreen";
@@ -25,6 +26,7 @@ import SettingsScreen from "./screens/SettingsScreen";
 import CountryDetailsScreen from "./screens/CountryDetailsScreen";
 import QuizResultsScreen from "./screens/quiz/QuizResultsScreen";
 import { ComparisonScreen } from "./screens/ComparisonScreen";
+import { FavoritesScreen } from "./screens/FavoritesScreen";
 import type { RootStackParamList } from "./types/navigation";
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -74,54 +76,61 @@ export default function App() {
     <ErrorBoundary>
       <PremiumProvider>
         <ThemeProvider>
-          <NavigationContainer>
-            <Stack.Navigator
-              initialRouteName="Home"
-              screenOptions={{ headerShown: false }}
-            >
-              <Stack.Screen
-                name="Home"
-                component={HomeScreen}
-                options={{ title: "World Explorer" }}
-              />
-              <Stack.Screen
-                name="Explore"
-                component={ExploreScreen}
-                options={{ title: t("explore") }}
-              />
-              <Stack.Screen
-                name="Map"
-                component={MapScreen}
-                options={{ title: t("map") }}
-              />
-              <Stack.Screen
-                name="Quiz"
-                component={QuizScreen}
-                options={{ title: t("quiz") }}
-              />
-              <Stack.Screen
-                name="QuizResults"
-                component={QuizResultsScreen}
-                options={{ title: t("yourScore") }}
-              />
-              <Stack.Screen
-                name="Settings"
-                component={SettingsScreen}
-                options={{ title: t("settings") }}
-              />
-              <Stack.Screen
-                name="CountryDetails"
-                component={CountryDetailsScreen}
-                options={{ title: t("countryDetails") }}
-              />
-              <Stack.Screen
-                name="Comparison"
-                component={ComparisonScreen}
-                options={{ title: t("compareCountries") }}
-              />
-            </Stack.Navigator>
-            <Toast />
-          </NavigationContainer>
+          <FavoritesProvider>
+            <NavigationContainer>
+              <Stack.Navigator
+                initialRouteName="Home"
+                screenOptions={{ headerShown: false }}
+              >
+                <Stack.Screen
+                  name="Home"
+                  component={HomeScreen}
+                  options={{ title: "World Explorer" }}
+                />
+                <Stack.Screen
+                  name="Explore"
+                  component={ExploreScreen}
+                  options={{ title: t("explore") }}
+                />
+                <Stack.Screen
+                  name="Map"
+                  component={MapScreen}
+                  options={{ title: t("map") }}
+                />
+                <Stack.Screen
+                  name="Quiz"
+                  component={QuizScreen}
+                  options={{ title: t("quiz") }}
+                />
+                <Stack.Screen
+                  name="QuizResults"
+                  component={QuizResultsScreen}
+                  options={{ title: t("yourScore") }}
+                />
+                <Stack.Screen
+                  name="Settings"
+                  component={SettingsScreen}
+                  options={{ title: t("settings") }}
+                />
+                <Stack.Screen
+                  name="CountryDetails"
+                  component={CountryDetailsScreen}
+                  options={{ title: t("countryDetails") }}
+                />
+                <Stack.Screen
+                  name="Comparison"
+                  component={ComparisonScreen}
+                  options={{ title: t("compareCountries") }}
+                />
+                <Stack.Screen
+                  name="Favorites"
+                  component={FavoritesScreen}
+                  options={{ title: t("favorites") }}
+                />
+              </Stack.Navigator>
+              <Toast />
+            </NavigationContainer>
+          </FavoritesProvider>
         </ThemeProvider>
       </PremiumProvider>
     </ErrorBoundary>

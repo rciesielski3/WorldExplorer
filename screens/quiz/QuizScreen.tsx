@@ -257,6 +257,7 @@ const QuizScreen = ({ route, navigation }: any) => {
     { name: "Home", icon: "home-outline", color: theme.colors.primary },
     { name: "Explore", icon: "map-outline", color: theme.colors.primary },
     { name: "Quiz", icon: "lightbulb-outline", color: theme.colors.primary },
+    { name: "Favorites", icon: "heart-outline", color: theme.colors.primary },
     { name: "Settings", icon: "cog-outline", color: theme.colors.primary },
   ];
 

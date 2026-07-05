@@ -128,6 +128,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
     { name: 'Explore', icon: 'earth', color: theme.colors.secondary },
     { name: 'Map', icon: 'map-outline', color: theme.colors.ocean },
     { name: 'Quiz', icon: 'puzzle-outline', color: theme.colors.amber },
+    { name: 'Favorites', icon: 'heart-outline', color: theme.colors.error },
   ];
 
   return (

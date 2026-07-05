@@ -63,6 +63,10 @@
   "countryInfo": "Info",
   "countryStats": "Statistiken",
   "countryMap": "Karte",
+  "historicalFacts": "Fakten",
+  "noFactsAvailable": "Noch keine historischen Fakten verfügbar",
+  "addToFavorites": "Zu Favoriten hinzufügen",
+  "removeFromFavorites": "Aus Favoriten entfernen",
   "countryFact": "Kurzfakt",
   "countryFactText": "{{country}} liegt in {{region}}. Die Hauptstadt ist {{capital}}, ein guter Einstieg zum schnellen Geografie-Lernen.",
   "area": "Fläche",
@@ -99,5 +103,10 @@
   "addCountry": "Land hinzufügen",
   "selectCountry": "Land auswählen",
   "searchCountries": "Länder suchen...",
-  "comparisonStat": "Merkmal"
+  "comparisonStat": "Merkmal",
+  "favorites": "Favoriten",
+  "noFavorites": "Noch keine Favoriten",
+  "addFavoritesPrompt": "Füge Länder zu deinen Favoriten hinzu, um sie hier zu sehen",
+  "removeFavorite": "{{country}} aus Favoriten entfernen",
+  "addToComparison": "{{country}} zum Vergleich hinzufügen"
 }

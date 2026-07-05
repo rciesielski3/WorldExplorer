@@ -63,6 +63,10 @@
   "countryInfo": "Info",
   "countryStats": "Stats",
   "countryMap": "Map",
+  "historicalFacts": "Facts",
+  "noFactsAvailable": "No historical facts available yet",
+  "addToFavorites": "Add to favorites",
+  "removeFromFavorites": "Remove from favorites",
   "countryFact": "Quick fact",
   "countryFactText": "{{country}} is in {{region}}. Its capital is {{capital}}, making it a useful stop for learning geography fast.",
   "area": "Area",
@@ -99,5 +103,10 @@
   "addCountry": "Add Country",
   "selectCountry": "Select Country",
   "searchCountries": "Search countries...",
-  "comparisonStat": "Stat"
+  "comparisonStat": "Stat",
+  "favorites": "Favorites",
+  "noFavorites": "No favorites yet",
+  "addFavoritesPrompt": "Add countries to your favorites to see them here",
+  "removeFavorite": "Remove {{country}} from favorites",
+  "addToComparison": "Add {{country}} to comparison"
 }
