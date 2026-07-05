@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   ImageBackground,
   StyleSheet,
+  FlatList,
+  ActivityIndicator,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { useTranslation } from "react-i18next";
@@ -14,9 +16,11 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { StackScreenProps } from "@react-navigation/stack";
 
 import { useTheme } from "../context/ThemeContext";
+import { useFavorites } from "../context/FavoritesContext";
 import { getStyles } from "../styles";
 import AdBanner from "../src/components/AdBanner";
 import { FLAG_ASSETS } from "../utils/flagAssets";
+import { fetchHistoricalFacts } from "../utils/historicalFacts";
 import {
   formatNumber,
   formatPopulation,
@@ -50,6 +54,7 @@ const DETAIL_TABS: DetailTab[] = [
   { key: "info", labelKey: "countryInfo" },
   { key: "stats", labelKey: "countryStats" },
   { key: "map", labelKey: "countryMap" },
+  { key: "facts", labelKey: "historicalFacts" },
 ];
 
 const getCoordinates = (country: Country | undefined): Coordinates => ({
@@ -65,9 +70,27 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
   const { t } = useTranslation();
   const styles = getStyles(theme);
   const [activeTab, setActiveTab] = React.useState<string>("info");
+  const { isFavorited, toggleFavorite } = useFavorites();
+  const [facts, setFacts] = React.useState<string[]>([]);
+  const [factsLoading, setFactsLoading] = React.useState(false);
 
   const { country } = route.params;
   const coordinates = getCoordinates(country);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    setFactsLoading(true);
+    fetchHistoricalFacts(country.code).then((f) => {
+      if (isMounted) {
+        setFacts(f);
+        setFactsLoading(false);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [country.code]);
+
   const countryName = country.translations?.en?.name ?? t("countryDetails");
   const capital = country.capital ?? t("noData");
   const population = formatPopulation(country.population) ?? t("noData");
@@ -180,6 +203,24 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
           </TouchableOpacity>
           <Text style={styles.countryBackText}>{t("back")}</Text>
           <View style={styles.countryTopBarSpacer} />
+          <TouchableOpacity
+            onPress={() => toggleFavorite(country.code)}
+            activeOpacity={0.6}
+            style={styles.countryTopBarButton}
+            testID="favorite-btn"
+            accessibilityRole="button"
+            accessibilityLabel={
+              isFavorited(country.code)
+                ? t("removeFromFavorites")
+                : t("addToFavorites")
+            }
+          >
+            <MaterialCommunityIcons
+              name={isFavorited(country.code) ? "heart" : "heart-outline"}
+              size={24}
+              color={theme.colors.error}
+            />
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={handleNavigateToSettings}
             activeOpacity={0.6}
@@ -299,6 +340,27 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
             >
               <Marker coordinate={coordinates} title={countryName} />
             </MapView>
+          </View>
+        )}
+
+        {activeTab === "facts" && (
+          <View style={styles.tabContent}>
+            {factsLoading ? (
+              <ActivityIndicator color={theme.colors.button} />
+            ) : facts.length > 0 ? (
+              <FlatList
+                data={facts}
+                renderItem={({ item, index }) => (
+                  <View key={index} style={styles.factItem}>
+                    <Text style={styles.factText}>{item}</Text>
+                  </View>
+                )}
+                keyExtractor={(_, idx) => String(idx)}
+                scrollEnabled={false}
+              />
+            ) : (
+              <Text style={styles.noFactsText}>{t("noFactsAvailable")}</Text>
+            )}
           </View>
         )}
 

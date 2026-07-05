@@ -532,6 +532,31 @@ export const getStyles = (theme: Theme) =>
       fontSize: 14,
       lineHeight: 20,
     },
+    tabContent: {
+      marginBottom: 14,
+    },
+    factItem: {
+      padding: 14,
+      borderRadius: 8,
+      backgroundColor: theme.colors.card,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      marginBottom: 10,
+    },
+    factText: {
+      color: theme.colors.text,
+      fontFamily: "Exo2-Regular",
+      fontSize: 14,
+      lineHeight: 20,
+    },
+    noFactsText: {
+      color: theme.colors.text,
+      fontFamily: "Exo2-Regular",
+      fontSize: 14,
+      opacity: 0.72,
+      textAlign: "center",
+      paddingVertical: 24,
+    },
     countryMiniMapCard: {
       height: 230,
       borderRadius: 8,
