@@ -35,6 +35,7 @@
   "viewCountry": "Ver país",
   "map": "Mapa",
   "quiz": "Cuestionario",
+  "quizzes": "Cuestionarios",
   "quizFlagBelong": "¿A qué país pertenece esta bandera?",
   "quizCapital": "¿Cuál es la capital de {{country}}?",
   "quizCountryCapital": "¿Qué país tiene como capital {{country}}?",

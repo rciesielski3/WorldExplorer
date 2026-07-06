@@ -16,6 +16,7 @@ import packageJson from '../package.json';
 
 import { useTheme } from '../context/ThemeContext';
 import { usePremium } from '../context/PremiumContext';
+import { useQuizHistory } from '../context/QuizHistoryContext';
 import { Card } from '../src/components/ui/Card';
 import { ToggleSwitch } from '../src/components/ui/ToggleSwitch';
 import { TopBar } from '../src/components/Navigation/TopBar';
@@ -38,6 +39,8 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
   const [language, setLanguage] = React.useState(i18n.language);
   const [soundEnabled, setSoundEnabled] = React.useState(true);
   const [hapticsEnabled, setHapticsEnabled] = React.useState(true);
+  const { getStats } = useQuizHistory();
+  const stats = getStats();
 
   const {
     error: premiumError,
@@ -549,6 +552,65 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
                 </TouchableOpacity>
               </View>
             ) : null}
+          </Card>
+        )}
+
+        {/* Quiz Statistics Card */}
+        {stats.totalQuizzes > 0 && (
+          <Card style={{ marginBottom: commonTokens.spacing.lg }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: commonTokens.spacing.md,
+              }}
+            >
+              <MaterialCommunityIcons
+                name="chart-box-outline"
+                size={24}
+                color={theme.colors.primary}
+                style={{ marginRight: commonTokens.spacing.md }}
+              />
+              <Text
+                style={{
+                  fontSize: commonTokens.typography.titleLg.fontSize,
+                  fontFamily: commonTokens.typography.titleLg.fontFamily,
+                  fontWeight: '600',
+                  color: theme.colors.text,
+                }}
+              >
+                {t('quizStatistics')}
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              onPress={() => navigation.navigate('QuizStats')}
+              style={{
+                paddingVertical: commonTokens.spacing.md,
+                paddingHorizontal: commonTokens.spacing.md,
+                backgroundColor: theme.colors.surfaceSubtle,
+                borderRadius: commonTokens.borderRadius.md,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+              testID="quiz-stats-menu"
+            >
+              <Text
+                style={{
+                  fontSize: commonTokens.typography.bodyLg.fontSize,
+                  fontFamily: commonTokens.typography.bodyLg.fontFamily,
+                  color: theme.colors.text,
+                }}
+              >
+                {t('quizStatistics')}
+              </Text>
+              <MaterialCommunityIcons
+                name="arrow-right"
+                size={20}
+                color={theme.colors.primary}
+              />
+            </TouchableOpacity>
           </Card>
         )}
 

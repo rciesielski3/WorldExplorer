@@ -35,6 +35,7 @@
   "viewCountry": "View country",
   "map": "Map",
   "quiz": "Quiz",
+  "quizzes": "Quizzes",
   "quizFlagBelong": "Which country does this flag belong to?",
   "quizCapital": "What is the capital of {{country}}?",
   "quizCountryCapital": "Which country has the capital {{country}}?",

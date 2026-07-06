@@ -7,6 +7,7 @@ import {
   Image,
   ActivityIndicator,
   ScrollView,
+  StyleSheet,
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -17,6 +18,7 @@ import { getStyles } from "../styles";
 import { getDailyCountry } from "../utils/dailyCountry";
 import { fetchCountries, getLocalizedCountryName } from "../utils/countries";
 import { FLAG_ASSETS } from "../utils/flagAssets";
+import { useQuizHistory } from "../context/QuizHistoryContext";
 import LottieView from "lottie-react-native";
 import { logger } from "../utils/logger";
 import type { Country } from "../utils/countries";
@@ -25,6 +27,29 @@ import type { RootStackParamList } from "../types/navigation";
 type HomeScreenProps = StackScreenProps<RootStackParamList, "Home">;
 
 type HomeActionScreen = "Explore" | "Map" | "Quiz" | "Settings";
+
+const localStyles = StyleSheet.create({
+  statsBtn: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    backgroundColor: "rgba(79, 172, 254, 0.1)",
+  },
+  statsBadge: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#4FACFE",
+    marginBottom: 4,
+  },
+  statsLabel: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#4FACFE",
+  },
+});
 
 interface HomeAction {
   key: string;
@@ -42,6 +67,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   const { theme } = useTheme();
   const styles = getStyles(theme);
+  const { getStats } = useQuizHistory();
+  const stats = getStats();
 
   const HOME_ACTIONS: HomeAction[] = [
     {
@@ -135,6 +162,16 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               </TouchableOpacity>
             ))}
           </View>
+          {stats.totalQuizzes > 0 && (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("QuizStats")}
+              style={localStyles.statsBtn}
+              testID="quiz-stats-btn"
+            >
+              <Text style={localStyles.statsBadge}>{stats.totalQuizzes}</Text>
+              <Text style={localStyles.statsLabel}>{t("quizzes")}</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <View style={styles.dailyCountryCard}>
