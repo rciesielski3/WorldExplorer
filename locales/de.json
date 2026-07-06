@@ -108,5 +108,19 @@
   "noFavorites": "Noch keine Favoriten",
   "addFavoritesPrompt": "Füge Länder zu deinen Favoriten hinzu, um sie hier zu sehen",
   "removeFavorite": "{{country}} aus Favoriten entfernen",
-  "addToComparison": "{{country}} zum Vergleich hinzufügen"
+  "addToComparison": "{{country}} zum Vergleich hinzufügen",
+  "quizStatistics": "Quiz-Statistiken",
+  "totalQuizzes": "Quiz insgesamt",
+  "currentStreak": "Aktuelle Serie",
+  "bestScore": "Bestwert",
+  "achievements": "Erfolge",
+  "clearHistory": "Quiz-Verlauf löschen",
+  "achievement_first_quiz": "Erstes Quiz",
+  "achievement_first_quiz_desc": "Schließe dein erstes Quiz ab",
+  "achievement_on_fire": "In Fahrt",
+  "achievement_on_fire_desc": "Mache 3 Tage in Folge ein Quiz",
+  "achievement_country_master": "Länder-Meister",
+  "achievement_country_master_desc": "Erreiche 100% bei einem schweren Quiz",
+  "achievement_improver": "Aufsteiger",
+  "achievement_improver_desc": "Verbessere deinen Punktestand um 20 Punkte oder mehr"
 }

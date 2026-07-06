@@ -108,5 +108,19 @@
   "noFavorites": "Pas encore de favoris",
   "addFavoritesPrompt": "Ajoutez des pays à vos favoris pour les voir ici",
   "removeFavorite": "Retirer {{country}} des favoris",
-  "addToComparison": "Ajouter {{country}} à la comparaison"
+  "addToComparison": "Ajouter {{country}} à la comparaison",
+  "quizStatistics": "Statistiques du quiz",
+  "totalQuizzes": "Quiz au total",
+  "currentStreak": "Série actuelle",
+  "bestScore": "Meilleur score",
+  "achievements": "Succès",
+  "clearHistory": "Effacer l'historique",
+  "achievement_first_quiz": "Premier quiz",
+  "achievement_first_quiz_desc": "Terminez votre premier quiz",
+  "achievement_on_fire": "En feu",
+  "achievement_on_fire_desc": "Faites des quiz 3 jours de suite",
+  "achievement_country_master": "Maître des pays",
+  "achievement_country_master_desc": "Obtenez 100% sur un quiz difficile",
+  "achievement_improver": "En progrès",
+  "achievement_improver_desc": "Améliorez votre score d'au moins 20 points"
 }

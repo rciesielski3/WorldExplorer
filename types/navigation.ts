@@ -17,4 +17,5 @@ export type RootStackParamList = {
   QuizResults: { score: number };
   Comparison: { initialCountries?: Country[] } | undefined;
   Favorites: undefined;
+  QuizStats: undefined;
 };

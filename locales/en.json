@@ -108,5 +108,19 @@
   "noFavorites": "No favorites yet",
   "addFavoritesPrompt": "Add countries to your favorites to see them here",
   "removeFavorite": "Remove {{country}} from favorites",
-  "addToComparison": "Add {{country}} to comparison"
+  "addToComparison": "Add {{country}} to comparison",
+  "quizStatistics": "Quiz Statistics",
+  "totalQuizzes": "Total Quizzes",
+  "currentStreak": "Current Streak",
+  "bestScore": "Best Score",
+  "achievements": "Achievements",
+  "clearHistory": "Clear Quiz History",
+  "achievement_first_quiz": "First Quiz",
+  "achievement_first_quiz_desc": "Complete your first quiz",
+  "achievement_on_fire": "On Fire",
+  "achievement_on_fire_desc": "Complete quizzes on a 3-day streak",
+  "achievement_country_master": "Country Master",
+  "achievement_country_master_desc": "Score 100% on a hard quiz",
+  "achievement_improver": "Improver",
+  "achievement_improver_desc": "Improve your score by 20 points or more"
 }

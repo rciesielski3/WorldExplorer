@@ -108,5 +108,19 @@
   "noFavorites": "Aún no hay favoritos",
   "addFavoritesPrompt": "Añade países a tus favoritos para verlos aquí",
   "removeFavorite": "Quitar {{country}} de favoritos",
-  "addToComparison": "Añadir {{country}} a la comparación"
+  "addToComparison": "Añadir {{country}} a la comparación",
+  "quizStatistics": "Estadísticas del cuestionario",
+  "totalQuizzes": "Cuestionarios totales",
+  "currentStreak": "Racha actual",
+  "bestScore": "Mejor puntuación",
+  "achievements": "Logros",
+  "clearHistory": "Borrar historial de cuestionarios",
+  "achievement_first_quiz": "Primer cuestionario",
+  "achievement_first_quiz_desc": "Completa tu primer cuestionario",
+  "achievement_on_fire": "En racha",
+  "achievement_on_fire_desc": "Completa cuestionarios durante 3 días seguidos",
+  "achievement_country_master": "Maestro de países",
+  "achievement_country_master_desc": "Obtén 100% en un cuestionario difícil",
+  "achievement_improver": "En mejora",
+  "achievement_improver_desc": "Mejora tu puntuación en 20 puntos o más"
 }
