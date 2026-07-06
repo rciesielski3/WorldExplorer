@@ -122,5 +122,9 @@
   "achievement_country_master": "Maestro de países",
   "achievement_country_master_desc": "Obtén 100% en un cuestionario difícil",
   "achievement_improver": "En mejora",
-  "achievement_improver_desc": "Mejora tu puntuación en 20 puntos o más"
+  "achievement_improver_desc": "Mejora tu puntuación en 20 puntos o más",
+  "selectDifficulty": "Selecciona la dificultad",
+  "difficulty_easy": "Fácil",
+  "difficulty_medium": "Medio",
+  "difficulty_hard": "Difícil"
 }

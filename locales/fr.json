@@ -122,5 +122,9 @@
   "achievement_country_master": "Maître des pays",
   "achievement_country_master_desc": "Obtenez 100% sur un quiz difficile",
   "achievement_improver": "En progrès",
-  "achievement_improver_desc": "Améliorez votre score d'au moins 20 points"
+  "achievement_improver_desc": "Améliorez votre score d'au moins 20 points",
+  "selectDifficulty": "Choisir la difficulté",
+  "difficulty_easy": "Facile",
+  "difficulty_medium": "Moyen",
+  "difficulty_hard": "Difficile"
 }

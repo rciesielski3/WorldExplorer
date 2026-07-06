@@ -122,5 +122,9 @@
   "achievement_country_master": "Länder-Meister",
   "achievement_country_master_desc": "Erreiche 100% bei einem schweren Quiz",
   "achievement_improver": "Aufsteiger",
-  "achievement_improver_desc": "Verbessere deinen Punktestand um 20 Punkte oder mehr"
+  "achievement_improver_desc": "Verbessere deinen Punktestand um 20 Punkte oder mehr",
+  "selectDifficulty": "Schwierigkeit wählen",
+  "difficulty_easy": "Leicht",
+  "difficulty_medium": "Mittel",
+  "difficulty_hard": "Schwer"
 }

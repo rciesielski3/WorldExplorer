@@ -122,5 +122,9 @@
   "achievement_country_master": "Mistrz krajów",
   "achievement_country_master_desc": "Zdobądź 100% w trudnym quizie",
   "achievement_improver": "Poprawiacz",
-  "achievement_improver_desc": "Popraw swój wynik o co najmniej 20 punktów"
+  "achievement_improver_desc": "Popraw swój wynik o co najmniej 20 punktów",
+  "selectDifficulty": "Wybierz poziom trudności",
+  "difficulty_easy": "Łatwy",
+  "difficulty_medium": "Średni",
+  "difficulty_hard": "Trudny"
 }

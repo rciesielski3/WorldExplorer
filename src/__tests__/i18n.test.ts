@@ -331,9 +331,14 @@ describe('i18n Completeness', () => {
       // break the already-established ACHIEVEMENTS contract.
       const isAchievementKey = (key: string) => /^achievement_[a-z_]+$/.test(key);
 
+      // Exception: `difficulty_*` keys mirror the `Difficulty` type values
+      // ('easy' | 'medium' | 'hard') from utils/quizDifficulty.ts, used via
+      // template interpolation (`t(\`difficulty_${diff}\`)`) in QuizScreen.
+      const isDifficultyKey = (key: string) => /^difficulty_[a-z]+$/.test(key);
+
       Object.keys(localeData.en).forEach(key => {
         expect(
-          isAchievementKey(key) || /^[a-z][a-zA-Z0-9]*$/.test(key)
+          isAchievementKey(key) || isDifficultyKey(key) || /^[a-z][a-zA-Z0-9]*$/.test(key)
         ).toBe(true);
       });
     });

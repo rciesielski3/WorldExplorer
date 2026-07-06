@@ -122,5 +122,9 @@
   "achievement_country_master": "Country Master",
   "achievement_country_master_desc": "Score 100% on a hard quiz",
   "achievement_improver": "Improver",
-  "achievement_improver_desc": "Improve your score by 20 points or more"
+  "achievement_improver_desc": "Improve your score by 20 points or more",
+  "selectDifficulty": "Select difficulty",
+  "difficulty_easy": "Easy",
+  "difficulty_medium": "Medium",
+  "difficulty_hard": "Hard"
 }
