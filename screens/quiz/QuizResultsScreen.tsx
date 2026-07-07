@@ -28,6 +28,7 @@ import { commonTokens } from '../../theme/tokens';
 import { Button } from '../../src/components/ui/Button';
 import { Card } from '../../src/components/ui/Card';
 import { logger } from '../../utils/logger';
+import { useQuizHistory } from '../../context/QuizHistoryContext';
 
 interface QuizResultsRouteParams {
   score: number;
@@ -37,6 +38,8 @@ interface QuizResultsRouteParams {
     selectedAnswer?: string;
     type?: string;
   }>;
+  difficulty?: 'easy' | 'medium' | 'hard';
+  timeTaken?: number;
 }
 
 const AnimatedView = Animated.createAnimatedComponent(View);
@@ -47,6 +50,7 @@ export function QuizResultsScreen() {
   const { score, questions } = (route.params as QuizResultsRouteParams);
   const { t, i18n } = useTranslation();
   const { theme } = useTheme();
+  const { addQuizSession } = useQuizHistory();
   const lottieRef = React.useRef<LottieView>(null);
   const badgeScale = useSharedValue(0);
 
@@ -69,6 +73,23 @@ export function QuizResultsScreen() {
     // Animate score badge after 500ms
     badgeScale.value = withDelay(500, withSpring(1, { damping: 8, mass: 1, overshootClamping: false }));
   }, []);
+
+  React.useEffect(() => {
+    const difficulty = (route.params as QuizResultsRouteParams)?.difficulty || 'medium';
+    addQuizSession({
+      timestamp: Date.now(),
+      difficulty: difficulty as 'easy' | 'medium' | 'hard',
+      score: (route.params as QuizResultsRouteParams)?.score || 0,
+      timeTaken: (route.params as QuizResultsRouteParams)?.timeTaken || 0,
+    }).catch((error) => {
+      logger.error('Failed to save quiz session', {
+        context: 'QuizResultsScreen',
+        timestamp: new Date().toISOString(),
+        metadata: { error: String(error) },
+      });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [route.params]);
 
   const handlePlayAgain = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);

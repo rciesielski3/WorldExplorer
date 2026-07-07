@@ -6,7 +6,6 @@ import {
   Image,
   TouchableOpacity,
   ImageBackground,
-  TextInput,
   ScrollView,
 } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -16,6 +15,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import AdBanner from "../src/components/AdBanner";
+import { SearchBar } from "../src/components/ui/SearchBar";
 import {
   fetchCountries,
   getLocalizedCountryName,
@@ -118,6 +118,24 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
             </Text>
             <Text style={styles.countryMetaText}>{metadata.join(" · ")}</Text>
           </View>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("Comparison", { initialCountries: [item] })
+            }
+            testID={`compare-${item.code}`}
+            accessibilityRole="button"
+            accessibilityLabel={t("addToComparison", {
+              country: getLocalizedCountryName(item, i18n.language),
+            })}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            style={styles.compareButton}
+          >
+            <MaterialCommunityIcons
+              name="compare-horizontal"
+              size={22}
+              color={theme.colors.primary}
+            />
+          </TouchableOpacity>
           <MaterialCommunityIcons
             name="chevron-right"
             size={22}
@@ -137,20 +155,11 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
         <View style={styles.exploreHeaderCard}>
           <Text style={styles.title}>{t("exploreCountries")}</Text>
           <Text style={styles.subtitle2}>{t("homeHeroSubtitle")}</Text>
-          <View style={styles.searchInputWrap}>
-            <MaterialCommunityIcons
-              name="magnify"
-              size={20}
-              color={theme.colors.text}
-            />
-            <TextInput
-              style={styles.searchBox}
-              placeholder={t("searchCountryCapital")}
-              placeholderTextColor={theme.colors.text}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-          </View>
+          <SearchBar
+            onSearch={setSearchQuery}
+            placeholder={t("searchCountryCapital")}
+            style={styles.searchInputWrap}
+          />
         </View>
 
         <ScrollView

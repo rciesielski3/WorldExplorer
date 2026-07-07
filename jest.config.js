@@ -12,6 +12,14 @@ module.exports = {
     '**/__tests__/**/*.test.[jt]s?(x)',
     '**/?(*.)+(spec|test).[jt]s?(x)',
   ],
+  // The react-native preset's default transformIgnorePatterns only allows
+  // react-native itself through babel-jest; @react-navigation ships ESM
+  // ("export { ... }") in its published lib/module output, which crashes
+  // under CommonJS unless it's transformed too. Screen tests that wrap
+  // components in <NavigationContainer> need this.
+  transformIgnorePatterns: [
+    'node_modules/(?!((jest-)?react-native|@react-native(-community)?|@react-navigation)/)',
+  ],
   testPathIgnorePatterns: [
     '/node_modules/',
     // quizSession.test.js is written against Node's built-in `node:test`

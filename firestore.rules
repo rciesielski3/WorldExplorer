@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Public read access to countries and facts
+    match /countries/{country} {
+      allow read: if true;
+      match /facts/{document=**} {
+        allow read: if true;
+      }
+    }
+
+    // User favorites - only authenticated users can read/write their own
+    match /users/{userId} {
+      allow read, write: if request.auth.uid == userId;
+      match /favorites/{document=**} {
+        allow read, write: if request.auth.uid == userId;
+      }
+    }
+
+    // Deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -58,11 +58,21 @@ jest.mock('react-native/Libraries/Utilities/Platform', () => ({
 // provider's loading/splash state instead of the settled one. Returning an
 // already-resolved Promise here keeps behavior async (a consumer still needs
 // `await`/`act`) while matching the real module's contract.
+const asyncStorageStore = {};
 jest.mock('@react-native-async-storage/async-storage', () => ({
-  getItem: jest.fn(() => Promise.resolve(null)),
-  setItem: jest.fn(() => Promise.resolve()),
-  removeItem: jest.fn(() => Promise.resolve()),
-  clear: jest.fn(() => Promise.resolve()),
+  getItem: jest.fn((key) => Promise.resolve(asyncStorageStore[key] || null)),
+  setItem: jest.fn((key, value) => {
+    asyncStorageStore[key] = value;
+    return Promise.resolve();
+  }),
+  removeItem: jest.fn((key) => {
+    delete asyncStorageStore[key];
+    return Promise.resolve();
+  }),
+  clear: jest.fn(() => {
+    Object.keys(asyncStorageStore).forEach(key => delete asyncStorageStore[key]);
+    return Promise.resolve();
+  }),
 }));
 
 // Mock react-native useColorScheme
@@ -109,6 +119,45 @@ jest.mock('expo-haptics', () => ({
     Warning: 'warning',
     Error: 'error',
   },
+}));
+
+// Mock @react-native-community/netinfo
+jest.mock('@react-native-community/netinfo', () => ({
+  useNetInfo: jest.fn(() => ({
+    isConnected: true,
+    isInternetReachable: true,
+    type: 'wifi',
+  })),
+}));
+
+// Mock firebase modules
+jest.mock('firebase/app', () => ({
+  initializeApp: jest.fn(),
+}));
+
+jest.mock('firebase/firestore', () => ({
+  getFirestore: jest.fn(),
+  connectFirestoreEmulator: jest.fn(),
+  collection: jest.fn(),
+  doc: jest.fn(),
+  setDoc: jest.fn(),
+  deleteDoc: jest.fn(),
+  getDocs: jest.fn(),
+  getDoc: jest.fn(),
+  query: jest.fn(),
+  where: jest.fn(),
+}));
+
+jest.mock('firebase/auth', () => ({
+  getAuth: jest.fn(),
+  connectAuthEmulator: jest.fn(),
+}));
+
+// Mock firebase-config
+jest.mock('./firebase-config', () => ({
+  db: {},
+  auth: {},
+  default: {},
 }));
 
 // Suppress console warnings

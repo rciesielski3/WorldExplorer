@@ -39,6 +39,7 @@ jobs:
           keystore-password: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           key-alias: ${{ secrets.ANDROID_KEY_ALIAS }}
           key-password: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          maps-api-key: ${{ secrets.MAPS_API_KEY }}
 
       - name: Verify Signing
         uses: ./.github/actions/sign-aab

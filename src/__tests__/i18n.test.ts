@@ -324,8 +324,22 @@ describe('i18n Completeness', () => {
     });
 
     it('should use camelCase for all keys', () => {
+      // Exception: `achievement_*` keys mirror the `labelKey`/`descriptionKey`
+      // values in the `Achievement` interface (utils/achievements.ts), which
+      // uses snake_case ids (e.g. `achievement_first_quiz`) as a stable,
+      // human-readable achievement identifier. Changing that convention would
+      // break the already-established ACHIEVEMENTS contract.
+      const isAchievementKey = (key: string) => /^achievement_[a-z_]+$/.test(key);
+
+      // Exception: `difficulty_*` keys mirror the `Difficulty` type values
+      // ('easy' | 'medium' | 'hard') from utils/quizDifficulty.ts, used via
+      // template interpolation (`t(\`difficulty_${diff}\`)`) in QuizScreen.
+      const isDifficultyKey = (key: string) => /^difficulty_[a-z]+$/.test(key);
+
       Object.keys(localeData.en).forEach(key => {
-        expect(/^[a-z][a-zA-Z0-9]*$/.test(key)).toBe(true);
+        expect(
+          isAchievementKey(key) || isDifficultyKey(key) || /^[a-z][a-zA-Z0-9]*$/.test(key)
+        ).toBe(true);
       });
     });
 
