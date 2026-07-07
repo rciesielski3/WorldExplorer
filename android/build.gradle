@@ -2,6 +2,14 @@
 
 buildscript {
   ext.kotlin_version = '2.1.20'
+  // Expo's autolinking/root-project Gradle plugin (applied below via
+  // `apply plugin: "expo-root-project"`) reads `kotlinVersion` (camelCase) from
+  // rootProject.ext to decide which KSP (Kotlin Symbol Processing) release to use
+  // for expo modules that run annotation processing, e.g. expo-updates. Without this,
+  // it silently defaults to Kotlin 2.0.21 / KSP 2.0.21-1.0.28, which is incompatible
+  // with the Kotlin 2.1.20 compiler actually on the classpath (kotlin_version above)
+  // and causes an internal compiler error in :expo-updates:kspReleaseKotlin.
+  ext.kotlinVersion = kotlin_version
   repositories {
     google()
     mavenCentral()
