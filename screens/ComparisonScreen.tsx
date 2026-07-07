@@ -37,13 +37,15 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({ route }) => 
 
   const canAddMore = selectedCountries.length < MAX_COMPARISON_COUNTRIES;
 
-  const availableCountries = countries.filter(
-    (c) =>
-      !selectedCountries.find((s) => s.code === c.code) &&
-      getLocalizedCountryName(c, i18n.language)
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase())
-  );
+  const availableCountries = React.useMemo(() => {
+    const selectedCodes = new Set(selectedCountries.map((s) => s.code));
+    const query = searchQuery.toLowerCase();
+    return countries.filter(
+      (c) =>
+        !selectedCodes.has(c.code) &&
+        getLocalizedCountryName(c, i18n.language).toLowerCase().includes(query)
+    );
+  }, [selectedCountries, searchQuery, i18n.language]);
 
   const handleSelectCountry = (country: Country) => {
     if (canAddMore) {
@@ -103,7 +105,12 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({ route }) => 
       )}
 
       {/* Country picker modal */}
-      <Modal visible={showPicker} transparent animationType="slide">
+      <Modal
+        visible={showPicker}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowPicker(false)}
+      >
         <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
           <View style={[localStyles.pickerHeader, { borderBottomColor: colors.border }]}>
             <TouchableOpacity

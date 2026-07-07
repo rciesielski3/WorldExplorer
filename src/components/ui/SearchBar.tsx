@@ -23,28 +23,25 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 }) => {
   const [query, setQuery] = useState('');
   const { theme } = useTheme();
+  const { colors } = theme;
 
   const handleClear = () => {
     setQuery('');
     onSearch('');
   };
 
-  const isDark = theme.isDarkMode;
-  const textColor = isDark ? '#fff' : '#000';
-  const backgroundColor = isDark ? '#2a2a2a' : '#f0f0f0';
-
   return (
     <View style={[styles.container, style]}>
       <MaterialCommunityIcons
         name="magnify"
         size={20}
-        color={textColor}
+        color={colors.text}
         style={styles.icon}
       />
       <TextInput
-        style={[styles.input, { color: textColor, backgroundColor }]}
+        style={[styles.input, { color: colors.text, backgroundColor: colors.surfaceVariant }]}
         placeholder={placeholder}
-        placeholderTextColor={isDark ? '#888' : '#999'}
+        placeholderTextColor={colors.textTertiary}
         value={query}
         onChangeText={(text) => {
           setQuery(text);
@@ -57,7 +54,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           <MaterialCommunityIcons
             name="close-circle"
             size={20}
-            color={textColor}
+            color={colors.text}
             style={styles.clearIcon}
           />
         </TouchableOpacity>

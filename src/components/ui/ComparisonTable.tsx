@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../../context/ThemeContext';
-import { Country } from '../../../utils/countries';
+import { Country, getLocalizedCountryName } from '../../../utils/countries';
 import {
   formatPopulation,
   formatNumber,
@@ -21,7 +21,7 @@ interface StatRow {
 
 export const ComparisonTable: React.FC<ComparisonTableProps> = ({ countries }) => {
   const { theme } = useTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { colors } = theme;
 
   const stats: StatRow[] = [
@@ -69,7 +69,7 @@ export const ComparisonTable: React.FC<ComparisonTableProps> = ({ countries }) =
           {countries.map((country) => (
             <View key={country.code} style={[localStyles.cell, { width: `${colWidth}%` }]}>
               <Text style={[localStyles.headerText, { color: colors.text }]}>
-                {country.translations?.en?.name}
+                {getLocalizedCountryName(country, i18n.language)}
               </Text>
             </View>
           ))}

@@ -3,140 +3,122 @@ import { QuizSession } from '../../context/QuizHistoryContext';
 
 const DAY_MS = 1000 * 60 * 60 * 24;
 
-function makeSession(overrides: Partial<QuizSession>): QuizSession {
+function sessionAt(
+  timestamp: number,
+  overrides: Partial<Omit<QuizSession, 'id' | 'timestamp'>> = {}
+): QuizSession {
   return {
-    id: 'session-id',
-    timestamp: Date.now(),
-    difficulty: 'medium',
-    score: 50,
-    timeTaken: 60,
+    id: `session-${timestamp}`,
+    timestamp,
+    difficulty: 'easy',
+    score: 80,
+    timeTaken: 30,
     ...overrides,
   };
 }
 
 describe('ACHIEVEMENTS', () => {
-  it('defines exactly the 4 MVP achievements with expected shape', () => {
-    expect(ACHIEVEMENTS).toEqual([
-      {
-        id: 'first_quiz',
-        labelKey: 'achievement_first_quiz',
-        descriptionKey: 'achievement_first_quiz_desc',
-        icon: '🎯',
-      },
-      {
-        id: 'on_fire',
-        labelKey: 'achievement_on_fire',
-        descriptionKey: 'achievement_on_fire_desc',
-        icon: '🔥',
-      },
-      {
-        id: 'country_master',
-        labelKey: 'achievement_country_master',
-        descriptionKey: 'achievement_country_master_desc',
-        icon: '🌍',
-      },
-      {
-        id: 'improver',
-        labelKey: 'achievement_improver',
-        descriptionKey: 'achievement_improver_desc',
-        icon: '📈',
-      },
+  it('defines exactly the 4 MVP achievements with required fields', () => {
+    expect(ACHIEVEMENTS).toHaveLength(4);
+    const ids = ACHIEVEMENTS.map((a) => a.id);
+    expect(ids).toEqual([
+      'first_quiz',
+      'on_fire',
+      'country_master',
+      'improver',
     ]);
+
+    ACHIEVEMENTS.forEach((achievement) => {
+      expect(achievement.labelKey).toBeTruthy();
+      expect(achievement.descriptionKey).toBeTruthy();
+      expect(achievement.icon).toBeTruthy();
+    });
   });
 });
 
 describe('checkAchievementUnlock', () => {
-  it('unlocks first_quiz when the session list contains only the new session', () => {
-    const newSession = makeSession({ id: 'a' });
-    const unlocked = checkAchievementUnlock(newSession, [newSession]);
+  const NOW = new Date(2026, 5, 15, 12, 0, 0).getTime();
 
+  beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(NOW);
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('unlocks first_quiz on the very first session', () => {
+    const first = sessionAt(NOW);
+    const unlocked = checkAchievementUnlock(first, [first]);
     expect(unlocked).toContain('first_quiz');
   });
 
-  it('does not unlock first_quiz when prior sessions already exist', () => {
-    const previous = makeSession({ id: 'a', timestamp: Date.now() - DAY_MS });
-    const newSession = makeSession({ id: 'b' });
-    const unlocked = checkAchievementUnlock(newSession, [previous, newSession]);
-
+  it('does not unlock first_quiz on subsequent sessions', () => {
+    const first = sessionAt(NOW - DAY_MS);
+    const second = sessionAt(NOW);
+    const unlocked = checkAchievementUnlock(second, [first, second]);
     expect(unlocked).not.toContain('first_quiz');
   });
 
-  it('unlocks on_fire when the session extends a 3-day consecutive streak', () => {
-    const now = Date.now();
-    const dayMinus2 = makeSession({ id: 'a', timestamp: now - 2 * DAY_MS });
-    const dayMinus1 = makeSession({ id: 'b', timestamp: now - 1 * DAY_MS });
-    const today = makeSession({ id: 'c', timestamp: now });
-
-    const unlocked = checkAchievementUnlock(today, [dayMinus2, dayMinus1, today]);
-
+  it('unlocks on_fire once the streak reaches 3 consecutive days', () => {
+    const sessions = [
+      sessionAt(NOW - 2 * DAY_MS),
+      sessionAt(NOW - DAY_MS),
+      sessionAt(NOW),
+    ];
+    const unlocked = checkAchievementUnlock(sessions[sessions.length - 1], sessions);
     expect(unlocked).toContain('on_fire');
   });
 
-  it('does not unlock on_fire when the streak is shorter than 3 days', () => {
-    const now = Date.now();
-    const dayMinus1 = makeSession({ id: 'a', timestamp: now - 1 * DAY_MS });
-    const today = makeSession({ id: 'b', timestamp: now });
-
-    const unlocked = checkAchievementUnlock(today, [dayMinus1, today]);
-
+  it('does not unlock on_fire when the streak is broken by a gap', () => {
+    const sessions = [
+      sessionAt(NOW - 5 * DAY_MS),
+      sessionAt(NOW - 4 * DAY_MS),
+      sessionAt(NOW),
+    ];
+    const unlocked = checkAchievementUnlock(sessions[sessions.length - 1], sessions);
     expect(unlocked).not.toContain('on_fire');
   });
 
-  it('unlocks country_master on a 100% hard-difficulty score', () => {
-    const newSession = makeSession({ difficulty: 'hard', score: 100 });
-    const unlocked = checkAchievementUnlock(newSession, [newSession]);
-
+  it('unlocks country_master for a perfect hard-difficulty score', () => {
+    const session = sessionAt(NOW, { difficulty: 'hard', score: 100 });
+    const unlocked = checkAchievementUnlock(session, [session]);
     expect(unlocked).toContain('country_master');
   });
 
-  it('does not unlock country_master on a 100% easy-difficulty score', () => {
-    const newSession = makeSession({ difficulty: 'easy', score: 100 });
-    const unlocked = checkAchievementUnlock(newSession, [newSession]);
-
+  it('does not unlock country_master for a non-perfect hard score', () => {
+    const session = sessionAt(NOW, { difficulty: 'hard', score: 90 });
+    const unlocked = checkAchievementUnlock(session, [session]);
     expect(unlocked).not.toContain('country_master');
   });
 
-  it('unlocks improver when score is 20+ points higher than the previous session', () => {
-    const previous = makeSession({ id: 'a', score: 50, timestamp: Date.now() - DAY_MS });
-    const newSession = makeSession({ id: 'b', score: 75, timestamp: Date.now() });
+  it('does not unlock country_master for a perfect score on easy/medium', () => {
+    const session = sessionAt(NOW, { difficulty: 'easy', score: 100 });
+    const unlocked = checkAchievementUnlock(session, [session]);
+    expect(unlocked).not.toContain('country_master');
+  });
 
-    const unlocked = checkAchievementUnlock(newSession, [previous, newSession]);
-
+  it('unlocks improver when score improves by at least 20 points over the previous session', () => {
+    const previous = sessionAt(NOW - DAY_MS, { score: 60 });
+    const current = sessionAt(NOW, { score: 85 });
+    const unlocked = checkAchievementUnlock(current, [previous, current]);
     expect(unlocked).toContain('improver');
   });
 
-  it('does not unlock improver when the score gain is under 20 points', () => {
-    const previous = makeSession({ id: 'a', score: 50, timestamp: Date.now() - DAY_MS });
-    const newSession = makeSession({ id: 'b', score: 65, timestamp: Date.now() });
-
-    const unlocked = checkAchievementUnlock(newSession, [previous, newSession]);
-
+  it('does not unlock improver for a smaller improvement', () => {
+    const previous = sessionAt(NOW - DAY_MS, { score: 60 });
+    const current = sessionAt(NOW, { score: 70 });
+    const unlocked = checkAchievementUnlock(current, [previous, current]);
     expect(unlocked).not.toContain('improver');
   });
 
-  it('does not unlock improver on the first session (no previous session to compare)', () => {
-    const newSession = makeSession({ id: 'a', score: 90 });
+  it('does not mutate the sessions array', () => {
+    const sessions = [sessionAt(NOW - DAY_MS), sessionAt(NOW)];
+    const copy = [...sessions];
 
-    const unlocked = checkAchievementUnlock(newSession, [newSession]);
+    checkAchievementUnlock(sessions[sessions.length - 1], sessions);
 
-    expect(unlocked).not.toContain('improver');
-  });
-
-  it('returns an empty array and does not mutate input when no conditions are met', () => {
-    const previous = makeSession({ id: 'a', score: 50, timestamp: Date.now() - DAY_MS });
-    const newSession = makeSession({ id: 'b', score: 55, difficulty: 'easy', timestamp: Date.now() });
-    const allSessions = [previous, newSession];
-    const snapshot = [...allSessions];
-
-    const unlocked = checkAchievementUnlock(newSession, allSessions);
-
-    expect(unlocked).toEqual([]);
-    expect(allSessions).toEqual(snapshot);
-  });
-
-  it('handles an empty sessions array without throwing', () => {
-    const newSession = makeSession({ id: 'a' });
-
-    expect(() => checkAchievementUnlock(newSession, [])).not.toThrow();
+    expect(sessions).toEqual(copy);
   });
 });

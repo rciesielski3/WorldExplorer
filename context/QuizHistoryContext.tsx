@@ -49,39 +49,57 @@ export const useQuizHistory = () => {
 const QUIZ_SESSIONS_STORAGE_KEY = 'worldexplorer_quiz_sessions';
 
 /**
- * Calculate current streak (consecutive days with at least one quiz)
+ * Format a timestamp as a local (device timezone) `YYYY-MM-DD` key. Using
+ * local calendar days (rather than `toISOString()`, which is UTC) avoids
+ * off-by-one errors for users not on UTC.
  */
-function calculateStreak(sessions: QuizSession[]): number {
+function toLocalDateKey(timestamp: number): string {
+  const d = new Date(timestamp);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
+    d.getDate()
+  ).padStart(2, '0')}`;
+}
+
+/** Parse a `YYYY-MM-DD` key back into a local-midnight Date. */
+function parseLocalDateKey(key: string): Date {
+  const [year, month, day] = key.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+/**
+ * Calculate the current streak: consecutive local-calendar days (ending
+ * today or yesterday) with at least one quiz session.
+ *
+ * If the most recent session isn't from today or yesterday, the streak has
+ * been broken and this returns 0.
+ */
+export function calculateStreak(sessions: QuizSession[]): number {
   if (sessions.length === 0) return 0;
 
-  // Sort sessions by timestamp in descending order (newest first)
-  const sorted = [...sessions].sort((a, b) => b.timestamp - a.timestamp);
+  const uniqueDateKeys = Array.from(
+    new Set(sessions.map((s) => toLocalDateKey(s.timestamp)))
+  ).sort((a, b) => (a < b ? 1 : a > b ? -1 : 0));
 
-  // Get unique dates (convert timestamps to dates)
-  const uniqueDates = new Set<string>();
-  for (const session of sorted) {
-    const date = new Date(session.timestamp).toISOString().split('T')[0];
-    uniqueDates.add(date);
+  const todayKey = toLocalDateKey(Date.now());
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayKey = toLocalDateKey(yesterday.getTime());
+
+  const mostRecentKey = uniqueDateKeys[0];
+  if (mostRecentKey !== todayKey && mostRecentKey !== yesterdayKey) {
+    return 0;
   }
 
-  // Convert to array and sort in descending order
-  const datesArray = Array.from(uniqueDates).sort().reverse();
+  let streak = 1;
+  let cursor = parseLocalDateKey(mostRecentKey);
+  for (let i = 1; i < uniqueDateKeys.length; i++) {
+    const expectedPrevDay = new Date(cursor);
+    expectedPrevDay.setDate(expectedPrevDay.getDate() - 1);
+    const expectedPrevDayKey = toLocalDateKey(expectedPrevDay.getTime());
 
-  // Calculate consecutive days from today backwards
-  let streak = 0;
-  let currentDate = new Date();
-  currentDate.setHours(0, 0, 0, 0);
-
-  for (const dateStr of datesArray) {
-    const [year, month, day] = dateStr.split('-').map(Number);
-    const sessionDate = new Date(year, month - 1, day);
-
-    const daysDiff = Math.floor(
-      (currentDate.getTime() - sessionDate.getTime()) / (1000 * 60 * 60 * 24)
-    );
-
-    if (daysDiff === streak) {
+    if (uniqueDateKeys[i] === expectedPrevDayKey) {
       streak++;
+      cursor = expectedPrevDay;
     } else {
       break;
     }

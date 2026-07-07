@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { db } from '../firebase-config';
-import { collection, doc, setDoc, deleteDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, doc, setDoc, deleteDoc, getDocs } from 'firebase/firestore';
 import { logger } from '../utils/logger';
 
 export interface FavoritesContextType {
@@ -59,30 +59,42 @@ export const FavoritesProvider: React.FC<{ children: ReactNode }> = ({ children 
     loadFavorites();
   }, []);
 
-  // Sync to Firebase when network available
-  useEffect(() => {
-    if (netInfo.isConnected && favorites.size > 0) {
-      syncFavoritesToFirebase();
-    }
-  }, [netInfo.isConnected]);
+  // TODO: Replace with the actual authenticated user ID once auth is wired up.
+  const userId = 'user-123';
 
-  const syncFavoritesToFirebase = async () => {
+  const getFavoritesCollection = () => collection(db, 'users', userId, 'favorites');
+
+  /**
+   * Reconcile the full local favorites set with Firestore: write anything
+   * that's missing and delete anything remote that's no longer favorited
+   * locally. Used for full sync (e.g. when transitioning from offline to
+   * online), not for routine per-toggle updates.
+   */
+  const reconcileFavoritesWithFirebase = async (current: Set<string>) => {
     try {
-      const userId = 'user-123'; // TODO: Replace with actual authenticated user ID
-      const favoritesCollection = collection(db, 'users', userId, 'favorites');
+      const favoritesCollection = getFavoritesCollection();
+      const snapshot = await getDocs(favoritesCollection);
+      const remoteCodes = new Set(snapshot.docs.map((d) => d.id));
 
-      for (const countryCode of favorites) {
-        await setDoc(doc(favoritesCollection, countryCode), {
-          countryCode,
-          addedAt: new Date(),
-        });
-      }
-      logger.info('Favorites synced to Firebase', {
+      const toAdd = Array.from(current).filter((code) => !remoteCodes.has(code));
+      const toDelete = Array.from(remoteCodes).filter((code) => !current.has(code));
+
+      await Promise.all([
+        ...toAdd.map((countryCode) =>
+          setDoc(doc(favoritesCollection, countryCode), {
+            countryCode,
+            addedAt: new Date(),
+          })
+        ),
+        ...toDelete.map((countryCode) => deleteDoc(doc(favoritesCollection, countryCode))),
+      ]);
+
+      logger.info('Favorites reconciled with Firebase', {
         context: 'FavoritesContext',
         timestamp: new Date().toISOString(),
       });
     } catch (error) {
-      logger.warn('Failed to sync favorites to Firebase', {
+      logger.warn('Failed to reconcile favorites with Firebase', {
         context: 'FavoritesContext',
         timestamp: new Date().toISOString(),
         metadata: {
@@ -92,9 +104,22 @@ export const FavoritesProvider: React.FC<{ children: ReactNode }> = ({ children 
     }
   };
 
+  // Perform a full reconciliation whenever we (re)gain connectivity, so any
+  // changes made while offline are pushed to Firestore.
+  useEffect(() => {
+    if (netInfo.isConnected) {
+      reconcileFavoritesWithFirebase(favorites);
+    }
+    // Only re-run when connectivity changes; the reconciliation intentionally
+    // reads `favorites` fresh via the closure rather than re-triggering sync
+    // on every keystroke-level favorites change (that's handled per-toggle).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [netInfo.isConnected]);
+
   const toggleFavorite = async (countryCode: string) => {
     const updated = new Set(favorites);
-    if (updated.has(countryCode)) {
+    const isRemoving = updated.has(countryCode);
+    if (isRemoving) {
       updated.delete(countryCode);
     } else {
       updated.add(countryCode);
@@ -115,6 +140,30 @@ export const FavoritesProvider: React.FC<{ children: ReactNode }> = ({ children 
           error: error instanceof Error ? error.message : String(error),
         },
       });
+    }
+
+    // Sync this single change to Firebase in real time when online, instead
+    // of waiting for the next full reconciliation pass.
+    if (netInfo.isConnected) {
+      try {
+        const favoritesCollection = getFavoritesCollection();
+        if (isRemoving) {
+          await deleteDoc(doc(favoritesCollection, countryCode));
+        } else {
+          await setDoc(doc(favoritesCollection, countryCode), {
+            countryCode,
+            addedAt: new Date(),
+          });
+        }
+      } catch (error) {
+        logger.warn('Failed to sync favorite to Firebase', {
+          context: 'FavoritesContext',
+          timestamp: new Date().toISOString(),
+          metadata: {
+            error: error instanceof Error ? error.message : String(error),
+          },
+        });
+      }
     }
   };
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Toast from "react-native-toast-message";
 import {
   useFonts,
@@ -28,8 +28,23 @@ import CountryDetailsScreen from "./screens/CountryDetailsScreen";
 import QuizResultsScreen from "./screens/quiz/QuizResultsScreen";
 import { ComparisonScreen } from "./screens/ComparisonScreen";
 import { FavoritesScreen } from "./screens/FavoritesScreen";
-import { QuizStatsScreen } from "./screens/QuizStatsScreen";
 import type { RootStackParamList } from "./types/navigation";
+
+const LazyQuizStatsScreen = React.lazy(() =>
+  import("./screens/QuizStatsScreen").then((m) => ({ default: m.QuizStatsScreen }))
+);
+
+// React Navigation only accepts `Stack.Screen`/`Stack.Group` as direct
+// children of a navigator, so the lazy screen must be wrapped in its own
+// component rather than having `<Suspense>` sit between `Stack.Navigator`
+// and `Stack.Screen`.
+function QuizStatsScreenWrapper(props: React.ComponentProps<typeof LazyQuizStatsScreen>) {
+  return (
+    <Suspense fallback={<ActivityIndicator size="large" color="#6366F1" />}>
+      <LazyQuizStatsScreen {...props} />
+    </Suspense>
+  );
+}
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -132,7 +147,7 @@ export default function App() {
                   />
                   <Stack.Screen
                     name="QuizStats"
-                    component={QuizStatsScreen}
+                    component={QuizStatsScreenWrapper}
                     options={{ title: t("quizStatistics") }}
                   />
                 </Stack.Navigator>
