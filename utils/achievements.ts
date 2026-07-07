@@ -1,4 +1,4 @@
-import { QuizSession } from '../context/QuizHistoryContext';
+import { QuizSession, calculateStreak } from '../context/QuizHistoryContext';
 
 export interface Achievement {
   id: string;
@@ -33,36 +33,6 @@ export const ACHIEVEMENTS: Achievement[] = [
     icon: '📈',
   },
 ];
-
-const DAY_MS = 1000 * 60 * 60 * 24;
-
-/**
- * Calculate the number of consecutive days (ending on the most recent
- * session's day) that contain at least one quiz session.
- *
- * Does not mutate the input array.
- */
-function calculateStreak(sessions: QuizSession[]): number {
-  if (sessions.length === 0) return 0;
-
-  const uniqueDayKeys = new Set<number>();
-  for (const session of sessions) {
-    uniqueDayKeys.add(Math.floor(session.timestamp / DAY_MS));
-  }
-
-  const sortedDays = Array.from(uniqueDayKeys).sort((a, b) => b - a);
-
-  let streak = 1;
-  for (let i = 1; i < sortedDays.length; i++) {
-    if (sortedDays[i - 1] - sortedDays[i] === 1) {
-      streak++;
-    } else {
-      break;
-    }
-  }
-
-  return streak;
-}
 
 /**
  * Determine which achievements the newly-completed session unlocks.
