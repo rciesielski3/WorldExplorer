@@ -68,6 +68,12 @@ const palette = {
   lightText: '#1A1F2E',
   lightTextSecondary: 'rgba(26,31,46,0.60)',
   lightTextTertiary: 'rgba(26,31,46,0.35)',
+
+  // Neutral Blue Grey — 'default' gradient for screens with no section branding
+  neutralGrey300: '#90A4AE',
+  neutralGrey400: '#78909C',
+  neutralGrey500: '#607D8B',
+  neutralGrey700: '#455A64',
 } as const;
 
 // ─── Common tokens (shared between light and dark themes) ──────────────────
@@ -176,10 +182,24 @@ export type ThemeColors = {
   border: string;
 };
 
-type ThemeGradients = {
+export type ThemeGradients = {
   home: readonly [string, string, ...string[]];
   explore: readonly [string, string, ...string[]];
   map: readonly [string, string, ...string[]];
+  /** Neutral gradient for screens without a specific section colour (e.g. Settings). */
+  default: readonly [string, string, ...string[]];
+};
+
+/**
+ * Tokens for `ScreenBackground`'s scrim + gradient tint layers.
+ * - `scrim` brings the world-map photo close to the solid theme background
+ *   so text/cards keep their designed WCAG AA contrast.
+ * - `gradientOpacity` keeps the brand-gradient tint subtle — strong enough
+ *   to read as section identity, faint enough not to shift text contrast.
+ */
+export type ThemeOverlay = {
+  scrim: string;
+  gradientOpacity: number;
 };
 
 export type TypographyStyles = typeof commonTokens.typography;
@@ -198,6 +218,7 @@ export type TypographyShortcuts = {
 export type Theme = {
   colors: ThemeColors;
   gradients: ThemeGradients;
+  overlay: ThemeOverlay;
   spacing: typeof commonTokens.spacing;
   typography: TypographyStyles & TypographyShortcuts;
   shadows: typeof commonTokens.shadows;
@@ -268,7 +289,15 @@ export const lightTheme = {
     home:    [palette.skyBlue500, palette.oceanBlue500] as const,
     explore: [palette.earthGreen500, palette.skyBlue500] as const,
     map:     [palette.oceanBlue500, palette.earthGreen500] as const,
+    default: [palette.neutralGrey500, palette.neutralGrey700] as const,
   } satisfies ThemeGradients,
+  overlay: {
+    // Derived from lightBg so the scrim matches the solid background it
+    // stands in for; opaque enough to preserve text/card contrast over the
+    // world-map photo.
+    scrim: 'rgba(245,247,250,0.85)',
+    gradientOpacity: 0.16,
+  } satisfies ThemeOverlay,
 };
 
 // ─── Dark theme ────────────────────────────────────────────────────────────
@@ -318,5 +347,13 @@ export const darkTheme = {
     home:    [palette.skyBlue300, palette.oceanBlue300] as const,
     explore: [palette.earthGreen300, palette.skyBlue300] as const,
     map:     [palette.oceanBlue300, palette.earthGreen300] as const,
+    default: [palette.neutralGrey300, palette.neutralGrey400] as const,
   } satisfies ThemeGradients,
+  overlay: {
+    // Derived from dark900 so the scrim matches the solid background it
+    // stands in for; opaque enough to preserve text/card contrast over the
+    // world-map photo.
+    scrim: 'rgba(13,17,23,0.82)',
+    gradientOpacity: 0.20,
+  } satisfies ThemeOverlay,
 };

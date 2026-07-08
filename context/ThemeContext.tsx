@@ -119,6 +119,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     typography: activeTheme.typography,
     shadows: activeTheme.shadows,
     gradients: activeTheme.gradients,
+    overlay: activeTheme.overlay,
     isDarkMode,
     toggleTheme,
   };

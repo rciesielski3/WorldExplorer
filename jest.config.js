@@ -16,9 +16,11 @@ module.exports = {
   // react-native itself through babel-jest; @react-navigation ships ESM
   // ("export { ... }") in its published lib/module output, which crashes
   // under CommonJS unless it's transformed too. Screen tests that wrap
-  // components in <NavigationContainer> need this.
+  // components in <NavigationContainer> need this. expo-linear-gradient
+  // (used by ScreenBackground) and its `expo`/`expo-modules-core` peers
+  // ship ESM too and need the same treatment.
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|@react-native(-community)?|@react-navigation)/)',
+    'node_modules/(?!((jest-)?react-native|@react-native(-community)?|@react-navigation|expo(-.*)?|expo-modules-core|@expo(nent)?/.*)/)',
   ],
   testPathIgnorePatterns: [
     '/node_modules/',

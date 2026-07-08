@@ -48,9 +48,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const stats = getStats();
 
   const localStyles = StyleSheet.create({
-    screenRoot: {
-      flex: 1,
-    },
     statsBtn: {
       alignItems: "center",
       justifyContent: "center",
@@ -123,7 +120,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   }, []);
 
   return (
-    <View style={localStyles.screenRoot}>
+    <View style={styles.screenRoot}>
       <ScreenBackground gradient="home" />
       <ScrollView
         style={styles.homeScroll}

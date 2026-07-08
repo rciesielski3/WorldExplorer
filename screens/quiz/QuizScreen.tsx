@@ -5,7 +5,6 @@ import {
   Text,
   ActivityIndicator,
   Image,
-  ImageBackground,
   Pressable,
   StyleSheet,
   TouchableOpacity,
@@ -19,6 +18,7 @@ import { ProgressBar } from "../../src/components/ui/ProgressBar";
 import { QuestionCard } from "../../src/components/ui/QuestionCard";
 import { Button } from "../../src/components/ui/Button";
 import { FloatingNavBar } from "../../src/components/Navigation/FloatingNavBar";
+import { ScreenBackground } from "../../src/components/ScreenBackground";
 import AdBanner from "../../src/components/AdBanner";
 import { FLAG_ASSETS } from "../../utils/flagAssets";
 import { triggerMediumHaptic } from "../../utils/haptics";
@@ -147,16 +147,14 @@ const QuizScreen = ({ route, navigation }: any) => {
 
   if (loading) {
     return (
-      <ImageBackground
-        source={require("../../assets/worldMapBackground.png")}
-        style={{ flex: 1 }}
-      >
+      <View style={{ flex: 1 }}>
+        <ScreenBackground gradient="map" />
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
-      </ImageBackground>
+      </View>
     );
   }
 
@@ -169,13 +167,9 @@ const QuizScreen = ({ route, navigation }: any) => {
   ];
 
   return (
-    <ImageBackground
-      source={require("../../assets/worldMapBackground.png")}
-      style={{ flex: 1 }}
-    >
-      <View
-        style={{ flex: 1, backgroundColor: `${theme.colors.background}00` }}
-      >
+    <View style={{ flex: 1 }}>
+      <ScreenBackground gradient="map" />
+      <View style={{ flex: 1 }}>
         {/* Top Bar */}
         <TopBar title={t("quiz")} />
 
@@ -186,36 +180,42 @@ const QuizScreen = ({ route, navigation }: any) => {
 
         {/* Difficulty Selector */}
         {!questions.length && (
-          <View style={localStyles.difficultySelector}>
-            <Text style={localStyles.difficultyTitle}>
-              {t("selectDifficulty")}
-            </Text>
-            {(["easy", "medium", "hard"] as Difficulty[]).map((diff) => {
-              const isActive = selectedDifficulty === diff;
-              return (
-                <TouchableOpacity
-                  key={diff}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: isActive }}
-                  accessibilityLabel={t(`difficulty_${diff}`)}
-                  style={[
-                    localStyles.difficultyButton,
-                    isActive && localStyles.difficultyButtonActive,
-                  ]}
-                  onPress={() => startQuiz(diff)}
-                >
-                  <Text
+          <ScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
+            scrollEventThrottle={16}
+          >
+            <View style={localStyles.difficultySelector}>
+              <Text style={localStyles.difficultyTitle}>
+                {t("selectDifficulty")}
+              </Text>
+              {(["easy", "medium", "hard"] as Difficulty[]).map((diff) => {
+                const isActive = selectedDifficulty === diff;
+                return (
+                  <TouchableOpacity
+                    key={diff}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: isActive }}
+                    accessibilityLabel={t(`difficulty_${diff}`)}
                     style={[
-                      localStyles.difficultyButtonText,
-                      isActive && localStyles.difficultyButtonTextActive,
+                      localStyles.difficultyButton,
+                      isActive && localStyles.difficultyButtonActive,
                     ]}
+                    onPress={() => startQuiz(diff)}
                   >
-                    {t(`difficulty_${diff}`)}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+                    <Text
+                      style={[
+                        localStyles.difficultyButtonText,
+                        isActive && localStyles.difficultyButtonTextActive,
+                      ]}
+                    >
+                      {t(`difficulty_${diff}`)}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </ScrollView>
         )}
 
         {/* Content */}
@@ -527,7 +527,7 @@ const QuizScreen = ({ route, navigation }: any) => {
         {/* Ad Banner */}
         <AdBanner />
       </View>
-    </ImageBackground>
+    </View>
   );
 };
 

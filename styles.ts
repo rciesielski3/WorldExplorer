@@ -13,6 +13,11 @@ interface Theme {
 
 export const getStyles = (theme: Theme) =>
   StyleSheet.create({
+    // Root wrapper for screens using <ScreenBackground />: transparent so
+    // the background layer (mounted as the first sibling) shows through.
+    screenRoot: {
+      flex: 1,
+    },
     containerButtons: {
       padding: 16,
       justifyContent: "center",
@@ -23,10 +28,10 @@ export const getStyles = (theme: Theme) =>
       justifyContent: "center",
     },
     homeScroll: {
+      // Background is provided by <ScreenBackground gradient="home" />
+      // rendered behind this ScrollView; kept transparent here so the
+      // scrim + gradient tint remain visible underneath.
       flex: 1,
-      backgroundColor: theme.isDarkMode
-        ? "rgba(11, 11, 22, 0.78)"
-        : "rgba(248, 250, 252, 0.82)",
     },
     homeScrollContent: {
       padding: 16,
@@ -121,21 +126,17 @@ export const getStyles = (theme: Theme) =>
       justifyContent: "center",
     },
 
-    backgroundImage: {
-      flex: 1,
-      width: "100%",
-      height: "100%",
-      resizeMode: "cover",
-    },
     containerScrollView: {
+      // Background is provided by <ScreenBackground gradient="explore" />
+      // rendered behind this ScrollView.
       padding: 16,
       flex: 1,
-      backgroundColor: "rgba(189, 189, 189, 0.43)",
     },
     containerContent: {
+      // Background is provided by <ScreenBackground gradient="explore" />
+      // rendered behind this View.
       padding: 16,
       flex: 1,
-      backgroundColor: "rgba(189, 189, 189, 0.43)",
       justifyContent: "flex-start",
     },
     mapContainer: {
@@ -355,6 +356,7 @@ export const getStyles = (theme: Theme) =>
     },
     regionFilterContent: {
       gap: 8,
+      paddingLeft: 8,
       paddingRight: 8,
     },
     regionFilterChip: {

@@ -12,7 +12,6 @@ interface TopBarProps {
   onSettingsPress?: () => void;
   showBack?: boolean;
   onBackPress?: () => void;
-  gradientColors?: [string, string];
   testID?: string;
 }
 
@@ -22,7 +21,6 @@ export function TopBar({
   onSettingsPress,
   showBack = false,
   onBackPress,
-  gradientColors,
   testID,
 }: TopBarProps) {
   const { theme } = useTheme();
@@ -49,7 +47,7 @@ export function TopBar({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: gradientColors ? undefined : theme.colors.surface,
+        backgroundColor: theme.colors.surface,
       }}
     >
       {/* Left Content */}
