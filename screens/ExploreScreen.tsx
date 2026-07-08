@@ -209,7 +209,11 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
                   size={32}
                   color={theme.colors.text}
                 />
-                <Text style={styles.settingDescription}>
+                <Text
+                  style={styles.settingDescription}
+                  numberOfLines={2}
+                  ellipsizeMode="tail"
+                >
                   {t("exploreEmptyState")}
                 </Text>
               </View>

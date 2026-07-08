@@ -307,7 +307,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
               borderBottomColor: theme.colors.border,
             }}
           >
-            <View>
+            <View style={{ flex: 1 }}>
               <Text
                 style={{
                   fontSize: commonTokens.typography.bodyLg.fontSize,
@@ -315,6 +315,8 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
                   color: theme.colors.text,
                   marginBottom: commonTokens.spacing.xs,
                 }}
+                numberOfLines={1}
+                ellipsizeMode="tail"
               >
                 {t('sound')}
               </Text>
@@ -345,7 +347,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
               paddingTop: commonTokens.spacing.md,
             }}
           >
-            <View>
+            <View style={{ flex: 1 }}>
               <Text
                 style={{
                   fontSize: commonTokens.typography.bodyLg.fontSize,
@@ -353,6 +355,8 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
                   color: theme.colors.text,
                   marginBottom: commonTokens.spacing.xs,
                 }}
+                numberOfLines={1}
+                ellipsizeMode="tail"
               >
                 {t('hapticFeedback')}
               </Text>
@@ -649,6 +653,8 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
               marginBottom: commonTokens.spacing.md,
               lineHeight: 22,
             }}
+            numberOfLines={3}
+            ellipsizeMode="tail"
           >
             {t('aboutAppDescription')}
           </Text>

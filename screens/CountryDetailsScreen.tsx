@@ -165,9 +165,21 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
             style={styles.countryInfoCardIcon}
           />
         )}
-        <Text style={styles.countryInfoCardTitle}>{title}</Text>
+        <Text
+          style={styles.countryInfoCardTitle}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {title}
+        </Text>
       </View>
-      <Text style={styles.countryInfoCardValue}>{value}</Text>
+      <Text
+        style={styles.countryInfoCardValue}
+        numberOfLines={2}
+        ellipsizeMode="tail"
+      >
+        {value}
+      </Text>
     </View>
   );
 

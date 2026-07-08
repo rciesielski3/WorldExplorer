@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ImageBackground,
   Image,
   ActivityIndicator,
   ScrollView,
@@ -15,6 +14,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 
 import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
+import { ScreenBackground } from "../src/components/ScreenBackground";
 import { getDailyCountry } from "../utils/dailyCountry";
 import { fetchCountries, getLocalizedCountryName } from "../utils/countries";
 import { FLAG_ASSETS } from "../utils/flagAssets";
@@ -48,6 +48,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const stats = getStats();
 
   const localStyles = StyleSheet.create({
+    screenRoot: {
+      flex: 1,
+    },
     statsBtn: {
       alignItems: "center",
       justifyContent: "center",
@@ -120,10 +123,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   }, []);
 
   return (
-    <ImageBackground
-      source={require("../assets/worldMapBackground.png")}
-      style={styles.backgroundImage}
-    >
+    <View style={localStyles.screenRoot}>
+      <ScreenBackground gradient="home" />
       <ScrollView
         style={styles.homeScroll}
         contentContainerStyle={styles.homeScrollContent}
@@ -201,11 +202,15 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                   source={FLAG_ASSETS[dailyCountry.flagPath]}
                   style={styles.dailyCountryFlag}
                 />
-                <View style={styles.dailyCountryText}>
+                <View style={[styles.dailyCountryText, { flex: 1 }]}>
                   <Text style={styles.countryName}>
                     {getLocalizedCountryName(dailyCountry, i18n.language)}
                   </Text>
-                  <Text style={styles.settingDescription}>
+                  <Text
+                    style={styles.settingDescription}
+                    numberOfLines={2}
+                    ellipsizeMode="tail"
+                  >
                     {t("dailyCountrySubtitle", {
                       capital: dailyCountry.capital,
                     })}
@@ -230,7 +235,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           )}
         </View>
       </ScrollView>
-    </ImageBackground>
+    </View>
   );
 };
 
