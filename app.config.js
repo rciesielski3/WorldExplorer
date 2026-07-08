@@ -53,6 +53,7 @@ module.exports = {
     plugins: [
       "expo-font",
       "expo-asset",
+      "@react-native-vector-icons/material-community-icons",
       [
         "react-native-google-mobile-ads",
         {
