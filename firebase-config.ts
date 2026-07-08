@@ -12,17 +12,50 @@ const firebaseConfig = {
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Validate required config
-if (!firebaseConfig.projectId) {
-  logger.warn('Firebase projectId not configured - offline mode only', {
+// Validate required config before initializing Firebase
+const isConfigured = !!(
+  firebaseConfig.apiKey &&
+  firebaseConfig.projectId &&
+  firebaseConfig.authDomain &&
+  firebaseConfig.appId
+);
+
+if (!isConfigured) {
+  logger.warn('Firebase configuration incomplete - offline mode only', {
     context: 'firebase-config',
     timestamp: new Date().toISOString(),
+    metadata: {
+      hasApiKey: !!firebaseConfig.apiKey,
+      hasProjectId: !!firebaseConfig.projectId,
+      hasAuthDomain: !!firebaseConfig.authDomain,
+      hasAppId: !!firebaseConfig.appId,
+    },
   });
 }
 
-const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
-export const auth = getAuth(app);
+let app: any;
+let db: any;
+let auth: any;
+
+try {
+  app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+  auth = getAuth(app);
+} catch (error) {
+  logger.error('Failed to initialize Firebase', {
+    context: 'firebase-config',
+    timestamp: new Date().toISOString(),
+    metadata: {
+      error: error instanceof Error ? error.message : String(error),
+    },
+  });
+  // Create placeholder objects to prevent crashes downstream
+  app = null;
+  db = null;
+  auth = null;
+}
+
+export { app, db, auth };
 
 // Connect to emulator in development (if FIREBASE_EMULATOR_HOST env var set)
 if (process.env.FIREBASE_EMULATOR_HOST && __DEV__) {

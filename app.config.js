@@ -78,11 +78,6 @@ module.exports = {
       EXPO_PUBLIC_REVENUECAT_PREMIUM_PRODUCT_ID:
         process.env.EXPO_PUBLIC_REVENUECAT_PREMIUM_PRODUCT_ID ||
         "worldexplorer_premium_lifetime",
-      FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
-      FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
-      FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
-      FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET,
-      FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
     },
     assetBundlePatterns: ["**/*"],
   },

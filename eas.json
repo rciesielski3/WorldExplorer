@@ -6,16 +6,43 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_FIREBASE_API_KEY": "@FIREBASE_API_KEY",
+        "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN": "@FIREBASE_AUTH_DOMAIN",
+        "EXPO_PUBLIC_FIREBASE_PROJECT_ID": "@FIREBASE_PROJECT_ID",
+        "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET": "@FIREBASE_STORAGE_BUCKET",
+        "EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "@FIREBASE_MESSAGING_SENDER_ID",
+        "EXPO_PUBLIC_FIREBASE_APP_ID": "@FIREBASE_APP_ID",
+        "GOOGLE_MAPS_API_KEY": "@GOOGLE_MAPS_API_KEY"
+      }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_FIREBASE_API_KEY": "@FIREBASE_API_KEY",
+        "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN": "@FIREBASE_AUTH_DOMAIN",
+        "EXPO_PUBLIC_FIREBASE_PROJECT_ID": "@FIREBASE_PROJECT_ID",
+        "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET": "@FIREBASE_STORAGE_BUCKET",
+        "EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "@FIREBASE_MESSAGING_SENDER_ID",
+        "EXPO_PUBLIC_FIREBASE_APP_ID": "@FIREBASE_APP_ID",
+        "GOOGLE_MAPS_API_KEY": "@GOOGLE_MAPS_API_KEY"
+      }
     },
     "production": {
       "autoIncrement": true,
       "android": {
         "buildType": "app-bundle",
         "credentialsSource": "local"
+      },
+      "env": {
+        "EXPO_PUBLIC_FIREBASE_API_KEY": "@FIREBASE_API_KEY",
+        "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN": "@FIREBASE_AUTH_DOMAIN",
+        "EXPO_PUBLIC_FIREBASE_PROJECT_ID": "@FIREBASE_PROJECT_ID",
+        "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET": "@FIREBASE_STORAGE_BUCKET",
+        "EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "@FIREBASE_MESSAGING_SENDER_ID",
+        "EXPO_PUBLIC_FIREBASE_APP_ID": "@FIREBASE_APP_ID",
+        "GOOGLE_MAPS_API_KEY": "@GOOGLE_MAPS_API_KEY"
       }
     },
     "internal": {
@@ -23,6 +50,15 @@
       "android": {
         "buildType": "app-bundle",
         "credentialsSource": "local"
+      },
+      "env": {
+        "EXPO_PUBLIC_FIREBASE_API_KEY": "@FIREBASE_API_KEY",
+        "EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN": "@FIREBASE_AUTH_DOMAIN",
+        "EXPO_PUBLIC_FIREBASE_PROJECT_ID": "@FIREBASE_PROJECT_ID",
+        "EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET": "@FIREBASE_STORAGE_BUCKET",
+        "EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID": "@FIREBASE_MESSAGING_SENDER_ID",
+        "EXPO_PUBLIC_FIREBASE_APP_ID": "@FIREBASE_APP_ID",
+        "GOOGLE_MAPS_API_KEY": "@GOOGLE_MAPS_API_KEY"
       }
     }
   },
