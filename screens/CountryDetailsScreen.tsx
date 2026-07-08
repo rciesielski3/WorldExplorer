@@ -5,7 +5,6 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-  ImageBackground,
   StyleSheet,
   FlatList,
   ActivityIndicator,
@@ -18,6 +17,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { useTheme } from "../context/ThemeContext";
 import { useFavorites } from "../context/FavoritesContext";
 import { getStyles } from "../styles";
+import { ScreenBackground } from "../src/components/ScreenBackground";
 import AdBanner from "../src/components/AdBanner";
 import { FLAG_ASSETS } from "../utils/flagAssets";
 import { fetchHistoricalFacts } from "../utils/historicalFacts";
@@ -165,9 +165,21 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
             style={styles.countryInfoCardIcon}
           />
         )}
-        <Text style={styles.countryInfoCardTitle}>{title}</Text>
+        <Text
+          style={styles.countryInfoCardTitle}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {title}
+        </Text>
       </View>
-      <Text style={styles.countryInfoCardValue}>{value}</Text>
+      <Text
+        style={styles.countryInfoCardValue}
+        numberOfLines={2}
+        ellipsizeMode="tail"
+      >
+        {value}
+      </Text>
     </View>
   );
 
@@ -180,11 +192,8 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
   };
 
   return (
-    <ImageBackground
-      source={require("../assets/worldMapBackground.png")}
-      style={styles.backgroundImage}
-      resizeMode="cover"
-    >
+    <View style={styles.screenRoot}>
+      <ScreenBackground gradient="explore" />
       <ScrollView
         style={styles.containerScrollView}
         contentContainerStyle={styles.countryDetailsContent}
@@ -399,7 +408,7 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
         </View>
       </ScrollView>
       <AdBanner />
-    </ImageBackground>
+    </View>
   );
 };
 

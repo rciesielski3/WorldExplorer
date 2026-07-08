@@ -21,6 +21,7 @@ import { Card } from '../src/components/ui/Card';
 import { ToggleSwitch } from '../src/components/ui/ToggleSwitch';
 import { TopBar } from '../src/components/Navigation/TopBar';
 import { FloatingNavBar } from '../src/components/Navigation/FloatingNavBar';
+import { ScreenBackground } from '../src/components/ScreenBackground';
 import { commonTokens } from '../theme/tokens';
 import { Picker } from '@react-native-picker/picker';
 import { logger } from '../utils/logger';
@@ -135,7 +136,8 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
   ];
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+    <View style={{ flex: 1 }}>
+      <ScreenBackground gradient="default" />
       <TopBar title={t('settings')} />
 
       <ScrollView
@@ -307,7 +309,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
               borderBottomColor: theme.colors.border,
             }}
           >
-            <View>
+            <View style={{ flex: 1 }}>
               <Text
                 style={{
                   fontSize: commonTokens.typography.bodyLg.fontSize,
@@ -315,6 +317,8 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
                   color: theme.colors.text,
                   marginBottom: commonTokens.spacing.xs,
                 }}
+                numberOfLines={1}
+                ellipsizeMode="tail"
               >
                 {t('sound')}
               </Text>
@@ -345,7 +349,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
               paddingTop: commonTokens.spacing.md,
             }}
           >
-            <View>
+            <View style={{ flex: 1 }}>
               <Text
                 style={{
                   fontSize: commonTokens.typography.bodyLg.fontSize,
@@ -353,6 +357,8 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
                   color: theme.colors.text,
                   marginBottom: commonTokens.spacing.xs,
                 }}
+                numberOfLines={1}
+                ellipsizeMode="tail"
               >
                 {t('hapticFeedback')}
               </Text>
@@ -649,6 +655,8 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
               marginBottom: commonTokens.spacing.md,
               lineHeight: 22,
             }}
+            numberOfLines={3}
+            ellipsizeMode="tail"
           >
             {t('aboutAppDescription')}
           </Text>

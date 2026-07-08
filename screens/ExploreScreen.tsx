@@ -5,7 +5,6 @@ import {
   View,
   Image,
   TouchableOpacity,
-  ImageBackground,
   ScrollView,
 } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -14,6 +13,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 
 import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
+import { ScreenBackground } from "../src/components/ScreenBackground";
 import AdBanner from "../src/components/AdBanner";
 import { SearchBar } from "../src/components/ui/SearchBar";
 import {
@@ -147,10 +147,8 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
   };
 
   return (
-    <ImageBackground
-      source={require("../assets/worldMapBackground.png")}
-      style={styles.backgroundImage}
-    >
+    <View style={styles.screenRoot}>
+      <ScreenBackground gradient="explore" />
       <View style={styles.containerContent}>
         <View style={styles.exploreHeaderCard}>
           <Text style={styles.title}>{t("exploreCountries")}</Text>
@@ -209,7 +207,11 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
                   size={32}
                   color={theme.colors.text}
                 />
-                <Text style={styles.settingDescription}>
+                <Text
+                  style={styles.settingDescription}
+                  numberOfLines={2}
+                  ellipsizeMode="tail"
+                >
                   {t("exploreEmptyState")}
                 </Text>
               </View>
@@ -219,7 +221,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
         )}
       </View>
       <AdBanner />
-    </ImageBackground>
+    </View>
   );
 };
 

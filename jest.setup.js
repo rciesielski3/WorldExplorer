@@ -121,6 +121,22 @@ jest.mock('expo-haptics', () => ({
   },
 }));
 
+// Mock expo-linear-gradient
+// The real module pulls in expo-modules-core's native binding
+// (NativeModule.ts throws outside a real Expo runtime), so it can't run
+// under Jest even with transformIgnorePatterns allowing it through Babel.
+// Render it as a plain View so components using <ScreenBackground> (which
+// wraps LinearGradient) can still be tested.
+jest.mock('expo-linear-gradient', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  const LinearGradient = React.forwardRef((props, ref) =>
+    React.createElement(View, { ...props, ref })
+  );
+  LinearGradient.displayName = 'LinearGradient';
+  return { LinearGradient };
+});
+
 // Mock @react-native-community/netinfo
 jest.mock('@react-native-community/netinfo', () => ({
   useNetInfo: jest.fn(() => ({

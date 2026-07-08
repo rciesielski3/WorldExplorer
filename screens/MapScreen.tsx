@@ -16,6 +16,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 
 import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
+import { ScreenBackground } from "../src/components/ScreenBackground";
 import { FLAG_ASSETS } from "../utils/flagAssets";
 import { logger } from "../utils/logger";
 import { triggerLightHaptic } from "../utils/haptics";
@@ -333,7 +334,8 @@ const MapScreen: React.FC<MapScreenProps> = ({ route, navigation }) => {
   }, [navigation]);
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <View style={styles.container}>
+      <ScreenBackground gradient="map" />
       <MapView
         ref={mapRef}
         style={styles.mapView}

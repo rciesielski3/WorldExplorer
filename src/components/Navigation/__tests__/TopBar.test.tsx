@@ -203,24 +203,13 @@ describe('TopBar Component', () => {
   });
 
   describe('Background Color', () => {
-    it('should use theme surface color when no gradient is provided', async () => {
+    it('should use theme surface color', async () => {
       const { findByTestId } = renderTopBar(
           <TopBar testID="top-bar" />
         );
 
       const outer = await findByTestId('top-bar');
       expect(outer.props.style.backgroundColor).toMatch(/^#[0-9A-Fa-f]{6}$/);
-    });
-
-    it('should leave backgroundColor unset when gradientColors is provided', async () => {
-      // TopBar does not itself render a gradient; when gradientColors is passed it
-      // omits its own backgroundColor so a parent gradient can show through.
-      const { findByTestId } = renderTopBar(
-          <TopBar testID="top-bar" gradientColors={['#1E88E5', '#43A047']} />
-        );
-
-      const outer = await findByTestId('top-bar');
-      expect(outer.props.style.backgroundColor).toBeUndefined();
     });
   });
 
@@ -333,14 +322,13 @@ describe('TopBar Component', () => {
       expect(await findByLabelText('Settings')).toBeTruthy();
     });
 
-    it('should render with all props including gradient', async () => {
+    it('should render with all props combined', async () => {
       const { findByText, findByLabelText } = renderTopBar(
           <TopBar
             title="Full TopBar"
             showBack={true}
             onBackPress={jest.fn()}
             onSettingsPress={jest.fn()}
-            gradientColors={['#FF6B6B', '#4ECDC4']}
           />
         );
 
