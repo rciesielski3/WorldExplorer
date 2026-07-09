@@ -9,7 +9,6 @@ import { ActivityIndicator } from "react-native";
 import { useTranslation } from "react-i18next";
 import mobileAds from "react-native-google-mobile-ads";
 import * as Font from "expo-font";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import "./i18n";
 import { logger } from "./utils/logger";
 
