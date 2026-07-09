@@ -55,7 +55,6 @@ export default function App() {
   const [fontsLoaded, fontError] = useFonts({
     "Exo2-Regular": Exo2_400Regular,
     "Exo2-Bold": Exo2_700Bold,
-    ...MaterialCommunityIcons.font,
   });
 
   React.useEffect(() => {
