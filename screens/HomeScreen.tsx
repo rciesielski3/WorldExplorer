@@ -47,28 +47,32 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const { getStats } = useQuizHistory();
   const stats = getStats();
 
-  const localStyles = StyleSheet.create({
-    statsBtn: {
-      alignItems: "center",
-      justifyContent: "center",
-      marginTop: 16,
-      paddingVertical: 12,
-      paddingHorizontal: 20,
-      borderRadius: 12,
-      backgroundColor: theme.colors.primaryLight,
-    },
-    statsBadge: {
-      fontSize: 24,
-      fontWeight: "700",
-      color: theme.colors.buttonStrong,
-      marginBottom: 4,
-    },
-    statsLabel: {
-      fontSize: 14,
-      fontWeight: "500",
-      color: theme.colors.buttonStrong,
-    },
-  });
+  const localStyles = React.useMemo(
+    () =>
+      StyleSheet.create({
+        statsBtn: {
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: 16,
+          paddingVertical: 12,
+          paddingHorizontal: 20,
+          borderRadius: 12,
+          backgroundColor: theme.colors.primaryLight,
+        },
+        statsBadge: {
+          fontSize: 24,
+          fontWeight: "700",
+          color: theme.colors.buttonStrong,
+          marginBottom: 4,
+        },
+        statsLabel: {
+          fontSize: 14,
+          fontWeight: "500",
+          color: theme.colors.buttonStrong,
+        },
+      }),
+    [theme]
+  );
 
   const HOME_ACTIONS: HomeAction[] = [
     {
