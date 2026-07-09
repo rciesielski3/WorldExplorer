@@ -92,8 +92,8 @@ android {
         applicationId 'com.adateo.WorldExplorer'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 146
-        versionName "2.0.2"
+        versionCode 147
+        versionName "2.0.3"
         manifestPlaceholders = [MAPS_API_KEY: (project.findProperty('MAPS_API_KEY') ?: '')]
     }
     signingConfigs {
