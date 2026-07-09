@@ -60,13 +60,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     statsBadge: {
       fontSize: 24,
       fontWeight: "700",
-      color: theme.colors.button,
+      color: theme.colors.buttonStrong,
       marginBottom: 4,
     },
     statsLabel: {
       fontSize: 14,
       fontWeight: "500",
-      color: theme.colors.button,
+      color: theme.colors.buttonStrong,
     },
   });
 

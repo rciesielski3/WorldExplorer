@@ -45,7 +45,7 @@ describe("QuizScreen", () => {
 
     await act(async () => {});
 
-    expect(getByText("Select difficulty")).toBeTruthy();
+    expect(getByText("Select Difficulty")).toBeTruthy();
     expect(getByText("Easy")).toBeTruthy();
     expect(getByText("Medium")).toBeTruthy();
     expect(getByText("Hard")).toBeTruthy();
@@ -63,7 +63,7 @@ describe("QuizScreen", () => {
     });
 
     // The selector should disappear once questions are generated.
-    expect(queryByText("Select difficulty")).toBeNull();
+    expect(queryByText("Select Difficulty")).toBeNull();
     // A generated capital question should now be visible.
     expect(getByText(/Question 1 of \d+/)).toBeTruthy();
   });

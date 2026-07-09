@@ -4,6 +4,7 @@
 
 const palette = {
   // Sky Blue — primary brand colour
+  skyBlue700: '#0D47A1',
   skyBlue500: '#1E88E5',
   skyBlue400: '#42A5F5',
   skyBlue300: '#64B5F6',
@@ -178,6 +179,13 @@ export type ThemeColors = {
   textSecondary: string;
   textTertiary: string;
   button: string;
+  /**
+   * Higher-contrast variant of `button`, for text/icons drawn directly on
+   * a `primaryLight`-tinted background (e.g. HomeScreen's quiz stats
+   * badge). `button` alone fails WCAG AA (~3:1) against that tint in
+   * light mode; this token is tuned to clear 4.5:1 in both themes.
+   */
+  buttonStrong: string;
   buttonText: string;
   border: string;
 };
@@ -276,6 +284,7 @@ export const lightTheme = {
     textSecondary: palette.lightTextSecondary,
     textTertiary:  palette.lightTextTertiary,
     button:        palette.skyBlue500,
+    buttonStrong:  palette.skyBlue700,
     buttonText:    '#FFFFFF',
     border:        palette.lightBorder,
   } satisfies ThemeColors,
@@ -334,6 +343,9 @@ export const darkTheme = {
     textSecondary: palette.textSecondaryDark,
     textTertiary:  palette.textTertiaryDark,
     button:        palette.skyBlue300,
+    // Already ~7.5:1 against the tinted background in dark mode, so the
+    // "strong" variant reuses the same colour as `button` here.
+    buttonStrong:  palette.skyBlue300,
     buttonText:    '#FFFFFF',
     border:        palette.cardBorderDark,
   } satisfies ThemeColors,
