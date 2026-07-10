@@ -51,24 +51,28 @@ const palette = {
   dark900: '#0D1117',
   dark800: '#161B22',
   dark700: '#1C2128',
-  cardBgDark: 'rgba(255,255,255,0.05)',
+  cardBgDark: 'rgba(30, 30, 35, 0.95)',
   cardBorderDark: 'rgba(255,255,255,0.08)',
 
   // Dark mode text
   textDark: '#F0F6FC',
   textSecondaryDark: 'rgba(240,246,252,0.55)',
   textTertiaryDark: 'rgba(240,246,252,0.28)',
+  textOnCard: '#FFFFFF',
+  textOnCardSecondary: '#E5E5E7',
 
   // Light mode backgrounds
   lightBg: '#F5F7FA',
   lightBg2: '#FFFFFF',
-  lightCard: '#FFFFFF',
+  lightCard: 'rgba(255, 255, 255, 0.98)',
   lightBorder: 'rgba(0,0,0,0.08)',
 
   // Light mode text
   lightText: '#1A1F2E',
   lightTextSecondary: 'rgba(26,31,46,0.60)',
   lightTextTertiary: 'rgba(26,31,46,0.35)',
+  lightTextOnCard: '#000000',
+  lightTextOnCardSecondary: '#424245',
 
   // Neutral Blue Grey — 'default' gradient for screens with no section branding
   neutralGrey300: '#90A4AE',
@@ -178,6 +182,10 @@ export type ThemeColors = {
   text: string;
   textSecondary: string;
   textTertiary: string;
+  /** High-contrast text color for use on cards (WCAG AA 4.5:1 compliant) */
+  textOnCard: string;
+  /** Secondary text color for use on cards (WCAG AA 4.5:1 compliant) */
+  textOnCardSecondary: string;
   button: string;
   /**
    * Higher-contrast variant of `button`, for text/icons drawn directly on
@@ -283,6 +291,8 @@ export const lightTheme = {
     text:          palette.lightText,
     textSecondary: palette.lightTextSecondary,
     textTertiary:  palette.lightTextTertiary,
+    textOnCard:    palette.lightTextOnCard,
+    textOnCardSecondary: palette.lightTextOnCardSecondary,
     button:        palette.skyBlue500,
     buttonStrong:  palette.skyBlue700,
     buttonText:    '#FFFFFF',
@@ -342,6 +352,8 @@ export const darkTheme = {
     text:          palette.textDark,
     textSecondary: palette.textSecondaryDark,
     textTertiary:  palette.textTertiaryDark,
+    textOnCard:    palette.textOnCard,
+    textOnCardSecondary: palette.textOnCardSecondary,
     button:        palette.skyBlue300,
     // Already ~7.5:1 against the tinted background in dark mode, so the
     // "strong" variant reuses the same colour as `button` here.
