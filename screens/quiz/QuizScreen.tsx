@@ -248,7 +248,7 @@ const QuizScreen = ({ route, navigation }: any) => {
               }}
             >
               {answeredQuestion.options.map((option: string, index: number) => {
-                const letters = ["A", "B", "C", "D"];
+                const letter = String.fromCharCode(65 + index); // A, B, C, D, E, ...
                 const isSelected = option === selectedAnswer;
                 const isCorrect = option === answeredQuestion.answer;
                 const showFeedback = hasAnsweredCurrentQuestion;
@@ -303,6 +303,7 @@ const QuizScreen = ({ route, navigation }: any) => {
                       }}
                     >
                       <Text
+                        testID={`quiz-answer-letter-${index}`}
                         style={{
                           fontSize: commonTokens.typography.titleLg.fontSize,
                           fontFamily:
@@ -311,7 +312,7 @@ const QuizScreen = ({ route, navigation }: any) => {
                           color: badgeTextColor,
                         }}
                       >
-                        {letters[index]}
+                        {letter}
                       </Text>
                     </View>
                     <Pressable

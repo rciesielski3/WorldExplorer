@@ -106,4 +106,88 @@ describe("QuizScreen", () => {
       })
     );
   });
+
+  it("centers the question text horizontally", async () => {
+    const practiceQuestions = [
+      {
+        type: "country",
+        question: "Which country is highlighted on the map?",
+        options: ["Alpha", "Beta", "Gamma", "Delta"],
+        answer: "Alpha",
+      },
+    ];
+    const { getByText } = renderQuizScreen({ practiceQuestions });
+
+    await act(async () => {});
+
+    const questionText = getByText("Which country is highlighted on the map?");
+    expect(questionText.props.style).toEqual(
+      expect.objectContaining({ textAlign: "center" })
+    );
+  });
+
+  it("renders all five options (A-E) for a question with five answers", async () => {
+    const practiceQuestions = [
+      {
+        type: "country",
+        question: "Pick the correct capital",
+        options: [
+          "Option One",
+          "Option Two",
+          "Option Three",
+          "Option Four",
+          "Option Five",
+        ],
+        answer: "Option One",
+      },
+    ];
+    const { getByTestId, queryByTestId } = renderQuizScreen({
+      practiceQuestions,
+    });
+
+    await act(async () => {});
+
+    ["A", "B", "C", "D", "E"].forEach((letter, index) => {
+      expect(getByTestId(`quiz-answer-letter-${index}`).props.children).toBe(
+        letter
+      );
+      expect(getByTestId(`quiz-answer-option-${index}`)).toBeTruthy();
+    });
+
+    // No sixth option/letter should be rendered.
+    expect(queryByTestId("quiz-answer-option-5")).toBeNull();
+    expect(queryByTestId("quiz-answer-letter-5")).toBeNull();
+  });
+
+  it.each([1, 2, 3, 4])(
+    "renders exactly %i option(s) with correct sequential letters",
+    async (count: number) => {
+      const allOptions = ["First", "Second", "Third", "Fourth"];
+      const options = allOptions.slice(0, count);
+      const practiceQuestions = [
+        {
+          type: "country",
+          question: `Question with ${count} option(s)`,
+          options,
+          answer: options[0],
+        },
+      ];
+      const { getByTestId, queryByTestId } = renderQuizScreen({
+        practiceQuestions,
+      });
+
+      await act(async () => {});
+
+      options.forEach((_option, index) => {
+        const expectedLetter = String.fromCharCode(65 + index);
+        expect(
+          getByTestId(`quiz-answer-letter-${index}`).props.children
+        ).toBe(expectedLetter);
+        expect(getByTestId(`quiz-answer-option-${index}`)).toBeTruthy();
+      });
+
+      // No option beyond the provided count should be rendered.
+      expect(queryByTestId(`quiz-answer-option-${count}`)).toBeNull();
+    }
+  );
 });

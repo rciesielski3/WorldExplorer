@@ -188,18 +188,9 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
               borderTopWidth: 1,
               borderTopColor: theme.colors.border,
             }}
+            testID="section-dark-mode"
           >
-            <View>
-              <Text
-                style={{
-                  fontSize: commonTokens.typography.bodyLg.fontSize,
-                  fontFamily: commonTokens.typography.bodyLg.fontFamily,
-                  color: theme.colors.text,
-                  marginBottom: commonTokens.spacing.xs,
-                }}
-              >
-                {t('darkMode')}
-              </Text>
+            <View style={{ flex: 1 }}>
               <Text
                 style={{
                   fontSize: commonTokens.typography.bodySm.fontSize,
@@ -213,8 +204,10 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
             <ToggleSwitch
               value={theme.isDarkMode}
               onToggle={handleThemeToggle}
-              label={t('darkMode')}
               accessibilityLabel={t('darkMode')}
+              iconOn="weather-night"
+              iconOff="white-balance-sunny"
+              testID="toggle-dark-mode"
             />
           </View>
         </Card>
@@ -308,20 +301,9 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
               borderBottomWidth: 1,
               borderBottomColor: theme.colors.border,
             }}
+            testID="section-sound-effects"
           >
             <View style={{ flex: 1 }}>
-              <Text
-                style={{
-                  fontSize: commonTokens.typography.bodyLg.fontSize,
-                  fontFamily: commonTokens.typography.bodyLg.fontFamily,
-                  color: theme.colors.text,
-                  marginBottom: commonTokens.spacing.xs,
-                }}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {t('sound')}
-              </Text>
               <Text
                 style={{
                   fontSize: commonTokens.typography.bodySm.fontSize,
@@ -335,8 +317,10 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
             <ToggleSwitch
               value={soundEnabled}
               onToggle={handleSoundToggle}
-              label={t('sound')}
               accessibilityLabel={t('sound')}
+              iconOn="volume-high"
+              iconOff="volume-off"
+              testID="toggle-sound-effects"
             />
           </View>
 
@@ -348,20 +332,9 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
               alignItems: 'center',
               paddingTop: commonTokens.spacing.md,
             }}
+            testID="section-haptics"
           >
             <View style={{ flex: 1 }}>
-              <Text
-                style={{
-                  fontSize: commonTokens.typography.bodyLg.fontSize,
-                  fontFamily: commonTokens.typography.bodyLg.fontFamily,
-                  color: theme.colors.text,
-                  marginBottom: commonTokens.spacing.xs,
-                }}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {t('hapticFeedback')}
-              </Text>
               <Text
                 style={{
                   fontSize: commonTokens.typography.bodySm.fontSize,
@@ -375,8 +348,10 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
             <ToggleSwitch
               value={hapticsEnabled}
               onToggle={handleHapticsToggle}
-              label={t('hapticFeedback')}
               accessibilityLabel={t('hapticFeedback')}
+              iconOn="vibrate"
+              iconOff="vibrate-off"
+              testID="toggle-haptics"
             />
           </View>
         </Card>

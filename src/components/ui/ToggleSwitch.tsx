@@ -11,9 +11,22 @@ interface ToggleSwitchProps {
   onToggle: (value: boolean) => void;
   label?: string;
   accessibilityLabel?: string;
+  /** Icon shown in the thumb when `value` is true. Defaults to the dark-mode "moon" icon. */
+  iconOn?: string;
+  /** Icon shown in the thumb when `value` is false. Defaults to the dark-mode "sun" icon. */
+  iconOff?: string;
+  testID?: string;
 }
 
-export function ToggleSwitch({ value, onToggle, label, accessibilityLabel }: ToggleSwitchProps) {
+export function ToggleSwitch({
+  value,
+  onToggle,
+  label,
+  accessibilityLabel,
+  iconOn = 'moon',
+  iconOff = 'white-balance-sunny',
+  testID,
+}: ToggleSwitchProps) {
   const { theme } = useTheme();
   const translateX = useSharedValue(value ? 24 : 0);
 
@@ -44,6 +57,7 @@ export function ToggleSwitch({ value, onToggle, label, accessibilityLabel }: Tog
         accessibilityRole="switch"
         accessibilityState={{ checked: value }}
         accessibilityLabel={accessibilityLabel || label}
+        testID={testID}
         style={{
           width: 56,
           height: 32,
@@ -68,9 +82,10 @@ export function ToggleSwitch({ value, onToggle, label, accessibilityLabel }: Tog
           ]}
         >
           <MaterialCommunityIcons
-            name={value ? 'moon' : 'white-balance-sunny'}
+            name={value ? iconOn : iconOff}
             size={16}
             color={theme.colors.primary}
+            testID={testID ? `${testID}-icon` : undefined}
           />
         </Animated.View>
       </Pressable>

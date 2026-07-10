@@ -90,6 +90,7 @@ export function QuestionCard({
             fontFamily: commonTokens.typography.titleMd.fontFamily,
             fontWeight: '600',
             lineHeight: commonTokens.typography.titleMd.lineHeight,
+            textAlign: 'center',
           }}
         >
           {question}
