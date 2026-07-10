@@ -352,7 +352,7 @@ export const getStyles = (theme: Theme) =>
     },
     regionFilterRow: {
       flexGrow: 0,
-      marginBottom: 14,
+      marginBottom: 16,
     },
     regionFilterContent: {
       gap: 8,
@@ -1007,7 +1007,7 @@ export const getStyles = (theme: Theme) =>
       elevation: 3,
     },
     exploreListContent: {
-      paddingBottom: 96,
+      paddingBottom: 120,
     },
     exploreEmptyState: {
       alignItems: "center",
