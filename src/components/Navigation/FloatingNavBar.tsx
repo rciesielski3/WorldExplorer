@@ -47,6 +47,7 @@ export function FloatingNavBar({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-around',
+        zIndex: 1000,
         ...theme.shadows.lg,
       }}
     >

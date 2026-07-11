@@ -482,6 +482,26 @@ describe('FloatingNavBar Component', () => {
       expect(navBar).toBeTruthy();
       expect(navBar.props.style.justifyContent).toBe('space-around');
     });
+
+    it('should have z-index set to 1000 to display above ads', async () => {
+      const { getByTestId } = render(
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
+      );
+      await act(async () => {});
+
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      expect(navBar.props.style.zIndex).toBe(1000);
+    });
   });
 
   describe('Theme Integration', () => {
