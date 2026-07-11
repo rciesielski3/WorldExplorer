@@ -182,7 +182,7 @@ const QuizScreen = ({ route, navigation }: any) => {
         {!questions.length && (
           <ScrollView
             style={{ flex: 1 }}
-            contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
+            contentContainerStyle={{ flexGrow: 1, paddingBottom: 100, justifyContent: 'center', alignItems: 'center' }}
             scrollEventThrottle={16}
           >
             <View style={localStyles.difficultySelector}>
@@ -225,6 +225,9 @@ const QuizScreen = ({ route, navigation }: any) => {
             contentContainerStyle={{
               padding: commonTokens.spacing.lg,
               paddingBottom: 100, // Space for floating nav
+              flexGrow: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
             scrollEventThrottle={16}
           >
@@ -538,6 +541,8 @@ const createLocalStyles = (theme: any) =>
       paddingHorizontal: commonTokens.spacing.lg,
       paddingTop: commonTokens.spacing.md,
       gap: commonTokens.spacing.sm,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     difficultyTitle: {
       fontSize: commonTokens.typography.titleMd.fontSize,
