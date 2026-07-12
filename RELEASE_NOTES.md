@@ -1,21 +1,20 @@
-# WorldExplorer v2.0.2 - Release Notes
+# WorldExplorer v2.0.6 - Release Notes
 
 ## 🌍 English (US)
 
-**Production-Ready Update: Reliability & Security**
+**UI Polish & Localization Update**
 
-WorldExplorer v2.0.2 brings critical production improvements, enhanced reliability, and security enhancements to ensure a smooth experience for all users.
+WorldExplorer v2.0.6 brings refined user experience improvements, better visual hierarchy, and comprehensive localization updates.
 
 **What's New:**
-- 🛡️ **Enhanced Error Handling** - Graceful error recovery with ErrorBoundary component
-- 🔄 **Automatic Retry Logic** - Smart exponential backoff for API failures (1s → 8s delays)
-- 🔐 **Security Guidelines** - Improved API key management and secure environment configuration
-- ⚡ **Improved Reliability** - Better handling of network interruptions and transient failures
-- 📱 **TypeScript Migration** - 100% TypeScript codebase for better type safety
-- ✅ **Comprehensive Testing** - Expanded test coverage with 240+ passing tests
-- 🌐 **Multi-language Support** - Full i18n support for 5 languages (EN, ES, DE, FR, PL)
+- ✨ **Improved Quiz UX** - Centered difficulty selector and questions for better screen usage
+- 🎯 **Fixed Navigation Visibility** - Floating nav bar now displays correctly above ad banners
+- 📏 **Better Spacing** - Adjusted filter bar spacing for improved accessibility
+- 🌐 **Enhanced Localization** - Added comprehensive quiz knowledge translations across all 5 languages
+- ⚙️ **Test Improvements** - Increased test timeouts for AsyncStorage operations, fixed icon assertions
+- 🐛 **Bug Fixes** - Resolved pre-existing test failures and timing issues
 
-Enjoy a more reliable and secure experience exploring the world.
+Enjoy a more polished, accessible experience exploring the world.
 
 ---
 
