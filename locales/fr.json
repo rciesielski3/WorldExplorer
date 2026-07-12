@@ -29,6 +29,7 @@
   "zoomOut": "Dézoomer",
   "resetMap": "Réinitialiser la carte",
   "showOnMap": "Afficher sur la carte",
+  "testKnowledge": "Testez vos connaissances",
   "dailyCountry": "Pays du jour",
   "dailyCountrySubtitle": "Aujourd'hui : {{capital}} et d'autres faits rapides.",
   "dailyCountryUnavailable": "Le pays du jour n'est pas disponible pour le moment.",
