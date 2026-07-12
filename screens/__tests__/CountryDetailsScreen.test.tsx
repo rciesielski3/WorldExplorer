@@ -81,4 +81,12 @@ describe("CountryDetailsScreen", () => {
     expect(getByText("Fact one")).toBeTruthy();
     expect(getByText("Fact two")).toBeTruthy();
   });
+
+  it("should display the testKnowledge translation key", async () => {
+    const { getByText } = renderScreen();
+
+    await act(async () => {});
+
+    expect(getByText("Test Your Knowledge")).toBeTruthy();
+  });
 });

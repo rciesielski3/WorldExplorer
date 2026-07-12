@@ -29,6 +29,7 @@
   "zoomOut": "Zoom out",
   "resetMap": "Reset map",
   "showOnMap": "Show on map",
+  "testKnowledge": "Test Your Knowledge",
   "dailyCountry": "Country of the day",
   "dailyCountrySubtitle": "Today: {{capital}} and more quick facts.",
   "dailyCountryUnavailable": "Country of the day is unavailable right now.",

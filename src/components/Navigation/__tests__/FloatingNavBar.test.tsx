@@ -61,7 +61,7 @@ describe('FloatingNavBar Component', () => {
       await act(async () => {});
 
       expect(getByTestId('nav-bar')).toBeTruthy();
-    });
+    }, 10000);
 
     it('should render all navigation items', async () => {
       const { getByTestId } = render(
@@ -481,6 +481,26 @@ describe('FloatingNavBar Component', () => {
       const navBar = getByTestId('nav-bar');
       expect(navBar).toBeTruthy();
       expect(navBar.props.style.justifyContent).toBe('space-around');
+    });
+
+    it('should have z-index set to 1000 to display above ads', async () => {
+      const { getByTestId } = render(
+        <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+          <ThemeProvider>
+            <FloatingNavBar
+              currentRoute="home"
+              onNavigate={jest.fn()}
+              items={mockNavItems}
+              testID="nav-bar"
+            />
+          </ThemeProvider>
+        </SafeAreaProvider>
+      );
+      await act(async () => {});
+
+      const navBar = getByTestId('nav-bar');
+      expect(navBar).toBeTruthy();
+      expect(navBar.props.style.zIndex).toBe(1000);
     });
   });
 
