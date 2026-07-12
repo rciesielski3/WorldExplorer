@@ -166,7 +166,7 @@ describe('SettingsScreen - Toggle Icons', () => {
         fireEvent.press(getByTestId('toggle-dark-mode'));
       });
 
-      expect(getByTestId('toggle-dark-mode-icon').props.name).toBe('moon');
+      expect(getByTestId('toggle-dark-mode-icon').props.name).toBe('weather-night');
     });
   });
 

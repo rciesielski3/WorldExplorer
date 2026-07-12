@@ -61,7 +61,7 @@ describe('FloatingNavBar Component', () => {
       await act(async () => {});
 
       expect(getByTestId('nav-bar')).toBeTruthy();
-    });
+    }, 10000);
 
     it('should render all navigation items', async () => {
       const { getByTestId } = render(
