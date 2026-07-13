@@ -165,9 +165,10 @@ export async function loadDailyChallenge(): Promise<DailyChallengeData | null>
 **File:** `src/components/NotificationService.ts`
 
 **SettingsScreen Changes:**
-- Add toggle: "Daily Challenge Reminder"
-- Time picker: "Remind me at [09:00 AM]" (if enabled)
+- Add new Card section: "Notifications"
+- Inside card: toggle "Daily Challenge Reminder" + time picker "Remind me at [09:00 AM]" (if enabled)
 - Storage: `AsyncStorage` key `dailyChallenge_notificationsEnabled` + `dailyChallenge_reminderTime`
+- Placement: After "Sound & Haptics" card, before "Data" section
 
 **Notification Behavior:**
 - If enabled → schedule daily notification at user's set time (default 9 AM)
