@@ -33,6 +33,8 @@
   "dailyCountry": "Land des Tages",
   "dailyCountrySubtitle": "Heute: {{capital}} und weitere kurze Fakten.",
   "dailyCountryUnavailable": "Das Land des Tages ist derzeit nicht verfügbar.",
+  "dailyChallenge": "Heutige Herausforderung",
+  "learnAndQuiz": "Lernen & Quiz",
   "viewCountry": "Land ansehen",
   "noFavorites": "Noch keine Favoriten",
   "addFavoritesPrompt": "Füge Länder hinzu, die dir gefallen, um sie hier zu sehen.",
