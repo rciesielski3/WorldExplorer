@@ -121,5 +121,8 @@
   "achievementCountryMaster": "Country Master",
   "achievementCountryMasterDesc": "Score 100% on hard difficulty",
   "achievementImprover": "Improver",
-  "achievementImproverDesc": "Score 20+ points higher than previous attempt"
+  "achievementImproverDesc": "Score 20+ points higher than previous attempt",
+  "notifications": "Notifications",
+  "dailyChallengeReminder": "Daily Challenge Reminder",
+  "remindMeAt": "Remind me at"
 }

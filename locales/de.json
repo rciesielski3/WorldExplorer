@@ -121,5 +121,8 @@
   "achievementCountryMaster": "Länder-Meister",
   "achievementCountryMasterDesc": "Erreiche 100% bei schwieriger Schwierigkeit",
   "achievementImprover": "Aufsteiger",
-  "achievementImproverDesc": "Verbessere Punkte um 20 oder mehr"
+  "achievementImproverDesc": "Verbessere Punkte um 20 oder mehr",
+  "notifications": "Benachrichtigungen",
+  "dailyChallengeReminder": "Tägliche Herausforderungserinnerung",
+  "remindMeAt": "Erinnern Sie mich um"
 }

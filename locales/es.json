@@ -121,5 +121,8 @@
   "achievementCountryMaster": "Maestro de Países",
   "achievementCountryMasterDesc": "Obtén 100% en dificultad difícil",
   "achievementImprover": "Mejorador",
-  "achievementImproverDesc": "Puntuación 20 puntos o más alta que el intento anterior"
+  "achievementImproverDesc": "Puntuación 20 puntos o más alta que el intento anterior",
+  "notifications": "Notificaciones",
+  "dailyChallengeReminder": "Recordatorio de Desafío Diario",
+  "remindMeAt": "Recordarme a las"
 }

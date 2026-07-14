@@ -121,5 +121,8 @@
   "achievementCountryMaster": "Maître des Pays",
   "achievementCountryMasterDesc": "Obtenez 100% en difficulté difficile",
   "achievementImprover": "En Progrès",
-  "achievementImproverDesc": "Score 20 points ou plus supérieur à la tentative précédente"
+  "achievementImproverDesc": "Score 20 points ou plus supérieur à la tentative précédente",
+  "notifications": "Notifications",
+  "dailyChallengeReminder": "Rappel du Défi Quotidien",
+  "remindMeAt": "Rappel à"
 }

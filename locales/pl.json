@@ -121,5 +121,8 @@
   "achievementCountryMaster": "Mistrz Krajów",
   "achievementCountryMasterDesc": "Zdobądź 100% w trudności trudnej",
   "achievementImprover": "Poprawiacz",
-  "achievementImproverDesc": "Wynik 20 punktów lub więcej wyższy niż poprzednia próba"
+  "achievementImproverDesc": "Wynik 20 punktów lub więcej wyższy niż poprzednia próba",
+  "notifications": "Powiadomienia",
+  "dailyChallengeReminder": "Codzienne Przypomnienie o Wyzwaniu",
+  "remindMeAt": "Przypomnienie o"
 }
