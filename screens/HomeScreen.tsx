@@ -21,7 +21,12 @@ import { FLAG_ASSETS } from "../utils/flagAssets";
 import { useQuizHistory } from "../context/QuizHistoryContext";
 import LottieView from "lottie-react-native";
 import { logger } from "../utils/logger";
+import { getTodayChallenge } from "../utils/dailyChallenge";
+import { DailyChallengeCard } from "../src/components/ui/DailyChallengeCard";
+import { countries } from "../utils/countries";
+import { commonTokens } from "../theme/tokens";
 import type { Country } from "../utils/countries";
+import type { DailyChallengeData } from "../utils/dailyChallenge";
 import type { RootStackParamList } from "../types/navigation";
 
 type HomeScreenProps = StackScreenProps<RootStackParamList, "Home">;
@@ -46,6 +51,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const styles = getStyles(theme);
   const { getStats } = useQuizHistory();
   const stats = getStats();
+  const streak = stats.currentStreak;
+
+  const [todayChallenge, setTodayChallenge] =
+    React.useState<DailyChallengeData | null>(null);
 
   const localStyles = React.useMemo(
     () =>
@@ -69,6 +78,39 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           fontSize: 14,
           fontWeight: "500",
           color: theme.colors.buttonStrong,
+        },
+        streakContainer: {
+          flexDirection: "row",
+          alignItems: "center",
+          borderRadius: 12,
+          padding: commonTokens.spacing.md,
+          marginTop: commonTokens.spacing.lg,
+          marginBottom: commonTokens.spacing.sm,
+          backgroundColor: theme.colors.card,
+          elevation: 1,
+        },
+        streakEmoji: {
+          fontSize: 24,
+          marginRight: commonTokens.spacing.md,
+        },
+        streakContent: {
+          flex: 1,
+        },
+        streakText: {
+          fontSize: 14,
+          fontWeight: "600",
+          marginBottom: commonTokens.spacing.xs,
+          color: theme.colors.text,
+        },
+        progressBarTrack: {
+          height: 4,
+          backgroundColor: "rgba(0, 0, 0, 0.1)",
+          borderRadius: 2,
+          overflow: "hidden",
+        },
+        progressBarFill: {
+          height: "100%",
+          backgroundColor: theme.colors.primary,
         },
       }),
     [theme]
@@ -123,6 +165,30 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       .finally(() => setIsDailyCountryLoading(false));
   }, []);
 
+  React.useEffect(() => {
+    const loadChallenge = async () => {
+      try {
+        const challenge = await getTodayChallenge(countries);
+        setTodayChallenge(challenge);
+      } catch (error) {
+        logger.warn("Failed to load daily challenge", {
+          context: "HomeScreen",
+          timestamp: new Date().toISOString(),
+          metadata: {
+            error: error instanceof Error ? error.message : String(error),
+          },
+        });
+      }
+    };
+    loadChallenge();
+  }, []);
+
+  const handleDailyChallengePress = () => {
+    if (todayChallenge) {
+      navigation.navigate("Quiz", { countryCode: todayChallenge.countryCode });
+    }
+  };
+
   return (
     <View style={styles.screenRoot}>
       <ScreenBackground gradient="home" />
@@ -142,6 +208,33 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           <Text style={styles.homeTitle}>{t("welcome")} World Explorer</Text>
           <Text style={styles.homeSubtitle}>{t("homeHeroSubtitle")}</Text>
         </View>
+
+        {streak > 0 && (
+          <View style={localStyles.streakContainer} testID="streak-badge">
+            <Text style={localStyles.streakEmoji}>🔥</Text>
+            <View style={localStyles.streakContent}>
+              <Text style={localStyles.streakText}>
+                {t("streakDays", { count: streak })}
+              </Text>
+              <View style={localStyles.progressBarTrack}>
+                <View
+                  style={[
+                    localStyles.progressBarFill,
+                    { width: `${Math.min((streak / 365) * 100, 100)}%` },
+                  ]}
+                />
+              </View>
+            </View>
+          </View>
+        )}
+
+        {todayChallenge && (
+          <DailyChallengeCard
+            country={countries.find((c) => c.code === todayChallenge.countryCode)!}
+            onPress={handleDailyChallengePress}
+            testID="daily-challenge-card"
+          />
+        )}
 
         <View style={styles.homeQuickActions}>
           <View style={styles.homeActionGrid}>

@@ -35,6 +35,7 @@
   "dailyCountryUnavailable": "Kraj dnia jest teraz niedostępny.",
   "dailyChallenge": "Wyzwanie Dnia",
   "learnAndQuiz": "Naucz się i Quiz",
+  "streakDays": "{{count}}-dniowa passa",
   "viewCountry": "Zobacz kraj",
   "noFavorites": "Brak ulubionych",
   "addFavoritesPrompt": "Dodaj kraje, które lubisz, aby zobaczyć je tutaj.",

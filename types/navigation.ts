@@ -11,7 +11,7 @@ export type RootStackParamList = {
         country: Country;
       }
     | undefined;
-  Quiz: { country: Country } | undefined;
+  Quiz: { country: Country } | { countryCode: string } | undefined;
   CountryDetails: { country: Country };
   Settings: undefined;
   QuizResults: { score: number };

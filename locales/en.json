@@ -35,6 +35,7 @@
   "dailyCountryUnavailable": "Country of the day is unavailable right now.",
   "dailyChallenge": "Today's Challenge",
   "learnAndQuiz": "Learn & Quiz",
+  "streakDays": "{{count}} day streak",
   "viewCountry": "View country",
   "noFavorites": "No favorites yet",
   "addFavoritesPrompt": "Add countries you love to see them here.",
