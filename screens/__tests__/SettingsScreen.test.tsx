@@ -48,6 +48,33 @@ jest.mock('../../context/PremiumContext', () => ({
   }),
 }));
 
+// NotificationService imports expo-notifications at module scope, which
+// pulls in expo-modules-core's native module bridge as a side effect of
+// require() -- unavailable under Jest (see NotificationService.test.ts for
+// the same rationale). SettingsScreen only calls loadNotificationSettings
+// and updateNotificationSettings, so a lightweight mock keeps this test
+// file from ever touching the real expo-notifications import chain.
+const mockLoadNotificationSettings = jest
+  .fn()
+  .mockResolvedValue({ enabled: false, time: '09:00' });
+const mockUpdateNotificationSettings = jest.fn().mockResolvedValue(undefined);
+jest.mock('../../src/components/NotificationService', () => ({
+  loadNotificationSettings: (...args: unknown[]) => mockLoadNotificationSettings(...args),
+  updateNotificationSettings: (...args: unknown[]) => mockUpdateNotificationSettings(...args),
+}));
+
+// getTodayChallenge reads/writes AsyncStorage and picks a random country;
+// SettingsScreen only needs the resolved country name to build the
+// notification message, so a fixed resolved value keeps notification tests
+// deterministic without depending on the full countries dataset.
+jest.mock('../../utils/dailyChallenge', () => ({
+  getTodayChallenge: jest.fn().mockResolvedValue({
+    countryCode: 'JP',
+    dateKey: '2026-07-14',
+    countryName: 'Japan',
+  }),
+}));
+
 const renderSettingsScreen = () =>
   render(
     <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
@@ -277,5 +304,122 @@ describe('SettingsScreen - No redundant text next to toggles', () => {
     await act(async () => {});
 
     expect(getByText('Sound & Haptics')).toBeTruthy();
+  });
+});
+
+describe('SettingsScreen - Notifications', () => {
+  beforeEach(async () => {
+    await AsyncStorage.clear();
+    mockLoadNotificationSettings.mockClear();
+    mockUpdateNotificationSettings.mockClear();
+    // Default: reminders off, matching NotificationService's real default
+    // when nothing has been persisted yet.
+    mockLoadNotificationSettings.mockResolvedValue({ enabled: false, time: '09:00' });
+  });
+
+  it('renders the Notifications card with the reminder toggle', async () => {
+    const { getByTestId, getByText } = renderSettingsScreen();
+    await act(async () => {});
+
+    expect(getByText('Notifications')).toBeTruthy();
+    expect(getByText('Daily Challenge Reminder')).toBeTruthy();
+    expect(getByTestId('notification-toggle')).toBeTruthy();
+  });
+
+  it('loads persisted notification settings on mount', async () => {
+    renderSettingsScreen();
+    await act(async () => {});
+
+    expect(mockLoadNotificationSettings).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not render the reminder time picker while reminders are off', async () => {
+    const { queryByTestId, queryByText } = renderSettingsScreen();
+    await act(async () => {});
+
+    expect(queryByTestId('reminder-time-picker')).toBeNull();
+    expect(queryByText('Remind me at')).toBeNull();
+  });
+
+  it('renders the reminder time picker once reminders are loaded as enabled', async () => {
+    mockLoadNotificationSettings.mockResolvedValue({ enabled: true, time: '09:00' });
+
+    const { getByTestId, getByText } = renderSettingsScreen();
+    await act(async () => {});
+
+    expect(getByText('Remind me at')).toBeTruthy();
+    const picker = getByTestId('reminder-time-picker');
+    expect(picker).toBeTruthy();
+    expect(getByText('09:00')).toBeTruthy();
+  });
+
+  it('turns reminders on when the toggle is pressed and persists the change', async () => {
+    const { getByTestId, queryByTestId } = renderSettingsScreen();
+    await act(async () => {});
+
+    expect(queryByTestId('reminder-time-picker')).toBeNull();
+
+    await act(async () => {
+      fireEvent.press(getByTestId('notification-toggle'));
+    });
+
+    // Toggling on reveals the time picker immediately (optimistic local state)...
+    expect(getByTestId('reminder-time-picker')).toBeTruthy();
+    // ...and persists via NotificationService with today's challenge country.
+    expect(mockUpdateNotificationSettings).toHaveBeenCalledWith(true, '09:00', 'Japan');
+  });
+
+  it('turns reminders off when the toggle is pressed while enabled', async () => {
+    mockLoadNotificationSettings.mockResolvedValue({ enabled: true, time: '09:00' });
+
+    const { getByTestId, queryByTestId } = renderSettingsScreen();
+    await act(async () => {});
+
+    expect(getByTestId('reminder-time-picker')).toBeTruthy();
+
+    await act(async () => {
+      fireEvent.press(getByTestId('notification-toggle'));
+    });
+
+    expect(queryByTestId('reminder-time-picker')).toBeNull();
+    expect(mockUpdateNotificationSettings).toHaveBeenCalledWith(false, '09:00', 'Japan');
+  });
+
+  it('advances the reminder time when the time picker is pressed', async () => {
+    mockLoadNotificationSettings.mockResolvedValue({ enabled: true, time: '09:00' });
+
+    const { getByTestId, getByText } = renderSettingsScreen();
+    await act(async () => {});
+
+    expect(getByText('09:00')).toBeTruthy();
+
+    await act(async () => {
+      fireEvent.press(getByTestId('reminder-time-picker'));
+    });
+
+    expect(getByText('09:30')).toBeTruthy();
+    expect(mockUpdateNotificationSettings).toHaveBeenCalledWith(true, '09:30', 'Japan');
+  });
+
+  it('wraps the reminder time back to 00:00 after 23:30', async () => {
+    mockLoadNotificationSettings.mockResolvedValue({ enabled: true, time: '23:30' });
+
+    const { getByTestId, getByText } = renderSettingsScreen();
+    await act(async () => {});
+
+    await act(async () => {
+      fireEvent.press(getByTestId('reminder-time-picker'));
+    });
+
+    expect(getByText('00:00')).toBeTruthy();
+  });
+
+  it('exposes the reminder toggle name to assistive tech via accessibilityLabel', async () => {
+    const { getByTestId } = renderSettingsScreen();
+    await act(async () => {});
+
+    expect(getByTestId('notification-toggle').props.accessibilityLabel).toBe(
+      'Daily Challenge Reminder'
+    );
   });
 });

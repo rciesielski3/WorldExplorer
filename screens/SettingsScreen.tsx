@@ -26,6 +26,25 @@ import { commonTokens } from '../theme/tokens';
 import { Picker } from '@react-native-picker/picker';
 import { logger } from '../utils/logger';
 import { triggerLightHaptic, triggerMediumHaptic } from '../utils/haptics';
+import { countries } from '../utils/countries';
+import { getTodayChallenge } from '../utils/dailyChallenge';
+import {
+  loadNotificationSettings,
+  updateNotificationSettings,
+  NotificationSettings,
+} from '../src/components/NotificationService';
+
+/** Cycling step (minutes) used by the reminder time picker's tap-to-advance control. */
+const REMINDER_TIME_STEP_MINUTES = 30;
+
+/** Advance a "HH:MM" time string forward by `REMINDER_TIME_STEP_MINUTES`, wrapping at midnight. */
+function advanceReminderTime(time: string): string {
+  const [hours, minutes] = time.split(':').map(Number);
+  const totalMinutes = (hours * 60 + minutes + REMINDER_TIME_STEP_MINUTES) % (24 * 60);
+  const nextHours = Math.floor(totalMinutes / 60);
+  const nextMinutes = totalMinutes % 60;
+  return `${String(nextHours).padStart(2, '0')}:${String(nextMinutes).padStart(2, '0')}`;
+}
 
 const CONTACT_URL = 'https://rciesielski.dev/contact';
 
@@ -40,8 +59,24 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
   const [language, setLanguage] = React.useState(i18n.language);
   const [soundEnabled, setSoundEnabled] = React.useState(true);
   const [hapticsEnabled, setHapticsEnabled] = React.useState(true);
+  const [notificationSettings, setNotificationSettings] = React.useState<NotificationSettings>({
+    enabled: false,
+    time: '09:00',
+  });
   const { getStats } = useQuizHistory();
   const stats = getStats();
+
+  React.useEffect(() => {
+    let isMounted = true;
+    loadNotificationSettings().then((settings) => {
+      if (isMounted) {
+        setNotificationSettings(settings);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const {
     error: premiumError,
@@ -80,6 +115,27 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
   const handleHapticsToggle = () => {
     setHapticsEnabled(!hapticsEnabled);
     triggerLightHaptic();
+  };
+
+  // Persists a notification settings change via NotificationService, resolving
+  // today's daily-challenge country so the scheduled reminder can name it.
+  const persistNotificationSettings = async (settings: NotificationSettings) => {
+    const challenge = await getTodayChallenge(countries);
+    await updateNotificationSettings(settings.enabled, settings.time, challenge.countryName);
+  };
+
+  const handleNotificationToggle = async () => {
+    const newSettings = { ...notificationSettings, enabled: !notificationSettings.enabled };
+    setNotificationSettings(newSettings);
+    triggerLightHaptic();
+    await persistNotificationSettings(newSettings);
+  };
+
+  const handleReminderTimePress = async () => {
+    const newSettings = { ...notificationSettings, time: advanceReminderTime(notificationSettings.time) };
+    setNotificationSettings(newSettings);
+    triggerLightHaptic();
+    await persistNotificationSettings(newSettings);
   };
 
   const handleResetData = () => {
@@ -354,6 +410,124 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
               testID="toggle-haptics"
             />
           </View>
+        </Card>
+
+        {/* Notifications Card */}
+        <Card style={{ marginBottom: commonTokens.spacing.lg }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: commonTokens.spacing.md,
+            }}
+          >
+            <MaterialCommunityIcons
+              name="bell-outline"
+              size={24}
+              color={theme.colors.primary}
+              style={{ marginRight: commonTokens.spacing.md }}
+            />
+            <Text
+              style={{
+                fontSize: commonTokens.typography.titleLg.fontSize,
+                fontFamily: commonTokens.typography.titleLg.fontFamily,
+                fontWeight: '600',
+                color: theme.colors.text,
+              }}
+            >
+              {t('notifications')}
+            </Text>
+          </View>
+
+          {/* Daily Challenge Reminder Toggle */}
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingTop: commonTokens.spacing.md,
+              paddingBottom: notificationSettings.enabled ? commonTokens.spacing.md : 0,
+              borderBottomWidth: notificationSettings.enabled ? 1 : 0,
+              borderBottomColor: theme.colors.border,
+            }}
+            testID="section-notifications"
+          >
+            <View style={{ flex: 1, marginRight: commonTokens.spacing.md }}>
+              <Text
+                style={{
+                  fontSize: commonTokens.typography.bodyLg.fontSize,
+                  fontFamily: commonTokens.typography.bodyLg.fontFamily,
+                  color: theme.colors.text,
+                }}
+              >
+                {t('dailyChallengeReminder')}
+              </Text>
+              <Text
+                style={{
+                  fontSize: commonTokens.typography.bodySm.fontSize,
+                  fontFamily: commonTokens.typography.bodySm.fontFamily,
+                  color: theme.colors.textSecondary,
+                }}
+              >
+                {notificationSettings.enabled ? t('enabled') : t('disabled')}
+              </Text>
+            </View>
+            <ToggleSwitch
+              value={notificationSettings.enabled}
+              onToggle={handleNotificationToggle}
+              accessibilityLabel={t('dailyChallengeReminder')}
+              iconOn="bell-ring"
+              iconOff="bell-off"
+              testID="notification-toggle"
+            />
+          </View>
+
+          {/* Reminder Time Picker (only visible when notifications are enabled) */}
+          {notificationSettings.enabled && (
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingTop: commonTokens.spacing.md,
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: commonTokens.typography.bodyLg.fontSize,
+                  fontFamily: commonTokens.typography.bodyLg.fontFamily,
+                  color: theme.colors.text,
+                }}
+              >
+                {t('remindMeAt')}
+              </Text>
+              <TouchableOpacity
+                onPress={handleReminderTimePress}
+                accessibilityRole="button"
+                accessibilityLabel={`${t('remindMeAt')} ${notificationSettings.time}`}
+                testID="reminder-time-picker"
+                style={{
+                  paddingVertical: commonTokens.spacing.sm,
+                  paddingHorizontal: commonTokens.spacing.md,
+                  minHeight: 48,
+                  justifyContent: 'center',
+                  backgroundColor: theme.colors.surfaceSubtle,
+                  borderRadius: commonTokens.borderRadius.md,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: commonTokens.typography.bodyLg.fontSize,
+                    fontFamily: commonTokens.typography.bodyLg.fontFamily,
+                    color: theme.colors.primary,
+                    fontWeight: '600',
+                  }}
+                >
+                  {notificationSettings.time}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </Card>
 
         {/* Data & Privacy Card */}
