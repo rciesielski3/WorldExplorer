@@ -54,8 +54,16 @@ const QuizScreen = ({ route, navigation }: any) => {
   const { startQuiz, selectedDifficulty, questions: difficultyQuestions } =
     useQuizDifficulty();
   const practiceQuestions = route.params?.practiceQuestions;
+  // Daily challenge deep link (see HomeScreen's DailyChallengeCard): the
+  // country picker step doesn't exist in this screen today (quizzes always
+  // draw questions from every country, filtered by difficulty), so a
+  // pre-selected countryCode has nothing to "skip" on its own. It does,
+  // however, gate the auto-start behavior below.
+  const preSelectedCountryCode: string | undefined = route.params?.countryCode;
+  const preSelectedDifficulty: Difficulty | undefined = route.params?.difficulty;
   const localStyles = React.useMemo(() => createLocalStyles(theme), [theme]);
   const quizStartTimeRef = React.useRef<number | null>(null);
+  const hasAutoStartedRef = React.useRef(false);
 
   React.useEffect(() => {
     if (practiceQuestions?.length) {
@@ -93,6 +101,24 @@ const QuizScreen = ({ route, navigation }: any) => {
       setSelectedAnswer(null);
     }
   }, [difficultyQuestions, practiceQuestions]);
+
+  // Daily challenge deep link: when both a country and a difficulty are
+  // pre-selected via route params (e.g. tapping "Learn & Quiz" on the
+  // HomeScreen daily challenge card), skip the manual difficulty selection
+  // step and start the quiz immediately. Guarded by a ref so this only ever
+  // fires once, even though `startQuiz` isn't referentially stable across
+  // renders.
+  React.useEffect(() => {
+    if (
+      !practiceQuestions?.length &&
+      preSelectedCountryCode &&
+      preSelectedDifficulty &&
+      !hasAutoStartedRef.current
+    ) {
+      hasAutoStartedRef.current = true;
+      startQuiz(preSelectedDifficulty);
+    }
+  }, [practiceQuestions, preSelectedCountryCode, preSelectedDifficulty]);
 
   const getDifficultyForQuestion = (
     question: Question,

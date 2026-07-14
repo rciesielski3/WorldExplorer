@@ -159,6 +159,74 @@ describe("QuizScreen", () => {
     expect(queryByTestId("quiz-answer-letter-5")).toBeNull();
   });
 
+  describe("daily challenge pre-selection (countryCode route param)", () => {
+    it("still shows the difficulty selector when only countryCode is provided", async () => {
+      const { getByText, queryByTestId } = renderQuizScreen({
+        countryCode: "JPN",
+      });
+
+      await act(async () => {});
+
+      // There is no country picker step in this screen (quizzes always draw
+      // from every country, filtered by difficulty) so providing a
+      // countryCode alone has nothing to "skip" — the difficulty selector
+      // should render exactly as it does without any route params.
+      expect(getByText("Select Difficulty")).toBeTruthy();
+      expect(getByText("Easy")).toBeTruthy();
+      expect(getByText("Medium")).toBeTruthy();
+      expect(getByText("Hard")).toBeTruthy();
+      expect(queryByTestId("question-progress")).toBeNull();
+    });
+
+    it("starts the quiz immediately when both countryCode and difficulty are provided", async () => {
+      const { getByText, getByTestId, queryByText } = renderQuizScreen({
+        countryCode: "JPN",
+        difficulty: "easy",
+      });
+
+      await act(async () => {});
+
+      // The difficulty selector should be skipped entirely and the first
+      // question should already be showing.
+      expect(queryByText("Select Difficulty")).toBeNull();
+      expect(getByText(/Question 1 of \d+/)).toBeTruthy();
+      expect(getByTestId("quiz-answer-option-0")).toBeTruthy();
+    });
+
+    it("does not auto-start when only difficulty is provided without a countryCode", async () => {
+      const { getByText, queryByTestId } = renderQuizScreen({
+        difficulty: "easy",
+      });
+
+      await act(async () => {});
+
+      expect(getByText("Select Difficulty")).toBeTruthy();
+      expect(queryByTestId("question-progress")).toBeNull();
+    });
+
+    it("does not re-trigger the quiz start on re-render (auto-start fires once)", async () => {
+      const { getByText, getByTestId } = renderQuizScreen({
+        countryCode: "JPN",
+        difficulty: "easy",
+      });
+
+      await act(async () => {});
+      expect(getByText(/Question 1 of \d+/)).toBeTruthy();
+
+      // Answering the first question triggers a re-render; the auto-start
+      // effect's dependencies are unchanged, so it must not fire again and
+      // reset progress back to question 1.
+      await act(async () => {
+        fireEvent.press(getByTestId("quiz-answer-option-0"));
+      });
+      await act(async () => {
+        fireEvent.press(getByText(/Next question|Finish quiz/));
+      });
+
+      expect(getByText(/Question 2 of \d+/)).toBeTruthy();
+    });
+  });
+
   it.each([1, 2, 3, 4])(
     "renders exactly %i option(s) with correct sequential letters",
     async (count: number) => {
