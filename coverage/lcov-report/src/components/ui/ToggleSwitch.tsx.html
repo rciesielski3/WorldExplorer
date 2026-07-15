@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">72.22% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>14/14</span>
+                <span class='fraction'>13/18</span>
             </div>
         
             
@@ -142,7 +142,22 @@
 <a name='L77'></a><a href='#L77'>77</a>
 <a name='L78'></a><a href='#L78'>78</a>
 <a name='L79'></a><a href='#L79'>79</a>
-<a name='L80'></a><a href='#L80'>80</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -158,25 +173,40 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">32x</span>
-<span class="cline-any cline-yes">32x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">32x</span>
-<span class="cline-any cline-yes">32x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">32x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">32x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">32x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">384x</span>
+<span class="cline-any cline-yes">384x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">384x</span>
+<span class="cline-any cline-yes">384x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">384x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">384x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">384x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -234,9 +264,22 @@ interface ToggleSwitchProps {
   onToggle: (value: boolean) =&gt; void;
   label?: string;
   accessibilityLabel?: string;
+  /** Icon shown in the thumb when `value` is true. Defaults to the dark-mode "moon" icon. */
+  iconOn?: string;
+  /** Icon shown in the thumb when `value` is false. Defaults to the dark-mode "sun" icon. */
+  iconOff?: string;
+  testID?: string;
 }
 &nbsp;
-export function ToggleSwitch({ value, onToggle, label, accessibilityLabel }: ToggleSwitchProps) {
+export function ToggleSwitch({
+  value,
+  onToggle,
+  label,
+  accessibilityLabel,
+  iconOn = <span class="branch-0 cbranch-no" title="branch not covered" >'moon',</span>
+  iconOff = <span class="branch-0 cbranch-no" title="branch not covered" >'white-balance-sunny',</span>
+  testID,
+}: ToggleSwitchProps) {
   const { theme } = useTheme();
   const translateX = useSharedValue(value ? 24 : 0);
 &nbsp;
@@ -258,7 +301,7 @@ export function ToggleSwitch({ value, onToggle, label, accessibilityLabel }: Tog
   return (
     &lt;View style={{ flexDirection: 'row', alignItems: 'center', gap: commonTokens.spacing.md }}&gt;
       {label &amp;&amp; (
-        &lt;Text style={{ color: theme.colors.text, fontSize: commonTokens.typography.bodyMd.fontSize }}&gt;
+<span class="branch-1 cbranch-no" title="branch not covered" >        &lt;Text style={{ color: theme.colors.text, fontSize: commonTokens.typography.bodyMd.fontSize }}&gt;</span>
           {label}
         &lt;/Text&gt;
       )}
@@ -266,7 +309,8 @@ export function ToggleSwitch({ value, onToggle, label, accessibilityLabel }: Tog
         onPress={handleToggle}
         accessibilityRole="switch"
         accessibilityState={{ checked: value }}
-        accessibilityLabel={accessibilityLabel || label}
+        accessibilityLabel={accessibilityLabel || <span class="branch-1 cbranch-no" title="branch not covered" >label}</span>
+        testID={testID}
         style={{
           width: 56,
           height: 32,
@@ -291,9 +335,10 @@ export function ToggleSwitch({ value, onToggle, label, accessibilityLabel }: Tog
           ]}
         &gt;
           &lt;MaterialCommunityIcons
-            name={value ? 'moon' : 'white-balance-sunny'}
+            name={value ? iconOn : iconOff}
             size={16}
             color={theme.colors.primary}
+            testID={testID ? `${testID}-icon` : <span class="branch-1 cbranch-no" title="branch not covered" >undefined}</span>
           /&gt;
         &lt;/Animated.View&gt;
       &lt;/Pressable&gt;
@@ -307,7 +352,7 @@ export function ToggleSwitch({ value, onToggle, label, accessibilityLabel }: Tog
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-06T07:04:14.464Z
+                at 2026-07-15T05:23:25.092Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>
