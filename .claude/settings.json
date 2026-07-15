@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh pr *)",
+      "Bash(gh api *)",
+      "Bash(npm test *)",
+      "Bash(git push *)",
+      "Read(//tmp/**)",
+      "Bash(git tag *)",
+      "Bash(gh release create v2.0.6 --title 'WorldExplorer v2.0.6' --notes 'UI polish & localization update *)",
+      "Bash(gh workflow *)",
+      "Bash(git commit *)",
+      "Bash(npm list *)",
+      "Bash(npm install *)",
+      "Bash(npm view *)",
+      "Bash(python3 -c ' *)",
+      "Bash(grep -rln \"from ['\\\\\"].*dailyChallenge['\\\\\"]\\\\|require\\(.*dailyChallenge\" /Users/rafalciesielski/Developer/WorldExplorer --include=\"*.ts\" --include=\"*.tsx\" -g '!node_modules')",
+      "Bash(grep -E \"\\\\.\\(ts|tsx\\)$\")",
+      "Bash(npm run *)",
+      "Bash(npx expo *)",
+      "Bash(npm -v)",
+      "Bash(npm ls *)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\(d.get\\('expo',{}\\).get\\('plugins',[]\\), indent=2\\)\\)\")"
+    ]
+  }
+}

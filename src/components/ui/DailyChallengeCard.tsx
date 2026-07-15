@@ -80,10 +80,12 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   button: {
+    minHeight: commonTokens.touchTarget.minimum,
     paddingVertical: commonTokens.spacing.md,
     paddingHorizontal: commonTokens.spacing.lg,
     borderRadius: 8,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: {
     fontSize: 14,

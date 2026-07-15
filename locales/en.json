@@ -95,6 +95,7 @@
   "remindMeAt": "Remind me at",
   "dataPrivacy": "Data & Privacy",
   "resetData": "Reset Data",
+  "resetDataWarning": "This will clear all app data including preferences. This cannot be undone.",
   "appVersion": "App Version",
   "aboutDeveloper": "About Developer",
   "aboutApp": "About World Explorer",

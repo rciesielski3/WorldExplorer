@@ -95,6 +95,7 @@
   "remindMeAt": "Rappel à",
   "dataPrivacy": "Données et Confidentialité",
   "resetData": "Réinitialiser les Données",
+  "resetDataWarning": "Cela effacera toutes les données de l'application, y compris les préférences. Cela ne peut pas être annulé.",
   "appVersion": "Version de l'Application",
   "aboutDeveloper": "À Propos du Développeur",
   "aboutApp": "À propos de World Explorer",

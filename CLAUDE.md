@@ -160,3 +160,9 @@ Refer to:
 - [Design Spec](docs/superpowers/specs/) for current features
 - [Implementation Plans](docs/superpowers/plans/) for ongoing work
 - This file (CLAUDE.md) for workflow questions
+
+---
+
+## 📚 Obsidian Vault Reference
+
+For daily notes, project context, and knowledge base — see: `~/Developer/obsidian-vault/CLAUDE.md`

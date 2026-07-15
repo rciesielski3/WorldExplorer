@@ -120,8 +120,20 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
   // Persists a notification settings change via NotificationService, resolving
   // today's daily-challenge country so the scheduled reminder can name it.
   const persistNotificationSettings = async (settings: NotificationSettings) => {
-    const challenge = await getTodayChallenge(countries);
-    await updateNotificationSettings(settings.enabled, settings.time, challenge.countryName);
+    try {
+      const challenge = await getTodayChallenge(countries);
+      await updateNotificationSettings(settings.enabled, settings.time, challenge.countryName);
+    } catch (error) {
+      logger.error('Failed to persist notification settings', {
+        context: 'SettingsScreen',
+        timestamp: new Date().toISOString(),
+        metadata: {
+          action: 'persistNotificationSettings',
+          error: error instanceof Error ? error.message : String(error),
+        },
+      });
+      Alert.alert('Error', 'Failed to update notification settings. Please try again.');
+    }
   };
 
   const handleNotificationToggle = async () => {
@@ -142,7 +154,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
     triggerMediumHaptic();
     Alert.alert(
       t('resetData'),
-      'This will clear all app data including preferences. This cannot be undone.',
+      t('resetDataWarning'),
       [
         {
           text: 'Cancel',

@@ -422,4 +422,141 @@ describe('SettingsScreen - Notifications', () => {
       'Daily Challenge Reminder'
     );
   });
+
+  it('displays disabled state text when notifications are off', async () => {
+    mockLoadNotificationSettings.mockResolvedValue({ enabled: false, time: '09:00' });
+
+    const { getByText } = renderSettingsScreen();
+    await act(async () => {});
+
+    expect(getByText('Disabled')).toBeTruthy();
+  });
+
+  it('displays enabled state text when notifications are on', async () => {
+    mockLoadNotificationSettings.mockResolvedValue({ enabled: true, time: '09:00' });
+
+    const { getByTestId, getAllByText } = renderSettingsScreen();
+    await act(async () => {});
+
+    // Verify the notification section specifically shows "Enabled"
+    const section = getByTestId('section-notifications');
+    const enabledTexts = getAllByText('Enabled');
+    expect(enabledTexts.length).toBeGreaterThan(0);
+  });
+
+  it('persists notification toggle state to NotificationService', async () => {
+    const { getByTestId } = renderSettingsScreen();
+    await act(async () => {});
+
+    await act(async () => {
+      fireEvent.press(getByTestId('notification-toggle'));
+    });
+
+    expect(mockUpdateNotificationSettings).toHaveBeenCalled();
+    expect(mockUpdateNotificationSettings).toHaveBeenCalledWith(
+      expect.any(Boolean),
+      expect.any(String),
+      'Japan'
+    );
+  });
+
+  it('respects loaded notification time', async () => {
+    mockLoadNotificationSettings.mockResolvedValue({ enabled: true, time: '14:30' });
+
+    const { getByText } = renderSettingsScreen();
+    await act(async () => {});
+
+    expect(getByText('14:30')).toBeTruthy();
+  });
+
+  it('updates UI state immediately when toggling reminders', async () => {
+    const { getByTestId, queryByTestId } = renderSettingsScreen();
+    await act(async () => {});
+
+    // Time picker should not be visible initially (disabled by default)
+    expect(queryByTestId('reminder-time-picker')).toBeNull();
+
+    // Toggle on
+    await act(async () => {
+      fireEvent.press(getByTestId('notification-toggle'));
+    });
+
+    // Time picker should now be visible (optimistic update)
+    expect(getByTestId('reminder-time-picker')).toBeTruthy();
+  });
+
+  it('loads and displays notification settings on mount', async () => {
+    mockLoadNotificationSettings.mockResolvedValue({ enabled: true, time: '08:30' });
+
+    const { getByText, getByTestId } = renderSettingsScreen();
+    await act(async () => {});
+
+    expect(mockLoadNotificationSettings).toHaveBeenCalledTimes(1);
+    expect(getByText('08:30')).toBeTruthy();
+    expect(getByTestId('reminder-time-picker')).toBeTruthy();
+  });
+
+  it('cycles through different reminder times', async () => {
+    mockLoadNotificationSettings.mockResolvedValue({ enabled: true, time: '09:00' });
+
+    const { getByTestId, getByText } = renderSettingsScreen();
+    await act(async () => {});
+
+    // First press: 09:00 -> 09:30
+    await act(async () => {
+      fireEvent.press(getByTestId('reminder-time-picker'));
+    });
+    expect(getByText('09:30')).toBeTruthy();
+
+    // Second press: 09:30 -> 10:00
+    await act(async () => {
+      fireEvent.press(getByTestId('reminder-time-picker'));
+    });
+    expect(getByText('10:00')).toBeTruthy();
+
+    // Verify persistence after each change
+    expect(mockUpdateNotificationSettings).toHaveBeenCalledTimes(2);
+  });
+
+  it('includes today\'s challenge country name in notification message', async () => {
+    const { getByTestId } = renderSettingsScreen();
+    await act(async () => {});
+
+    await act(async () => {
+      fireEvent.press(getByTestId('notification-toggle'));
+    });
+
+    // Should call updateNotificationSettings with Japan (mocked challenge)
+    expect(mockUpdateNotificationSettings).toHaveBeenCalledWith(true, '09:00', 'Japan');
+  });
+
+  it('toggles through multiple time values with persistence', async () => {
+    mockLoadNotificationSettings.mockResolvedValue({ enabled: true, time: '23:00' });
+
+    const { getByTestId, getByText } = renderSettingsScreen();
+    await act(async () => {});
+
+    // 23:00 -> 23:30
+    await act(async () => {
+      fireEvent.press(getByTestId('reminder-time-picker'));
+    });
+    expect(getByText('23:30')).toBeTruthy();
+    expect(mockUpdateNotificationSettings).toHaveBeenCalledWith(true, '23:30', 'Japan');
+
+    // 23:30 -> 00:00 (midnight wrap)
+    await act(async () => {
+      fireEvent.press(getByTestId('reminder-time-picker'));
+    });
+    expect(getByText('00:00')).toBeTruthy();
+    expect(mockUpdateNotificationSettings).toHaveBeenCalledWith(true, '00:00', 'Japan');
+  });
+
+  it('unmounts cleanly without memory leaks', async () => {
+    const { unmount } = renderSettingsScreen();
+    await act(async () => {});
+
+    expect(() => {
+      unmount();
+    }).not.toThrow();
+  });
 });

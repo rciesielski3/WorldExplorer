@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">55.55% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>9/9</span>
+                <span class='fraction'>5/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">56.25% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>18/18</span>
+                <span class='fraction'>9/16</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">33.33% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>1/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">55.55% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>9/9</span>
+                <span class='fraction'>5/9</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -161,9 +161,7 @@
 <a name='L96'></a><a href='#L96'>96</a>
 <a name='L97'></a><a href='#L97'>97</a>
 <a name='L98'></a><a href='#L98'>98</a>
-<a name='L99'></a><a href='#L99'>99</a>
-<a name='L100'></a><a href='#L100'>100</a>
-<a name='L101'></a><a href='#L101'>101</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L99'></a><a href='#L99'>99</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -188,22 +186,20 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">96x</span>
+<span class="cline-any cline-yes">96x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">96x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">32x</span>
-<span class="cline-any cline-yes">32x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">32x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">96x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">32x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">32x</span>
+<span class="cline-any cline-yes">96x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -277,7 +273,6 @@ interface TopBarProps {
   onSettingsPress?: () =&gt; void;
   showBack?: boolean;
   onBackPress?: () =&gt; void;
-  gradientColors?: [string, string];
   testID?: string;
 }
 &nbsp;
@@ -287,20 +282,19 @@ export function TopBar({
   onSettingsPress,
   showBack = false,
   onBackPress,
-  gradientColors,
   testID,
 }: TopBarProps) {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
 &nbsp;
-  const handleSettingsPress = () =&gt; {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onSettingsPress?.();
+  const handleSettingsPress = <span class="fstat-no" title="function not covered" >()</span> =&gt; {
+<span class="cstat-no" title="statement not covered" >    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);</span>
+<span class="cstat-no" title="statement not covered" >    onSettingsPress?.();</span>
   };
 &nbsp;
-  const handleBackPress = () =&gt; {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onBackPress?.();
+  const handleBackPress = <span class="fstat-no" title="function not covered" >()</span> =&gt; {
+<span class="cstat-no" title="statement not covered" >    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);</span>
+<span class="cstat-no" title="statement not covered" >    onBackPress?.();</span>
   };
 &nbsp;
   return (
@@ -314,13 +308,13 @@ export function TopBar({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: gradientColors ? undefined : theme.colors.surface,
+        backgroundColor: theme.colors.surface,
       }}
     &gt;
       {/* Left Content */}
       &lt;View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}&gt;
         {showBack &amp;&amp; (
-          &lt;Pressable
+<span class="branch-1 cbranch-no" title="branch not covered" >          &lt;Pressable</span>
             onPress={handleBackPress}
             style={{ marginRight: commonTokens.spacing.md }}
             accessibilityRole="button"
@@ -335,19 +329,19 @@ export function TopBar({
         )}
         &lt;Text
           style={{
-            fontSize: showAppName ? commonTokens.typography.display.fontSize : commonTokens.typography.titleLg.fontSize,
-            fontWeight: showAppName ? 'bold' : '600',
-            fontFamily: showAppName ? commonTokens.typography.display.fontFamily : commonTokens.typography.titleLg.fontFamily,
-            color: showAppName ? theme.colors.primary : theme.colors.text,
+            fontSize: showAppName ? <span class="branch-0 cbranch-no" title="branch not covered" >commonTokens.typography.display.fontSize </span>: commonTokens.typography.titleLg.fontSize,
+            fontWeight: showAppName ? <span class="branch-0 cbranch-no" title="branch not covered" >'bold' </span>: '600',
+            fontFamily: showAppName ? <span class="branch-0 cbranch-no" title="branch not covered" >commonTokens.typography.display.fontFamily </span>: commonTokens.typography.titleLg.fontFamily,
+            color: showAppName ? <span class="branch-0 cbranch-no" title="branch not covered" >theme.colors.primary </span>: theme.colors.text,
           }}
         &gt;
-          {showAppName ? 'WorldExplorer' : title}
+          {showAppName ? <span class="branch-0 cbranch-no" title="branch not covered" >'WorldExplorer' </span>: title}
         &lt;/Text&gt;
       &lt;/View&gt;
 &nbsp;
       {/* Right Content */}
       {onSettingsPress &amp;&amp; (
-        &lt;Pressable
+<span class="branch-1 cbranch-no" title="branch not covered" >        &lt;Pressable</span>
           onPress={handleSettingsPress}
           hitSlop={8}
           accessibilityRole="button"
@@ -370,7 +364,7 @@ export function TopBar({
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-07-06T07:04:14.464Z
+                at 2026-07-15T05:23:25.092Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

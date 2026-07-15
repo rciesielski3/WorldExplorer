@@ -95,6 +95,7 @@
   "remindMeAt": "Przypomnienie o",
   "dataPrivacy": "Dane i Prywatność",
   "resetData": "Resetuj Dane",
+  "resetDataWarning": "Spowoduje to usunięcie wszystkich danych aplikacji, w tym preferencji. Nie można tego cofnąć.",
   "appVersion": "Wersja Aplikacji",
   "aboutDeveloper": "Deweloper",
   "aboutApp": "O aplikacji",
