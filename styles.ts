@@ -270,26 +270,17 @@ export const getStyles = (theme: Theme) =>
       fontFamily: "Exo2-Bold",
       color: theme.colors.text,
       marginBottom: 20,
-      textShadowColor: "rgba(87, 87, 87, 0.7)",
-      textShadowOffset: { width: 2, height: 2 },
-      textShadowRadius: 3,
     },
     subtitle: {
       fontSize: 20,
       color: theme.colors.text,
       fontFamily: "Exo2-Bold",
-      textShadowColor: theme.colors.button,
-      textShadowOffset: { width: 2, height: 2 },
-      textShadowRadius: 3,
     },
     subtitle2: {
       fontSize: 18,
       color: theme.colors.text,
       fontFamily: "Exo2-Regular",
       marginBottom: 20,
-      textShadowColor: "rgba(61, 61, 61, 0.7)",
-      textShadowOffset: { width: 3, height: 3 },
-      textShadowRadius: 3,
     },
     card: {
       flexDirection: "row",
@@ -1009,6 +1000,7 @@ export const getStyles = (theme: Theme) =>
     },
     exploreListContent: {
       paddingBottom: 120,
+      marginBottom: 32,
     },
     exploreEmptyState: {
       alignItems: "center",

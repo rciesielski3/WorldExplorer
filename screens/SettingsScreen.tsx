@@ -4,7 +4,6 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  Linking,
   ActivityIndicator,
   Alert,
 } from 'react-native';
@@ -45,8 +44,6 @@ function advanceReminderTime(time: string): string {
   const nextMinutes = totalMinutes % 60;
   return `${String(nextHours).padStart(2, '0')}:${String(nextMinutes).padStart(2, '0')}`;
 }
-
-const CONTACT_URL = 'https://rciesielski.dev/contact';
 
 interface SettingsScreenProps {
   navigation: any;
@@ -188,11 +185,6 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
         },
       ]
     );
-  };
-
-  const handleContactPress = () => {
-    triggerLightHaptic();
-    Linking.openURL(CONTACT_URL);
   };
 
   const navItems = [
@@ -379,7 +371,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
                   color: theme.colors.textSecondary,
                 }}
               >
-                {soundEnabled ? t('enabled') : t('disabled')}
+                {soundEnabled ? t('sound') : ''}
               </Text>
             </View>
             <ToggleSwitch
@@ -410,7 +402,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
                   color: theme.colors.textSecondary,
                 }}
               >
-                {hapticsEnabled ? t('enabled') : t('disabled')}
+                {hapticsEnabled ? t('hapticFeedback') : ''}
               </Text>
             </View>
             <ToggleSwitch
@@ -481,7 +473,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
                   color: theme.colors.textSecondary,
                 }}
               >
-                {notificationSettings.enabled ? t('enabled') : t('disabled')}
+                {notificationSettings.enabled ? t('dailyChallengeReminder') : ''}
               </Text>
             </View>
             <ToggleSwitch
@@ -819,41 +811,8 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
             numberOfLines={3}
             ellipsizeMode="tail"
           >
-            {t('aboutAppDescription')}
+            {t('aboutAppBrief')}
           </Text>
-
-          <Text
-            style={{
-              fontSize: commonTokens.typography.bodySm.fontSize,
-              fontFamily: commonTokens.typography.bodySm.fontFamily,
-              color: theme.colors.textSecondary,
-              marginBottom: commonTokens.spacing.md,
-            }}
-          >
-            {t('createdBy')}
-          </Text>
-
-          <TouchableOpacity
-            onPress={handleContactPress}
-            style={{
-              paddingVertical: commonTokens.spacing.sm,
-              paddingHorizontal: commonTokens.spacing.md,
-              backgroundColor: theme.colors.primaryLight,
-              borderRadius: commonTokens.borderRadius.md,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: commonTokens.typography.bodyLg.fontSize,
-                fontFamily: commonTokens.typography.bodyLg.fontFamily,
-                color: theme.colors.primary,
-                fontWeight: '600',
-                textAlign: 'center',
-              }}
-            >
-              {t('contact')} →
-            </Text>
-          </TouchableOpacity>
         </Card>
 
         {/* Version Card */}
@@ -892,7 +851,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
                 marginTop: commonTokens.spacing.xs,
               }}
             >
-              © {new Date().getFullYear()} Adateo
+              © {new Date().getFullYear()} Adateo Rafał Ciesielski
             </Text>
           </View>
         </Card>

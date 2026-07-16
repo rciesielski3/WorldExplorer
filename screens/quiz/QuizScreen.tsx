@@ -585,6 +585,8 @@ const createLocalStyles = (theme: any) =>
       backgroundColor: theme.colors.surface,
       justifyContent: "center",
       alignItems: "center",
+      paddingVertical: commonTokens.spacing.md,
+      paddingHorizontal: commonTokens.spacing.lg,
     },
     difficultyButtonActive: {
       borderColor: theme.colors.primary,
