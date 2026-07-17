@@ -233,6 +233,22 @@ describe('i18n Completeness', () => {
         expect(localeData[locale].currency).toBeDefined();
       });
     });
+
+    it('should have aboutAppBrief key (PR #44)', () => {
+      locales.forEach(locale => {
+        expect(localeData[locale].aboutAppBrief).toBeDefined();
+        expect(typeof localeData[locale].aboutAppBrief).toBe('string');
+        expect(localeData[locale].aboutAppBrief.length).toBeGreaterThan(0);
+      });
+    });
+
+    it('should have addCountry key (PR #44)', () => {
+      locales.forEach(locale => {
+        expect(localeData[locale].addCountry).toBeDefined();
+        expect(typeof localeData[locale].addCountry).toBe('string');
+        expect(localeData[locale].addCountry.length).toBeGreaterThan(0);
+      });
+    });
   });
 
   describe('JSON Validity', () => {
