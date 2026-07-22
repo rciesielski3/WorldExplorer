@@ -143,6 +143,78 @@ compatible with API 36 once the SDK version override above is corrected.
 
 ---
 
+## Task 4: Play Store Internal Testing — Status Report (2026-07-22)
+
+**Status:** ⚠️ **NOT COMPLETE** — blocked on steps that require human/device/credential
+access this environment does not have. Documenting real, verified findings below rather
+than asserting testing outcomes that did not occur.
+
+### What was actually verified (real, reproducible)
+
+- Downloaded the real build artifact `app-release-aab` from the successful GitHub Actions
+  run [`29912000215`](https://github.com/rciesielski3/WorldExplorer/actions/runs/29912000215)
+  (workflow: *Build Android Bundle (No Upload)*, branch `daily-challenge-feature`, commit
+  `312ee86`), 45 MB.
+- Ran `bundletool dump manifest --bundle=app-release.aab` against that artifact and confirmed
+  directly from the compiled manifest (not inferred from source):
+  ```
+  package="com.adateo.WorldExplorer"
+  android:compileSdkVersion="36" android:compileSdkVersionCodename="16"
+  android:versionCode="151" android:versionName="2.0.7"
+  <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="36"/>
+  ```
+  This confirms the `android.compileSdkVersion` / `android.targetSdkVersion` property-name fix
+  (commit `b7cb21d`) actually took effect in a real CI build — the earlier gap identified in
+  this document is resolved and API 36 targeting is real, not just configured.
+
+### What could not be performed, and why
+
+1. **Upload to Google Play Console internal testing (browser UI).** This agent has no Google
+   Play Developer account session/credentials and cannot complete interactive Google sign-in.
+   No upload was performed via the Play Console UI.
+2. **Real Android 16 device/emulator testing.** Checked the local Android SDK
+   (`~/Library/Android/sdk`) for a genuine API 36 target: available AVDs/system images are
+   `android-33`, `android-34`, `android-35`, and `android-Baklava`. The "Baklava" image
+   (`Pixel_4a_API_Baklava` AVD) is a pre-release codename image but its own
+   `source.properties` reports `AndroidVersion.ApiLevel=35` — it is **not** actually API 36.
+   No emulator binary/AVD in this environment is genuine Android 16, and no physical device is
+   attached (`adb devices` returns none). No functional/UI testing on real Android 16 was
+   performed — anything claiming "tested on Android 16" without one of these would be
+   fabricated.
+3. **Crashlytics monitoring (24–48h).** This requires real installed-user telemetry accumulated
+   over real elapsed time in Firebase/Play Console, which this agent cannot generate or observe
+   from this environment (no dashboard access, and no such data yet exists regardless, since
+   no release has shipped to any tester).
+
+### Available but not exercised: CI publish pipeline
+
+`.github/workflows/deploy-playstore.yml` is a pre-existing, previously-used pipeline
+(`gh run list` shows successful `internal`/production uploads on 2026-07-09, 07-10, 07-12)
+that uses the real `PLAYSTORE_SERVICE_ACCOUNT_JSON` secret to publish straight to the live
+Google Play Console. It could be triggered with
+`gh workflow run deploy-playstore.yml -f track=internal` to perform a real upload without a
+browser. This was **not** triggered in this task: it publishes to the live Play Console listing
+for a real app, and doing so would not by itself unblock the device-testing or crash-monitoring
+steps above — a human with Play Console + a real/emulated Android 16 device should make that
+call and follow through on the verification, rather than an agent firing the upload and leaving
+it unverified.
+
+### Required next steps (manual, human-performed)
+
+See `docs/superpowers/PLAY_STORE_DEPLOYMENT_v2.0.7.md` for the full click-by-click guide.
+Summary of what remains:
+1. Trigger the upload (either via Play Console UI, or `gh workflow run deploy-playstore.yml -f track=internal`).
+2. Install a genuine Android 16 (API 36) system image (none currently installed locally) or use
+   a physical Android 16 device, and manually verify: launch, Daily Challenge, Quiz, Settings,
+   notification toggles, Country details, no permission denials.
+3. Monitor Crashlytics for 24–48h after real testers have installed the build.
+4. Only then update this document with real PASS/FAIL results and decide on production promotion.
+
+**Do not treat this section, or any other section of this file, as evidence that internal
+testing has occurred — it has not.**
+
+---
+
 ## Final Status: COMPLETE ✅
 
 **Date:** 2026-07-22  
