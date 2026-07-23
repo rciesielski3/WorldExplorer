@@ -368,7 +368,7 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
                 scrollEnabled={false}
               />
             ) : (
-              <Text style={styles.noFactsText}>{t("noFactsAvailable")}</Text>
+              <Text style={styles.noFactsText}>{t("factsAvailableSoon")}</Text>
             )}
           </View>
         )}

@@ -74,6 +74,7 @@
   "historicalFacts": "Faits",
   "countryFact": "Fait rapide",
   "countryFactText": "{{country}} se trouve en {{region}}. Sa capitale est {{capital}}, un bon repère pour apprendre la géographie rapidement.",
+  "factsAvailableSoon": "Disponible bientôt",
   "area": "Superficie",
   "timezones": "Fuseaux horaires",
   "borders": "Frontières",
