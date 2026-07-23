@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { commonTokens } from "./theme/tokens";
 
 interface Theme {
   isDarkMode: boolean;
@@ -999,8 +1000,8 @@ export const getStyles = (theme: Theme) =>
       elevation: 3,
     },
     exploreListContent: {
-      paddingBottom: 120,
-      marginBottom: 32,
+      paddingBottom: 160,
+      marginBottom: commonTokens.spacing.xl,
     },
     exploreEmptyState: {
       alignItems: "center",
