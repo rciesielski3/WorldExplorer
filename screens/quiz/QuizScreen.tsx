@@ -578,15 +578,15 @@ const createLocalStyles = (theme: any) =>
       marginBottom: commonTokens.spacing.xs,
     },
     difficultyButton: {
-      height: 48,
+      minHeight: 48,
       borderRadius: commonTokens.borderRadius.md,
       borderWidth: 2,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.surface,
       justifyContent: "center",
       alignItems: "center",
-      paddingVertical: commonTokens.spacing.md,
-      paddingHorizontal: commonTokens.spacing.lg,
+      paddingVertical: commonTokens.spacing.lg,
+      paddingHorizontal: commonTokens.spacing.xl,
     },
     difficultyButtonActive: {
       borderColor: theme.colors.primary,
