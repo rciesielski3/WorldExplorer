@@ -80,7 +80,7 @@ describe('Styles - PR #44 Changes', () => {
 
     it('should maintain paddingBottom alongside new marginBottom', () => {
       const styles = getStyles(lightTheme);
-      expect(styles.exploreListContent.paddingBottom).toBe(120);
+      expect(styles.exploreListContent.paddingBottom).toBe(160);
       expect(styles.exploreListContent.marginBottom).toBe(32);
     });
 
