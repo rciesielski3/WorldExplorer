@@ -4,13 +4,11 @@ import { getStyles } from '../../styles';
 const createTestTheme = (isDarkMode: boolean) => ({
   isDarkMode,
   colors: {
-    primary: '#1976D2',
-    secondary: '#DC004E',
-    error: '#D32F2F',
-    background: isDarkMode ? '#121212' : '#FFFFFF',
-    surface: isDarkMode ? '#1E1E1E' : '#F5F5F5',
     text: isDarkMode ? '#FFFFFF' : '#000000',
-    textSecondary: isDarkMode ? '#B3B3B3' : '#666666',
+    button: '#1976D2',
+    buttonText: '#FFFFFF',
+    card: isDarkMode ? '#1E1E1E' : '#F5F5F5',
+    border: isDarkMode ? '#333333' : '#E0E0E0',
   },
 });
 
