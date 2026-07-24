@@ -47,21 +47,21 @@ describe('Styles - PR #44 Changes', () => {
 
     it('should maintain font properties after textShadow removal', () => {
       const styles = getStyles(lightTheme);
-      expect(styles.title.fontFamily).toBe('Exo2-Bold');
+      expect(styles.title.fontFamily).toBe('Inter-Bold');
       expect(styles.title.fontSize).toBe(28);
       expect(styles.title.color).toBe(lightTheme.colors.text);
     });
 
     it('should maintain subtitle font properties after textShadow removal', () => {
       const styles = getStyles(lightTheme);
-      expect(styles.subtitle.fontFamily).toBe('Exo2-Bold');
+      expect(styles.subtitle.fontFamily).toBe('Inter-Bold');
       expect(styles.subtitle.fontSize).toBe(20);
       expect(styles.subtitle.color).toBe(lightTheme.colors.text);
     });
 
     it('should maintain subtitle2 font properties after textShadow removal', () => {
       const styles = getStyles(lightTheme);
-      expect(styles.subtitle2.fontFamily).toBe('Exo2-Regular');
+      expect(styles.subtitle2.fontFamily).toBe('Inter-Regular');
       expect(styles.subtitle2.fontSize).toBe(18);
       expect(styles.subtitle2.color).toBe(lightTheme.colors.text);
     });

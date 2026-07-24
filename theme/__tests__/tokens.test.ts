@@ -50,7 +50,7 @@ describe('Design Tokens', () => {
   describe('Typography', () => {
     it('should have display typography styles', () => {
       expect(commonTokens.typography.display).toBeDefined();
-      expect(commonTokens.typography.display.fontFamily).toBe('Exo2-Bold');
+      expect(commonTokens.typography.display.fontFamily).toBe('Inter-Bold');
       expect(commonTokens.typography.display.fontSize).toBe(32);
     });
 
@@ -68,7 +68,7 @@ describe('Design Tokens', () => {
 
     it('should have label typography style', () => {
       expect(commonTokens.typography.label).toBeDefined();
-      expect(commonTokens.typography.label.fontFamily).toBe('Exo2-Bold');
+      expect(commonTokens.typography.label.fontFamily).toBe('Inter-Bold');
       expect(commonTokens.typography.label.letterSpacing).toBe(0.8);
     });
 
