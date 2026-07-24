@@ -100,17 +100,17 @@ export const commonTokens = {
     full: 999,
   },
   typography: {
-    display:   { fontFamily: 'Exo2-Bold',    fontSize: 32, lineHeight: 40 },
-    displayLg: { fontFamily: 'Exo2-Bold',    fontSize: 28, lineHeight: 34 },
-    displayMd: { fontFamily: 'Exo2-Bold',    fontSize: 22, lineHeight: 28 },
-    displaySm: { fontFamily: 'Exo2-Bold',    fontSize: 18, lineHeight: 24 },
-    titleLg:   { fontFamily: 'Exo2-Bold',    fontSize: 16, lineHeight: 22 },
-    titleMd:   { fontFamily: 'Exo2-Bold',    fontSize: 14, lineHeight: 20 },
-    bodyLg:    { fontFamily: 'Exo2-Regular', fontSize: 15, lineHeight: 22 },
-    bodyMd:    { fontFamily: 'Exo2-Regular', fontSize: 13, lineHeight: 19 },
-    bodySm:    { fontFamily: 'Exo2-Regular', fontSize: 11, lineHeight: 16 },
-    caption:   { fontFamily: 'Exo2-Regular', fontSize: 10, lineHeight: 14 },
-    label:     { fontFamily: 'Exo2-Bold',    fontSize: 10, lineHeight: 14, letterSpacing: 0.8 },
+    display:   { fontFamily: 'Inter-Bold',    fontSize: 32, lineHeight: 40 },
+    displayLg: { fontFamily: 'Inter-Bold',    fontSize: 28, lineHeight: 34 },
+    displayMd: { fontFamily: 'Inter-Bold',    fontSize: 22, lineHeight: 28 },
+    displaySm: { fontFamily: 'Inter-Bold',    fontSize: 18, lineHeight: 24 },
+    titleLg:   { fontFamily: 'Inter-Bold',    fontSize: 16, lineHeight: 22 },
+    titleMd:   { fontFamily: 'Inter-Bold',    fontSize: 14, lineHeight: 20 },
+    bodyLg:    { fontFamily: 'Inter-Regular', fontSize: 15, lineHeight: 22 },
+    bodyMd:    { fontFamily: 'Inter-Regular', fontSize: 13, lineHeight: 19 },
+    bodySm:    { fontFamily: 'Inter-Regular', fontSize: 11, lineHeight: 16 },
+    caption:   { fontFamily: 'Inter-Regular', fontSize: 10, lineHeight: 14 },
+    label:     { fontFamily: 'Inter-Bold',    fontSize: 10, lineHeight: 14, letterSpacing: 0.8 },
   },
   shadows: {
     sm: {
@@ -253,8 +253,8 @@ const typographyShortcuts: TypographyShortcuts = {
     subtitle: commonTokens.typography.titleMd,
   },
   weights: {
-    bold: 'Exo2-Bold',
-    medium: 'Exo2-Regular',
+    bold: 'Inter-Bold',
+    medium: 'Inter-Medium',
   },
 };
 

@@ -74,6 +74,7 @@
   "historicalFacts": "Fakty",
   "countryFact": "Ciekawostka",
   "countryFactText": "{{country}} leży w {{region}}. Stolica: {{capital}}.",
+  "factsAvailableSoon": "Dostępne wkrótce",
   "area": "Powierzchnia",
   "timezones": "Strefy czasu",
   "borders": "Granice",

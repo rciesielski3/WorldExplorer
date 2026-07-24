@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { commonTokens } from "./theme/tokens";
 
 interface Theme {
   isDarkMode: boolean;
@@ -49,7 +50,7 @@ export const getStyles = (theme: Theme) =>
     },
     homeEyebrow: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 11,
       letterSpacing: 0,
       textTransform: "uppercase",
@@ -59,7 +60,7 @@ export const getStyles = (theme: Theme) =>
     homeTitle: {
       fontSize: 28,
       lineHeight: 34,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       color: theme.colors.text,
       textAlign: "center",
       marginTop: 8,
@@ -67,7 +68,7 @@ export const getStyles = (theme: Theme) =>
     homeSubtitle: {
       fontSize: 14,
       lineHeight: 20,
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       color: theme.colors.text,
       opacity: 0.78,
       textAlign: "center",
@@ -109,13 +110,13 @@ export const getStyles = (theme: Theme) =>
     },
     homeActionTitle: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 16,
       lineHeight: 21,
     },
     homeActionSubtitle: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       fontSize: 12,
       lineHeight: 17,
       opacity: 0.72,
@@ -227,12 +228,12 @@ export const getStyles = (theme: Theme) =>
     },
     mapTooltipName: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 13,
     },
     mapTooltipMeta: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       fontSize: 11,
       marginTop: 2,
       opacity: 0.74,
@@ -261,25 +262,25 @@ export const getStyles = (theme: Theme) =>
     },
     mapLegendText: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       fontSize: 12,
       opacity: 0.78,
     },
     title: {
       fontSize: 28,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       color: theme.colors.text,
       marginBottom: 20,
     },
     subtitle: {
       fontSize: 20,
       color: theme.colors.text,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
     },
     subtitle2: {
       fontSize: 18,
       color: theme.colors.text,
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       marginBottom: 20,
     },
     card: {
@@ -299,7 +300,7 @@ export const getStyles = (theme: Theme) =>
     },
     searchBox: {
       fontSize: 16,
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       paddingVertical: 10,
       paddingHorizontal: 8,
       flex: 1,
@@ -337,7 +338,7 @@ export const getStyles = (theme: Theme) =>
       flex: 1,
       minHeight: 48,
       color: theme.colors.text,
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       fontSize: 15,
       paddingVertical: 0,
     },
@@ -367,7 +368,7 @@ export const getStyles = (theme: Theme) =>
     },
     regionFilterChipText: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 13,
     },
     regionFilterChipTextActive: {
@@ -399,7 +400,7 @@ export const getStyles = (theme: Theme) =>
     },
     countryBackText: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 15,
     },
     countryHeroCard: {
@@ -431,7 +432,7 @@ export const getStyles = (theme: Theme) =>
     },
     countryHeroName: {
       color: "#FFFFFF",
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 28,
       textShadowColor: "rgba(0, 0, 0, 0.45)",
       textShadowOffset: { width: 0, height: 1 },
@@ -439,7 +440,7 @@ export const getStyles = (theme: Theme) =>
     },
     countryHeroRegion: {
       color: "#FFFFFF",
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       fontSize: 15,
       marginTop: 4,
       opacity: 0.92,
@@ -465,7 +466,7 @@ export const getStyles = (theme: Theme) =>
     },
     countryTabText: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 13,
     },
     countryTabTextActive: {
@@ -489,14 +490,14 @@ export const getStyles = (theme: Theme) =>
     },
     countryStatLabel: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 12,
       opacity: 0.72,
       textTransform: "uppercase",
     },
     countryStatValue: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 16,
       marginTop: 8,
     },
@@ -516,13 +517,13 @@ export const getStyles = (theme: Theme) =>
     },
     countryFactLabel: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 12,
       textTransform: "uppercase",
     },
     countryFactText: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       fontSize: 14,
       lineHeight: 20,
     },
@@ -539,13 +540,13 @@ export const getStyles = (theme: Theme) =>
     },
     factText: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       fontSize: 14,
       lineHeight: 20,
     },
     noFactsText: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       fontSize: 14,
       opacity: 0.72,
       textAlign: "center",
@@ -609,13 +610,13 @@ export const getStyles = (theme: Theme) =>
     },
     countryHeaderName: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 18,
       marginBottom: 4,
     },
     countryHeaderCapital: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       fontSize: 13,
       opacity: 0.74,
     },
@@ -627,7 +628,7 @@ export const getStyles = (theme: Theme) =>
     },
     countryRegionBadgeText: {
       color: theme.colors.buttonText,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 12,
     },
     countryStatGridContainer: {
@@ -663,14 +664,14 @@ export const getStyles = (theme: Theme) =>
     },
     countryInfoCardTitle: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 12,
       textTransform: "uppercase",
       opacity: 0.74,
     },
     countryInfoCardValue: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 16,
       marginTop: 4,
     },
@@ -734,7 +735,7 @@ export const getStyles = (theme: Theme) =>
     },
     countryCardMeta: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       fontSize: 13,
       marginTop: 3,
       opacity: 0.72,
@@ -775,7 +776,7 @@ export const getStyles = (theme: Theme) =>
     },
     emptyStateText: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       fontSize: 15,
       textAlign: "center",
       marginTop: 24,
@@ -803,7 +804,7 @@ export const getStyles = (theme: Theme) =>
     },
     dailyCountryEyebrow: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 13,
       opacity: 0.8,
     },
@@ -822,7 +823,7 @@ export const getStyles = (theme: Theme) =>
     },
     dailyCountryAction: {
       color: theme.colors.button,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 13,
     },
     dailyCountryActionRow: {
@@ -837,19 +838,19 @@ export const getStyles = (theme: Theme) =>
     },
     countryName: {
       fontSize: 18,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       color: theme.colors.text,
     },
     capitalText: {
       fontSize: 14,
       color: "#666666",
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
     },
     countryMetaText: {
       fontSize: 13,
       lineHeight: 18,
       color: theme.colors.text,
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       opacity: 0.72,
       marginTop: 3,
     },
@@ -880,18 +881,18 @@ export const getStyles = (theme: Theme) =>
     quizFeedbackTitle: {
       fontSize: 20,
       color: theme.colors.text,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       marginBottom: 8,
     },
     quizFeedbackText: {
       fontSize: 16,
       color: theme.colors.text,
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       marginBottom: 8,
     },
     buttonText: {
       color: theme.colors.buttonText,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 15,
     },
     settingItem: {
@@ -921,20 +922,20 @@ export const getStyles = (theme: Theme) =>
     },
     settingDescription: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       fontSize: 14,
       marginTop: 8,
     },
     settingMetaText: {
       color: theme.colors.text,
-      fontFamily: "Exo2-Regular",
+      fontFamily: commonTokens.typography.bodyMd.fontFamily,
       fontSize: 13,
       marginTop: 10,
       opacity: 0.8,
     },
     settingError: {
       color: "#B42318",
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 13,
       marginTop: 8,
     },
@@ -965,7 +966,7 @@ export const getStyles = (theme: Theme) =>
     },
     settingActionText: {
       color: theme.colors.buttonText,
-      fontFamily: "Exo2-Bold",
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 14,
     },
     settingLinkText: {
@@ -999,8 +1000,8 @@ export const getStyles = (theme: Theme) =>
       elevation: 3,
     },
     exploreListContent: {
-      paddingBottom: 120,
-      marginBottom: 32,
+      paddingBottom: 160,
+      marginBottom: commonTokens.spacing.xl,
     },
     exploreEmptyState: {
       alignItems: "center",

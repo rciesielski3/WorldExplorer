@@ -302,8 +302,8 @@ describe('Design System Accessibility', () => {
 
     it('should use consistent font families', () => {
       const typography = lightTheme.typography;
-      const boldFont = 'Exo2-Bold';
-      const regularFont = 'Exo2-Regular';
+      const boldFont = 'Inter-Bold';
+      const regularFont = 'Inter-Regular';
 
       expect(typography.display.fontFamily).toBe(boldFont);
       expect(typography.bodyLg.fontFamily).toBe(regularFont);

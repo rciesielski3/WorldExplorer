@@ -1,7 +1,7 @@
 {
   "name": "worldexplorer",
   "license": "0BSD",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "main": "index.ts",
   "scripts": {
     "countries:generate": "tsx scripts/countries/generate.ts",
@@ -21,7 +21,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@expo-google-fonts/exo-2": "^0.2.3",
+    "@expo-google-fonts/inter": "^0.2.3",
     "@expo/config-plugins": "~10.1.1",
     "@expo/prebuild-config": "~9.0.0",
     "@react-native-async-storage/async-storage": "2.2.0",

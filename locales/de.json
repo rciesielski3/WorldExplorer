@@ -74,6 +74,7 @@
   "historicalFacts": "Fakten",
   "countryFact": "Kurzfakt",
   "countryFactText": "{{country}} liegt in {{region}}. Die Hauptstadt ist {{capital}}, ein guter Einstieg zum schnellen Geografie-Lernen.",
+  "factsAvailableSoon": "Bald verfügbar",
   "area": "Fläche",
   "timezones": "Zeitzonen",
   "borders": "Grenzen",
