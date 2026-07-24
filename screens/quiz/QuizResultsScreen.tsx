@@ -318,7 +318,7 @@ const createStyles = (theme: any) =>
     },
     scorePercentage: {
       fontSize: 56,
-      fontFamily: 'Inter-Bold',
+      fontFamily: commonTokens.typography.displayMd.fontFamily,
       color: '#FFFFFF',
       fontWeight: '700',
     },

@@ -16,6 +16,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 
 import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
+import { commonTokens } from "../theme/tokens";
 import { ScreenBackground } from "../src/components/ScreenBackground";
 import { FLAG_ASSETS } from "../utils/flagAssets";
 import { logger } from "../utils/logger";
@@ -432,7 +433,7 @@ const styles = StyleSheet.create({
   topBarTitle: {
     flex: 1,
     fontSize: 18,
-    fontFamily: "Inter-Bold",
+    fontFamily: commonTokens.typography.displayMd.fontFamily,
     marginLeft: 12,
   },
   topBarSpacer: {
@@ -497,12 +498,12 @@ const styles = StyleSheet.create({
   },
   infoCardName: {
     fontSize: 18,
-    fontFamily: "Inter-Bold",
+    fontFamily: commonTokens.typography.displayMd.fontFamily,
     marginBottom: 4,
   },
   infoCardMeta: {
     fontSize: 13,
-    fontFamily: "Inter-Regular",
+    fontFamily: commonTokens.typography.bodyMd.fontFamily,
     opacity: 0.7,
   },
 });

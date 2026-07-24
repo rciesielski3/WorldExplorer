@@ -172,7 +172,7 @@ const localStyles = StyleSheet.create({
   },
   clearButtonText: {
     color: "#FFFFFF",
-    fontFamily: "Inter-Bold",
+    fontFamily: commonTokens.typography.displayMd.fontFamily,
     fontSize: 15,
   },
 });
