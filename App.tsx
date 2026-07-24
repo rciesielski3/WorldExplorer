@@ -2,9 +2,10 @@ import React, { Suspense } from "react";
 import Toast from "react-native-toast-message";
 import {
   useFonts,
-  Exo2_400Regular,
-  Exo2_700Bold,
-} from "@expo-google-fonts/exo-2";
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_700Bold,
+} from "@expo-google-fonts/inter";
 import { ActivityIndicator } from "react-native";
 import { useTranslation } from "react-i18next";
 import mobileAds from "react-native-google-mobile-ads";
@@ -53,8 +54,9 @@ export default function App() {
   const { t } = useTranslation();
 
   const [fontsLoaded, fontError] = useFonts({
-    "Exo2-Regular": Exo2_400Regular,
-    "Exo2-Bold": Exo2_700Bold,
+    "Inter-Regular": Inter_400Regular,
+    "Inter-Medium": Inter_500Medium,
+    "Inter-Bold": Inter_700Bold,
   });
 
   React.useEffect(() => {

@@ -432,7 +432,7 @@ const styles = StyleSheet.create({
   topBarTitle: {
     flex: 1,
     fontSize: 18,
-    fontFamily: "Exo2-Bold",
+    fontFamily: "Inter-Bold",
     marginLeft: 12,
   },
   topBarSpacer: {
@@ -497,12 +497,12 @@ const styles = StyleSheet.create({
   },
   infoCardName: {
     fontSize: 18,
-    fontFamily: "Exo2-Bold",
+    fontFamily: "Inter-Bold",
     marginBottom: 4,
   },
   infoCardMeta: {
     fontSize: 13,
-    fontFamily: "Exo2-Regular",
+    fontFamily: "Inter-Regular",
     opacity: 0.7,
   },
 });
