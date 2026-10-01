@@ -1,5 +1,35 @@
 # WorldExplorer Release Notes
 
+## 🚀 Latest Release: v2.1
+
+**Release Date:** October 2026
+**Version:** 2.1.0 (versionCode 154)
+**Platform:** Android (Google Play Store)
+
+**Enhanced Exploration & Polish**
+
+WorldExplorer v2.1 brings richer country information, powerful filtering tools, and polished UI for a refined exploration experience.
+
+**What's New:**
+- 🌍 **Enhanced Country Details** - Rich information, historical facts, culture insights, and more context
+- 🔍 **Advanced Explore Filtering** - Filter by region, population size, development level; sort by multiple options
+- ✨ **Polished UI** - Consistent typography (Inter font), refined color palette, improved visual hierarchy
+- 🌙 **Enhanced Dark/Light Modes** - Better contrast, smoother transitions, cohesive theming
+- ♿ **Improved Accessibility** - 48dp+ touch targets, semantic HTML labels, WCAG AA compliance
+- ✅ **All v2.0.9 Features** - Daily Challenge, Quiz, Notifications, Favorites, Comparison tools
+
+**Compatibility:**
+- Requires Android 11+ (API 30)
+- Targets Android 16 (API 36)
+- All devices Android 11-16 supported
+
+**Build Info:**
+- **versionCode:** 154
+- **versionName:** 2.1.0
+- **Test Status:** 631+ tests passing
+
+---
+
 ## 🚀 Latest Release: v2.0.9
 
 **Release Date:** September 20, 2026  
