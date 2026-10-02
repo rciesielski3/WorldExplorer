@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-01T09:35:34.137Z",
-  "lastUpdated": "2026-08-01T09:35:34.137Z",
+  "generatedAt": "2026-10-01T09:35:42.207Z",
+  "lastUpdated": "2026-10-01T09:35:42.207Z",
   "source": "countries.dev + mledoze/countries",
   "version": 2,
   "countries": [
@@ -2222,8 +2222,8 @@
           "description": ""
         },
         "pl": {
-          "name": "WybrzeŻe Kości Słoniowej",
-          "officialName": "Republika WybrzeŻa Kości Słoniowej",
+          "name": "Wybrzeże Kości Słoniowej",
+          "officialName": "Republika Wybrzeża Kości Słoniowej",
           "description": ""
         },
         "es": {
@@ -2375,8 +2375,8 @@
           "description": ""
         },
         "pl": {
-          "name": "WybrzeŻe Kości Słoniowej",
-          "officialName": "Republika WybrzeŻa Kości Słoniowej",
+          "name": "Kamerun",
+          "officialName": "Republika Kamerunu",
           "description": ""
         },
         "es": {
@@ -3442,7 +3442,7 @@
         },
         "pl": {
           "name": "Hiszpania",
-          "officialName": "Królestwo Hiszpanii ",
+          "officialName": "Królestwo Hiszpanii",
           "description": ""
         },
         "es": {
@@ -10429,8 +10429,8 @@
           "description": ""
         },
         "pl": {
-          "name": "Sudan",
-          "officialName": "Republika Sudanu",
+          "name": "Sudan Południowy",
+          "officialName": "Republika Sudanu Południowego",
           "description": ""
         },
         "es": {
