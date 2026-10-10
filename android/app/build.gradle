@@ -108,7 +108,13 @@ android {
             def keystorePropertiesFile = rootProject.file("key.properties")
             def keystoreProperties = new Properties()
 
-            if (keystorePropertiesFile.exists()) {
+            if (project.hasProperty('WORLDEXPLORER_UPLOAD_STORE_FILE')) {
+                // CI: injected via ORG_GRADLE_PROJECT_* env vars (see .github/actions/build-aab)
+                storeFile file(project.property('WORLDEXPLORER_UPLOAD_STORE_FILE'))
+                storePassword project.property('WORLDEXPLORER_UPLOAD_STORE_PASSWORD')
+                keyAlias project.property('WORLDEXPLORER_UPLOAD_KEY_ALIAS')
+                keyPassword project.property('WORLDEXPLORER_UPLOAD_KEY_PASSWORD')
+            } else if (keystorePropertiesFile.exists()) {
                 keystorePropertiesFile.withInputStream { stream ->
                     keystoreProperties.load(stream)
                 }
