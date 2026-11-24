@@ -29,7 +29,7 @@ implementation. Use this as the last pass before requesting review.
 
 ## Motion and haptics
 
-- [ ] Press feedback: scale to about 0.96 (never below 0.95), as `src/components/ui/Button.tsx` does with `withSpring`
+- [ ] Press feedback: subtle scale (`Button` uses 1.02 with `withSpring`); if you scale down, stay at or above 0.95
 - [ ] Animate `transform` and `opacity`; not `width`, `height`, `top`, `left`
 - [ ] 200-300ms for standard transitions; nothing in a default interaction over 600ms
 - [ ] Entering elements ease out; stagger 50ms, maximum 6-8 items
