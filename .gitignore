@@ -11,7 +11,6 @@ credentials.json
 firebase-service-account*.json
 *.keystore
 *.jks
-!android/app/debug.keystore
 android/local.properties
 
 # @generated expo-cli sync-8d4afeec25ea8a192358fae2f8e2fc766bdce4ec
@@ -77,3 +76,6 @@ CODE_REVIEW_SUMMARY.md
 commit_retry_changes.sh
 docs/superpowers/
 .superpowers/
+
+# Claude Code local settings
+.claude/settings*.json
