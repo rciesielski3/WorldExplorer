@@ -79,3 +79,6 @@ docs/superpowers/
 
 # Claude Code local settings
 .claude/settings*.json
+
+# Test coverage output
+coverage/

@@ -4,44 +4,51 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-validate-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
-    runs-on: macos-latest
-
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '18'
+          node-version-file: '.nvmrc'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '11'
-
-      - name: TypeScript Check
+      - name: TypeScript check
         run: npx tsc --noEmit
 
-      - name: Validate Countries Data
+      - name: Unit tests
+        run: npm test -- --ci
+
+      - name: Validate countries data
         run: npm run countries:validate
 
-      - name: Verify Flags
+      - name: Verify flags
         run: npm run flags:verify
 
-  lint:
-    runs-on: macos-latest
+  gitleaks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: '18'
-          cache: 'npm'
-      - run: npm ci
-      - run: npm list | head -20
+          fetch-depth: 0
+
+      - name: Install gitleaks
+        uses: ./.github/actions/install-gitleaks
+
+      - name: Scan full history
+        run: gitleaks git --redact --no-banner --verbose
