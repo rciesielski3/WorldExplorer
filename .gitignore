@@ -76,3 +76,6 @@ CODE_REVIEW_SUMMARY.md
 commit_retry_changes.sh
 docs/superpowers/
 .superpowers/
+
+# Claude Code local settings
+.claude/settings*.json
