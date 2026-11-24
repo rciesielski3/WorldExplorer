@@ -134,6 +134,8 @@ Git hooks (husky 9, installed by `npm install` via `prepare`) run automatically:
 - `commit-msg`: commitlint (`@commitlint/config-conventional`, e.g. `feat: add x`) and `.claude/hooks/no-ai-trailers.sh`.
 - `pre-push`: `npx tsc --noEmit` and `npm test -- --ci` (about 40 s).
 
+In each git worktree run `npm ci` or `npx husky` once: husky sets the shared `core.hooksPath`, so a worktree without an install can lose its hooks.
+
 The PR title is also checked with commitlint in CI (`pr-title` job in `pr-validate.yml`).
 
 gitleaks must be installed locally, otherwise `pre-commit` fails with an install hint:
