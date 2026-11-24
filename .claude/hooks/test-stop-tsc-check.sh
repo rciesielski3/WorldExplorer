@@ -40,4 +40,24 @@ rm a.ts
 echo 'notes' > notes.md
 run "no .ts changes (skip)"  0 '{"stop_hook_active": false}' 9
 
+# Regression: new .ts file inside an untracked directory must trigger the check (-uall).
+mkdir -p newdir/sub && echo 'export const b = 2;' > newdir/sub/b.ts
+run "untracked dir .ts (blocks)" 2 '{"stop_hook_active": false}' 4
+rm -rf newdir
+
+# tsc fails without any "error TS" line -> warning, not PASSED.
+echo 'export const c = 3;' > c.ts
+cat > "$TMP/bin/npx" <<'STUB'
+#!/bin/bash
+echo "tsc: crashed unexpectedly"
+exit 1
+STUB
+out=$(printf '%s' '{"stop_hook_active": false}' | "$HOOK" 2>/dev/null); code=$?
+if [ "$code" -eq 0 ] && printf '%s' "$out" | grep -q 'systemMessage' && ! printf '%s' "$out" | grep -q PASSED; then
+  echo "PASS tsc fails without error TS (warning, exit 0)"
+else
+  echo "FAIL tsc fails without error TS: code=$code out=$out"; FAILS=$((FAILS + 1))
+fi
+rm c.ts
+
 [ "$FAILS" -eq 0 ] && echo "ALL PASSED" || { echo "$FAILS FAILED"; exit 1; }
