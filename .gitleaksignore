@@ -1,0 +1,15 @@
+# Historical gitleaks findings, reviewed 2026-11. One entry per finding (fingerprint = commit:file:rule:line).
+# All six are the Google Maps SDK key (gcp-api-key) embedded in AndroidManifest.xml, or that key quoted in SECURITY.md.
+# A Maps SDK key is shipped inside the APK by design, so it cannot be kept secret; it is protected by
+# GCP restrictions (Android package name + signing SHA-1, Maps SDK for Android only).
+# OWNER ACTION: confirm those restrictions in Google Cloud Console; rotate the key if they are not set.
+
+# AndroidManifest.xml, first key (2025-02, since replaced)
+b8f9d563a3d869f7d3c52f940b96870649783d17:android/app/src/main/AndroidManifest.xml:gcp-api-key:15
+715df092130cb829d7748783b5bafbdb932502ff:android/app/src/main/AndroidManifest.xml:gcp-api-key:15
+# AndroidManifest.xml, current key (2026-06/07)
+2f466855d3dd508fa6c5e1152e97b67eb18d010d:android/app/src/main/AndroidManifest.xml:gcp-api-key:17
+2856e456070b6b155573412fdabcbbc0992b8b6f:android/app/src/main/AndroidManifest.xml:gcp-api-key:17
+c589178af68cb5c7feedd119e25141f458d41702:android/app/src/main/AndroidManifest.xml:gcp-api-key:17
+# SECURITY.md, current Maps key quoted in an example snippet ("NEVER DO THIS")
+404eaa0a2df585e0ecd77e550fa3ea2d9966aacc:SECURITY.md:gcp-api-key:76
