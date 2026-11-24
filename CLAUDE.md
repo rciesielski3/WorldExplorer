@@ -34,12 +34,13 @@ Merge to Main
   - Accessibility (WCAG AA compliance where applicable)
   - i18n (all user-facing strings localized)
 
-**Agent Assignment:**
+**Agent Assignment** (defined in `.claude/agents/`):
 ```
-Dispatch general-purpose agent with code review focus:
-- Examine all files modified
-- Flag Critical (blocks merge), Important (should fix), Minor (nice to have)
-- Report findings ranked by severity
+- `reviewer`    — always; spec + checklist review, verifies every finding in code before reporting
+- `correctness` — for non-trivial logic (async, effects, AsyncStorage, Firebase, streak/date logic)
+- `security`    — for changes touching auth, data, networking, config or CI
+All: examine all modified files, flag Critical (blocks merge), Important (should fix),
+Minor (nice to have), report findings ranked by severity
 ```
 
 ### 3. **Fix Code Review Issues**
@@ -49,7 +50,7 @@ Dispatch general-purpose agent with code review focus:
 - Re-run code review if significant changes made
 
 ### 4. **Test Coverage** (Assign Agent)
-- Dispatch test-writing agent to add tests for changed areas
+- Dispatch a general-purpose agent to write tests for changed areas, then run the `reviewer` agent (`.claude/agents/reviewer.md`) over the test diff to check assertions are meaningful, deterministic and cover negative paths
 - Target coverage:
   - Unit tests for new functions/components
   - Integration tests for feature workflows
