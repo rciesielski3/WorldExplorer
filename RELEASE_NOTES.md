@@ -15,7 +15,7 @@ Everything in v2.1.0, plus support for tablets, foldables and landscape, and a c
 - 🖼️ **Edge-to-Edge Display** - Content now fits correctly around the status bar and gesture/navigation bar on Android 15 and 16
 - 🎨 **Status Bar Icons** - Status bar icons follow the light/dark theme
 - 💎 **Premium** - Ad banner is hidden for premium users
-- ⚙️ **Under the Hood** - Hardened release pipeline and native crash symbols for faster stability fixes
+- ⚙️ **Under the Hood** - Native crash symbols for faster stability fixes
 
 **Compatibility:**
 - Requires Android 11+ (API 30)
@@ -57,7 +57,7 @@ WorldExplorer v2.1 brings richer country information, powerful filtering tools, 
 
 ---
 
-## 🚀 Latest Release: v2.0.9
+## v2.0.9
 
 **Release Date:** September 20, 2026  
 **Version:** 2.0.9 (versionCode 153)  
