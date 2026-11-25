@@ -1,0 +1,54 @@
+name: Verify AAB Signature
+description: Verify the release AAB is signed with the expected production certificate
+
+inputs:
+  expected-sha1:
+    description: Expected certificate SHA1 fingerprint
+    required: true
+
+outputs:
+  sha1:
+    description: SHA1 fingerprint of the certificate found in the AAB
+    value: ${{ steps.verify.outputs.sha1 }}
+
+runs:
+  using: composite
+  steps:
+    - name: Verify AAB signing certificate
+      id: verify
+      shell: bash
+      env:
+        EXPECTED_SHA1: ${{ inputs.expected-sha1 }}
+        AAB_FILE: android/app/build/outputs/bundle/release/app-release.aab
+      run: |
+        set -euo pipefail
+        EXTRACT_DIR="$RUNNER_TEMP/aab_extract"
+        rm -rf "$EXTRACT_DIR"
+        mkdir -p "$EXTRACT_DIR"
+        unzip -q "$AAB_FILE" 'META-INF/*' -d "$EXTRACT_DIR"
+
+        CERT_FILE=$(find "$EXTRACT_DIR/META-INF" -type f \( -name '*.RSA' -o -name '*.DSA' -o -name '*.EC' \) | head -1)
+        if [ -z "$CERT_FILE" ]; then
+          echo "::error::Certificate not found in AAB META-INF"
+          exit 1
+        fi
+
+        ACTUAL_SHA1=$(keytool -printcert -file "$CERT_FILE" | grep 'SHA1:' | awk '{print $NF}')
+        if [ -z "$ACTUAL_SHA1" ]; then
+          echo "::error::Could not extract certificate SHA1"
+          exit 1
+        fi
+        echo "sha1=$ACTUAL_SHA1" >> "$GITHUB_OUTPUT"
+
+        echo "Expected SHA1: $EXPECTED_SHA1"
+        echo "Actual SHA1:   $ACTUAL_SHA1"
+        if [ "$ACTUAL_SHA1" != "$EXPECTED_SHA1" ]; then
+          echo "::error::Certificate mismatch: AAB is NOT signed with the production key"
+          exit 1
+        fi
+        echo "AAB signed with the expected production certificate"
+
+    - name: Remove extracted AAB files
+      if: always()
+      shell: bash
+      run: rm -rf "$RUNNER_TEMP/aab_extract"

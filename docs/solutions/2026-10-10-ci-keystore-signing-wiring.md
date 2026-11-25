@@ -6,7 +6,7 @@ symptoms:
   - CI builds of the release AAB were not signed with the production keystore, although the keystore secrets were decoded and passed to Gradle
 root_cause: android/app/build.gradle release signing config only read key.properties; the ORG_GRADLE_PROJECT_* values injected by the CI action were never read.
 fix: PR #51 reads the WORLDEXPLORER_UPLOAD_* Gradle properties first, then falls back to key.properties, then to the debug keystore.
-prevention: Keep the signing-certificate check (sign-aab action) in the pipeline; keep the signing inputs and the Gradle property names in sync.
+prevention: Keep the signing-certificate check (verify-aab-signature action) in the pipeline; keep the signing inputs and the Gradle property names in sync.
 ---
 
 ## Symptoms
@@ -16,7 +16,7 @@ signing config did not use it. The symptom is reconstructed from the code before
 recorded run log: with no `key.properties` on a CI runner, the release config fell through to its last
 branch, which points at `debug.keystore` (a local fallback so Gradle can evaluate the project). A bundle
 signed that way cannot match the production certificate that
-`.github/actions/sign-aab/action.yml` checks against its expected SHA1.
+`.github/actions/verify-aab-signature/action.yml` checks against its expected SHA1.
 
 ## Root cause
 
@@ -57,18 +57,18 @@ The change is 7 lines added, 1 removed, in `android/app/build.gradle` only.
 
 ## Prevention
 
-- After any signing change, build the release bundle in CI and let the `sign-aab` verification step compare
+- After any signing change, build the release bundle in CI and let the `verify-aab-signature` verification step compare
   the certificate SHA1 with the expected production value; do not rely on the build merely succeeding.
 - The debug fallback exists so Gradle can evaluate without secrets; it means a misconfigured pipeline
   still builds, just with the wrong key. A green build is not proof of correct signing.
 - Keep the property names in `build.gradle` identical to the `ORG_GRADLE_PROJECT_*` names in
   `.github/actions/build-aab/action.yml`; renaming one without the other recreates this bug silently.
 - Secrets used: `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`,
-  `ANDROID_KEY_PASSWORD` (see `.github/workflows/build-aab.yml` and `deploy-playstore.yml`). Never commit
+  `ANDROID_KEY_PASSWORD` (see `.github/workflows/deploy-playstore.yml`). Never commit
   keystores or `key.properties`.
 
 ## References
 
 - PR #51, commit fd851a7: `android/app/build.gradle`
-- `.github/actions/build-aab/action.yml`, `.github/actions/sign-aab/action.yml`
+- `.github/actions/build-aab/action.yml`, `.github/actions/verify-aab-signature/action.yml`
 - Earlier related change: b30b9cf "fix: use production keystore for release builds"

@@ -3,10 +3,6 @@ name: Deploy to Play Store
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Version to release (e.g., 1.3.0)'
-        required: false
-        type: string
       track:
         description: 'Play Store release track'
         required: true
@@ -18,65 +14,94 @@ on:
           - production
         default: internal
       release_notes:
-        description: 'Release notes for Play Store'
+        description: 'Release notes for the GitHub release (production track only)'
         required: false
         type: string
+      dry_run:
+        description: 'Build and verify only: no Play Store upload, no tag, no GitHub release'
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  # Production upload certificate (public fingerprint, not a secret).
+  EXPECTED_SIGNING_SHA1: '34:C6:3A:57:7B:3C:06:5F:B3:5D:18:C6:65:E3:B6:6B:3A:29:F9:5F'
+
+# Publishing guards compare github.event.inputs.dry_run (always a string) to
+# 'false', so anything other than an explicit false skips upload, tag and release.
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-    permissions:
-      contents: write
+    timeout-minutes: 40
     outputs:
       version: ${{ steps.version.outputs.version }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Determine Version
+      - name: Determine version
         id: version
-        env:
-          INPUT_VERSION: ${{ inputs.version }}
         run: |
-          if [ -z "$INPUT_VERSION" ]; then
-            VERSION=$(grep 'versionName' android/app/build.gradle | sed -n 's/.*versionName "\(.*\)".*/\1/p')
-          else
-            VERSION="$INPUT_VERSION"
+          VERSION=$(sed -n 's/.*versionName "\(.*\)".*/\1/p' android/app/build.gradle)
+          VERSION_CODE=$(sed -n 's/.*versionCode \([0-9][0-9]*\).*/\1/p' android/app/build.gradle)
+          if [ -z "$VERSION" ] || [ -z "$VERSION_CODE" ]; then
+            echo "::error::Could not read versionName/versionCode from android/app/build.gradle"
+            exit 1
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Version: $VERSION"
+          echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: '.nvmrc'
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Unit tests
+        run: npm test -- --ci --maxWorkers=2
 
       - name: Setup Android
         uses: ./.github/actions/setup-android
 
       - name: Build AAB
-        id: build
         uses: ./.github/actions/build-aab
         with:
-          java-home: ${{ env.JAVA_HOME }}
-          android-home: ${{ env.ANDROID_HOME }}
           keystore-base64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           keystore-password: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           key-alias: ${{ secrets.ANDROID_KEY_ALIAS }}
           key-password: ${{ secrets.ANDROID_KEY_PASSWORD }}
           maps-api-key: ${{ secrets.MAPS_API_KEY }}
 
-      - name: Verify Signing
-        uses: ./.github/actions/sign-aab
+      - name: Verify AAB signature
+        id: signature
+        uses: ./.github/actions/verify-aab-signature
         with:
-          expected-sha1: '34:C6:3A:57:7B:3C:06:5F:B3:5D:18:C6:65:E3:B6:6B:3A:29:F9:5F'
+          expected-sha1: ${{ env.EXPECTED_SIGNING_SHA1 }}
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          retention-days: 14
+          if-no-files-found: error
 
       - name: Upload to Play Store
+        if: ${{ github.event.inputs.dry_run == 'false' }}
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAYSTORE_SERVICE_ACCOUNT_JSON }}
@@ -86,18 +111,51 @@ jobs:
           releaseName: 'v${{ steps.version.outputs.version }}'
           status: completed
 
-      - name: Release date
-        id: date
-        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+      - name: Summary
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          VERSION_CODE: ${{ steps.version.outputs.version_code }}
+          TRACK: ${{ inputs.track }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          SIGNING_SHA1: ${{ steps.signature.outputs.sha1 }}
+        run: |
+          SIZE=$(du -h android/app/build/outputs/bundle/release/app-release.aab | cut -f1)
+          if [ "$DRY_RUN" = "false" ]; then MODE="uploaded to $TRACK"; else MODE="dry run (nothing published)"; fi
+          {
+            echo "### Release build"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Version | $VERSION |"
+            echo "| Version code | $VERSION_CODE |"
+            echo "| Track | $TRACK |"
+            echo "| Mode | $MODE |"
+            echo "| AAB size | $SIZE |"
+            echo "| Signing SHA1 | \`$SIGNING_SHA1\` (matches expected) |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  release:
+    needs: build
+    if: ${{ github.event.inputs.dry_run == 'false' && github.event.inputs.track == 'production' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download AAB artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release-aab
 
       - name: Create GitHub Release
-        if: inputs.track == 'production'
         uses: softprops/action-gh-release@v2
         with:
-          files: android/app/build/outputs/bundle/release/app-release.aab
-          tag_name: v${{ steps.version.outputs.version }}
+          files: app-release.aab
+          tag_name: v${{ needs.build.outputs.version }}
+          target_commitish: ${{ github.sha }}
           body: |
-            # WorldExplorer v${{ steps.version.outputs.version }}
+            # WorldExplorer v${{ needs.build.outputs.version }}
 
             ## Release Track
             **${{ inputs.track }}** track deployment
@@ -109,19 +167,5 @@ jobs:
             - Platform: Android
             - Build Type: release
             - Signing: production keystore
-            - Date: ${{ steps.date.outputs.date }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Deployment Summary
-        env:
-          RELEASE_VERSION: ${{ steps.version.outputs.version }}
-          RELEASE_TRACK: ${{ inputs.track }}
-        run: |
-          echo "✅ Deployment completed"
-          echo "📦 Version: v$RELEASE_VERSION"
-          echo "📍 Track: $RELEASE_TRACK"
-          echo "🏪 Play Store: app-release.aab uploaded"
-          if [ "$RELEASE_TRACK" = "production" ]; then
-            echo "🏷️ GitHub Release: v$RELEASE_VERSION created"
-          fi
