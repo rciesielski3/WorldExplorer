@@ -281,21 +281,21 @@ const QuizScreen = ({ route, navigation }: any) => {
                   if (showFeedback && isSelected && isCorrect) {
                     backgroundColor = theme.colors.success;
                     borderColor = theme.colors.success;
-                    textColor = "#FFFFFF";
+                    textColor = theme.colors.onAccent;
                     badgeBackgroundColor = theme.colors.success;
-                    badgeTextColor = "#FFFFFF";
+                    badgeTextColor = theme.colors.onAccent;
                   } else if (showFeedback && isSelected && !isCorrect) {
                     backgroundColor = theme.colors.error;
                     borderColor = theme.colors.error;
-                    textColor = "#FFFFFF";
+                    textColor = theme.colors.onAccent;
                     badgeBackgroundColor = theme.colors.error;
-                    badgeTextColor = "#FFFFFF";
+                    badgeTextColor = theme.colors.onAccent;
                   } else if (showFeedback && !isSelected && isCorrect) {
                     backgroundColor = theme.colors.successBg;
                     borderColor = theme.colors.success;
                     textColor = theme.colors.success;
                     badgeBackgroundColor = theme.colors.success;
-                    badgeTextColor = "#FFFFFF";
+                    badgeTextColor = theme.colors.onAccent;
                   } else if (hasAnsweredCurrentQuestion && !isSelected) {
                     backgroundColor = theme.colors.surfaceSubtle;
                     borderColor = theme.colors.textTertiary;
