@@ -24,6 +24,7 @@ module.exports = {
       backgroundColor: "#ffffff",
     },
     android: {
+      edgeToEdgeEnabled: true,
       package: "com.adateo.WorldExplorer",
       versionCode: 126,
       permissions: [

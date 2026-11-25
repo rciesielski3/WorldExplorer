@@ -13,6 +13,7 @@ import * as Font from "expo-font";
 import "./i18n";
 import { logger } from "./utils/logger";
 
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -93,6 +94,7 @@ export default function App() {
   }
 
   return (
+    <SafeAreaProvider>
     <ErrorBoundary>
       <PremiumProvider>
         <ThemeProvider>
@@ -161,5 +163,6 @@ export default function App() {
         </ThemeProvider>
       </PremiumProvider>
     </ErrorBoundary>
+    </SafeAreaProvider>
   );
 }
