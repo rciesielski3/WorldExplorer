@@ -5,9 +5,15 @@ on:
     - cron: "0 3 1 * *" # 1st of every month at 3 AM UTC
   workflow_dispatch: # Allow manual trigger
 
+permissions: {}
+
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      # Local git hooks (gitleaks pre-commit) must not run in CI commits.
+      HUSKY: "0"
     permissions:
       contents: write
       pull-requests: write
@@ -19,7 +25,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version-file: ".nvmrc"
           cache: "npm"
 
       - name: Install dependencies
@@ -28,34 +34,21 @@ jobs:
       - name: Update countries dataset
         run: npm run countries:update
 
-      - name: Check for changes
-        id: changes
-        run: |
-          if git diff --quiet; then
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_changes=true" >> "$GITHUB_OUTPUT"
-          fi
+      - name: Validate countries dataset
+        run: npm run countries:validate
 
-      - name: Create commit and branch
-        if: steps.changes.outputs.has_changes == 'true'
-        run: |
-          git config user.name "Countries Bot"
-          git config user.email "bot@worldexplorer.local"
-          git add data/countries.json
-          git commit -m "chore: update countries dataset
-
-          Automated monthly update from countries.dev + mledoze/countries sources.
-          All country descriptions preserved during this update."
-
+      # create-pull-request does nothing when there is no diff, and makes its
+      # own commit and branch when there is one.
       - name: Create Pull Request
-        if: steps.changes.outputs.has_changes == 'true'
         id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
           # BOT_PR_TOKEN (PAT/App token) lets PR Validation run on the bot PR;
           # falls back to GITHUB_TOKEN, whose PRs do not trigger workflows.
           token: ${{ secrets.BOT_PR_TOKEN || secrets.GITHUB_TOKEN }}
+          add-paths: data/countries.json
+          author: Countries Bot <bot@worldexplorer.local>
+          committer: Countries Bot <bot@worldexplorer.local>
           commit-message: |
             chore: update countries dataset
 
@@ -64,41 +57,27 @@ jobs:
           branch: chore/countries-dataset-${{ github.run_number }}
           title: "chore: monthly countries dataset update"
           body: |
-            ## 🌍 Monthly Countries Dataset Update
+            ## Monthly Countries Dataset Update
 
-            This automated PR updates the countries dataset with the latest data from:
-            - countries.dev
-            - mledoze/countries
+            Automated update of `data/countries.json` from countries.dev and
+            mledoze/countries.
 
-            ### Details
-            - All country descriptions have been preserved
-            - Dataset version incremented
-            - Validation passed
+            ### What ran in this workflow
+            - `npm run countries:update`
+            - `npm run countries:validate` (passed)
 
-            ### Testing
-            ```bash
-            npm run countries:validate
-            npm test
-            ```
-
-            Please review and merge if the update looks correct.
+            `npm test` was not run by the workflow; please review the diff
+            and run the checks before merging.
           labels: "chore,automated"
           delete-branch: true
 
-      - name: PR Creation Status
-        if: steps.changes.outputs.has_changes == 'true'
+      - name: Summary
         env:
-          CPR_OUTCOME: ${{ steps.cpr.outcome }}
+          CPR_OP: ${{ steps.cpr.outputs.pull-request-operation }}
           CPR_URL: ${{ steps.cpr.outputs.pull-request-url }}
         run: |
-          if [ "$CPR_OUTCOME" = "failure" ]; then
-            echo "⚠️ PR creation had issues"
+          if [ -z "$CPR_OP" ]; then
+            echo "Dataset is up to date, no changes needed"
           else
-            echo "✅ PR created successfully"
+            echo "Pull request $CPR_OP: $CPR_URL"
           fi
-          echo "PR URL: $CPR_URL"
-
-      - name: No changes detected
-        if: steps.changes.outputs.has_changes == 'false'
-        run: |
-          echo "✓ Dataset is up to date, no changes needed"
