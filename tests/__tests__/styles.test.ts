@@ -9,6 +9,13 @@ const createTestTheme = (isDarkMode: boolean) => ({
     buttonText: '#FFFFFF',
     card: isDarkMode ? '#1E1E1E' : '#F5F5F5',
     border: isDarkMode ? '#333333' : '#E0E0E0',
+    onAccent: '#FFFFFF',
+    shadow: '#000000',
+    textMuted: '#666666',
+    successStrong: '#1B7F4C',
+    errorStrong: '#B42318',
+    info: '#3B82F6',
+    countryAction: '#6200EE',
   },
 });
 

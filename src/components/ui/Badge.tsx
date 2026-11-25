@@ -38,10 +38,10 @@ export function Badge({ label, icon, variant = 'primary' }: BadgeProps) {
         ...commonTokens.shadows.sm,
       }}
     >
-      {icon && <MaterialCommunityIcons name={icon} size={12} color="#FFFFFF" />}
+      {icon && <MaterialCommunityIcons name={icon} size={12} color={theme.colors.onAccent} />}
       <Text
         style={{
-          color: '#FFFFFF',
+          color: theme.colors.onAccent,
           fontSize: commonTokens.typography.caption.fontSize,
           fontFamily: commonTokens.typography.caption.fontFamily,
           fontWeight: '500',

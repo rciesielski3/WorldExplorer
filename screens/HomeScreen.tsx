@@ -246,7 +246,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                   activeOpacity={0.78}
                 >
                   <View style={styles.homeActionIcon}>
-                    <MaterialCommunityIcons name={item.icon as any} size={24} color="#FFFFFF" />
+                    <MaterialCommunityIcons name={item.icon as any} size={24} color={theme.colors.onAccent} />
                   </View>
                   <Text style={styles.homeActionTitle}>{item.label}</Text>
                   <Text style={styles.homeActionSubtitle}>{item.subtitle}</Text>

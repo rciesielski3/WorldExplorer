@@ -668,7 +668,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
                       style={{
                         fontSize: commonTokens.typography.bodyLg.fontSize,
                         fontFamily: commonTokens.typography.bodyLg.fontFamily,
-                        color: "#FFFFFF",
+                        color: theme.colors.onAccent,
                         fontWeight: "600",
                         textAlign: "center",
                       }}

@@ -16,7 +16,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 
 import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
-import { commonTokens } from "../theme/tokens";
+import { commonTokens, fixedColors } from "../theme/tokens";
 import { ScreenBackground } from "../src/components/ScreenBackground";
 import { FLAG_ASSETS } from "../utils/flagAssets";
 import { logger } from "../utils/logger";
@@ -25,30 +25,30 @@ import { getLocalizedCountryName } from "../utils/countries";
 import type { RootStackParamList } from "../types/navigation";
 
 const DARK_MAP_STYLE = [
-  { elementType: "geometry", stylers: [{ color: "#1d2c4d" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#8ec3b9" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#1a3646" }] },
+  { elementType: "geometry", stylers: [{ color: fixedColors.mapDark.geometry }] },
+  { elementType: "labels.text.fill", stylers: [{ color: fixedColors.mapDark.labelFill }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: fixedColors.mapDark.labelStroke }] },
   {
     featureType: "water",
     elementType: "geometry",
-    stylers: [{ color: "#0e1626" }],
+    stylers: [{ color: fixedColors.mapDark.water }],
   },
   {
     featureType: "road",
     elementType: "geometry",
-    stylers: [{ color: "#304a7d" }],
+    stylers: [{ color: fixedColors.mapDark.road }],
   },
   { featureType: "poi", stylers: [{ visibility: "off" }] },
   { featureType: "transit", stylers: [{ visibility: "off" }] },
   {
     featureType: "administrative",
     elementType: "geometry",
-    stylers: [{ color: "#17263c" }],
+    stylers: [{ color: fixedColors.mapDark.administrative }],
   },
   {
     featureType: "landscape",
     elementType: "geometry",
-    stylers: [{ color: "#163759" }],
+    stylers: [{ color: fixedColors.mapDark.landscape }],
   },
 ];
 
@@ -130,6 +130,7 @@ const CountryInfoCard = ({
       style={[
         styles.infoCard,
         {
+          shadowColor: theme.colors.shadow,
           width: cardWidth,
           left: insetLeft + (availableWidth - cardWidth) / 2,
           right: undefined,
@@ -186,6 +187,7 @@ const FAB = ({
       style={[
         styles.fab,
         {
+          shadowColor: theme.colors.shadow,
           backgroundColor: theme.colors.button,
           borderColor: theme.colors.border,
         },
@@ -194,7 +196,7 @@ const FAB = ({
       activeOpacity={0.7}
       accessibilityLabel={label}
     >
-      <MaterialCommunityIcons name={icon} size={24} color="#FFFFFF" />
+      <MaterialCommunityIcons name={icon} size={24} color={theme.colors.onAccent} />
     </TouchableOpacity>
   );
 };
@@ -417,7 +419,6 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -439,7 +440,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     borderTopWidth: 1,
     zIndex: 20,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.15,
     shadowRadius: 12,

@@ -145,6 +145,41 @@ export const commonTokens = {
   },
 } as const;
 
+// ─── Fixed colours (identical in every theme) ──────────────────────────────
+// For surfaces rendered outside ThemeProvider (splash, root loader, error
+// boundary), static StyleSheets and third-party style payloads (Google Maps).
+
+export const fixedColors = {
+  /** Root/lazy-screen loading spinner */
+  loader: '#6366F1',
+  splash: {
+    background: '#FFFFFF',
+    title: '#1F1F1F',
+    spinner: '#1E88E5',
+  },
+  errorBoundary: {
+    background: '#0B0B16',
+    icon: '#EF4444',
+    title: '#FFFFFF',
+    body: '#9CA3AF',
+    detailBackground: '#1F2937',
+    detailText: '#F87171',
+    button: '#1E88E5',
+    buttonText: '#FFFFFF',
+    dismissText: '#9CA3AF',
+  },
+  /** Google Maps night style payload (MapScreen) */
+  mapDark: {
+    geometry: '#1D2C4D',
+    labelFill: '#8EC3B9',
+    labelStroke: '#1A3646',
+    water: '#0E1626',
+    road: '#304A7D',
+    administrative: '#17263C',
+    landscape: '#163759',
+  },
+} as const;
+
 // ─── Convenience re-exports (backward-compatible) ──────────────────────────
 
 export const spacing = commonTokens.spacing;
@@ -192,6 +227,22 @@ export type ThemeColors = {
   /** Secondary text color for use on cards (WCAG AA 4.5:1 compliant) */
   textOnCardSecondary: string;
   button: string;
+  /** Content (text/icons) drawn on saturated fills such as badges, FABs and filled buttons */
+  onAccent: string;
+  /** Colour of drop shadows */
+  shadow: string;
+  /** Thumb of the custom toggle switch */
+  switchThumb: string;
+  /** Muted text for secondary labels on light surfaces (e.g. capital name) */
+  textMuted: string;
+  /** Solid fill for a correct quiz answer */
+  successStrong: string;
+  /** Solid fill / text for an incorrect quiz answer or inline setting error */
+  errorStrong: string;
+  /** Informational blue for secondary actions and inline links */
+  info: string;
+  /** Fill of the call-to-action button on the country details screen */
+  countryAction: string;
   /**
    * Higher-contrast variant of `button`, for text/icons drawn directly on
    * a `primaryLight`-tinted background (e.g. HomeScreen's quiz stats
@@ -299,6 +350,14 @@ export const lightTheme = {
     textOnCard:    palette.lightTextOnCard,
     textOnCardSecondary: palette.lightTextOnCardSecondary,
     button:        palette.skyBlue500,
+    onAccent:      '#FFFFFF',
+    shadow:        '#000000',
+    switchThumb:   '#FFFFFF',
+    textMuted:     '#666666',
+    successStrong: '#1B7F4C',
+    errorStrong:   '#B42318',
+    info:          '#3B82F6',
+    countryAction: '#6200EE',
     buttonStrong:  palette.skyBlue700,
     buttonText:    '#FFFFFF',
     border:        palette.lightBorder,
@@ -360,6 +419,14 @@ export const darkTheme = {
     textOnCard:    palette.textOnCard,
     textOnCardSecondary: palette.textOnCardSecondary,
     button:        palette.skyBlue300,
+    onAccent:      '#FFFFFF',
+    shadow:        '#000000',
+    switchThumb:   '#FFFFFF',
+    textMuted:     '#666666',
+    successStrong: '#1B7F4C',
+    errorStrong:   '#B42318',
+    info:          '#3B82F6',
+    countryAction: '#6200EE',
     // Already ~7.5:1 against the tinted background in dark mode, so the
     // "strong" variant reuses the same colour as `button` here.
     buttonStrong:  palette.skyBlue300,

@@ -107,7 +107,7 @@ export const QuizStatsScreen = ({ navigation }: any) => {
           accessibilityRole="button"
           accessibilityLabel={t("clearHistory")}
         >
-          <Text style={localStyles.clearButtonText}>{t("clearHistory")}</Text>
+          <Text style={[localStyles.clearButtonText, { color: theme.colors.onAccent }]}>{t("clearHistory")}</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -172,7 +172,6 @@ const localStyles = StyleSheet.create({
     paddingVertical: commonTokens.spacing.sm,
   },
   clearButtonText: {
-    color: "#FFFFFF",
     fontFamily: commonTokens.typography.displayMd.fontFamily,
     fontSize: 15,
   },

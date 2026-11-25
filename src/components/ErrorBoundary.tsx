@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { logger } from '../../utils/logger';
+import { fixedColors } from '../../theme/tokens';
 
 interface Props {
   children: React.ReactNode;
@@ -49,7 +50,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
         <View
           style={{
             flex: 1,
-            backgroundColor: '#0b0b16',
+            backgroundColor: fixedColors.errorBoundary.background,
             justifyContent: 'center',
             alignItems: 'center',
             padding: 16,
@@ -67,14 +68,14 @@ export class ErrorBoundary extends React.Component<Props, State> {
             <MaterialCommunityIcons
               name="alert-circle"
               size={64}
-              color="#EF4444"
+              color={fixedColors.errorBoundary.icon}
               style={{ marginBottom: 16 }}
             />
             <Text
               style={{
                 fontSize: 24,
                 fontWeight: 'bold',
-                color: '#FFFFFF',
+                color: fixedColors.errorBoundary.title,
                 marginBottom: 8,
                 textAlign: 'center',
               }}
@@ -84,7 +85,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
             <Text
               style={{
                 fontSize: 14,
-                color: '#9CA3AF',
+                color: fixedColors.errorBoundary.body,
                 marginBottom: 24,
                 textAlign: 'center',
                 lineHeight: 20,
@@ -97,7 +98,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
             {this.state.error && (
               <View
                 style={{
-                  backgroundColor: '#1F2937',
+                  backgroundColor: fixedColors.errorBoundary.detailBackground,
                   borderRadius: 8,
                   padding: 12,
                   marginBottom: 24,
@@ -108,7 +109,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 <Text
                   style={{
                     fontSize: 12,
-                    color: '#F87171',
+                    color: fixedColors.errorBoundary.detailText,
                     fontFamily: 'monospace',
                   }}
                   numberOfLines={6}
@@ -121,7 +122,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
             <TouchableOpacity
               onPress={this.handleReset}
               style={{
-                backgroundColor: '#1E88E5',
+                backgroundColor: fixedColors.errorBoundary.button,
                 paddingVertical: 12,
                 paddingHorizontal: 32,
                 borderRadius: 8,
@@ -130,7 +131,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
             >
               <Text
                 style={{
-                  color: '#FFFFFF',
+                  color: fixedColors.errorBoundary.buttonText,
                   fontSize: 16,
                   fontWeight: '600',
                   textAlign: 'center',
@@ -156,7 +157,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
             >
               <Text
                 style={{
-                  color: '#9CA3AF',
+                  color: fixedColors.errorBoundary.dismissText,
                   fontSize: 14,
                   textAlign: 'center',
               }}

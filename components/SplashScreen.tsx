@@ -1,6 +1,7 @@
 // components/SplashScreen.tsx
 import React from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
+import { fixedColors } from '../theme/tokens';
 
 /**
  * SplashScreen - Displayed while theme preference is loading from storage.
@@ -16,20 +17,20 @@ export function SplashScreen() {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: fixedColors.splash.background,
       }}
     >
       <Text
         style={{
           fontSize: 28,
           fontWeight: 'bold',
-          color: '#1F1F1F',
+          color: fixedColors.splash.title,
           marginBottom: 24,
         }}
       >
         WorldExplorer
       </Text>
-      <ActivityIndicator size="large" color="#1E88E5" />
+      <ActivityIndicator size="large" color={fixedColors.splash.spinner} />
     </View>
   );
 }

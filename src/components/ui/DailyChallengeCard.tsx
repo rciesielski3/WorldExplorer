@@ -25,7 +25,7 @@ export const DailyChallengeCard: React.FC<DailyChallengeCardProps> = ({
   const countryName = getLocalizedCountryName(country, i18n.language);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.card }]} testID={testID}>
+    <View style={[styles.container, { backgroundColor: colors.card, shadowColor: colors.shadow }]} testID={testID}>
       <View style={styles.header}>
         <Text style={styles.flag}>{country.flag}</Text>
         <Text style={[styles.countryName, { color: colors.text }]}>{countryName}</Text>
@@ -55,7 +55,6 @@ const styles = StyleSheet.create({
     padding: commonTokens.spacing.md,
     marginVertical: commonTokens.spacing.md,
     elevation: 2,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

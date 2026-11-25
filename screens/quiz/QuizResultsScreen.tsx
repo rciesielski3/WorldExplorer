@@ -193,7 +193,7 @@ export function QuizResultsScreen() {
             <Card style={styles.breakdownCard}>
               <View style={styles.cardContent}>
                 <View style={[styles.cardIcon, { backgroundColor: theme.colors.success }]}>
-                  <MaterialCommunityIcons name="check-circle" size={24} color="#FFFFFF" />
+                  <MaterialCommunityIcons name="check-circle" size={24} color={theme.colors.onAccent} />
                 </View>
                 <View style={styles.cardTextContainer}>
                   <Text style={styles.cardNumber}>{correctCount}</Text>
@@ -206,7 +206,7 @@ export function QuizResultsScreen() {
             <Card style={styles.breakdownCard}>
               <View style={styles.cardContent}>
                 <View style={[styles.cardIcon, { backgroundColor: theme.colors.error }]}>
-                  <MaterialCommunityIcons name="close-circle" size={24} color="#FFFFFF" />
+                  <MaterialCommunityIcons name="close-circle" size={24} color={theme.colors.onAccent} />
                 </View>
                 <View style={styles.cardTextContainer}>
                   <Text style={styles.cardNumber}>{incorrectCount}</Text>
@@ -219,7 +219,7 @@ export function QuizResultsScreen() {
             <Card style={styles.breakdownCard}>
               <View style={styles.cardContent}>
                 <View style={[styles.cardIcon, { backgroundColor: theme.colors.amber }]}>
-                  <MaterialCommunityIcons name="skip-forward-circle" size={24} color="#FFFFFF" />
+                  <MaterialCommunityIcons name="skip-forward-circle" size={24} color={theme.colors.onAccent} />
                 </View>
                 <View style={styles.cardTextContainer}>
                   <Text style={styles.cardNumber}>{skippedCount}</Text>
@@ -319,7 +319,7 @@ const createStyles = (theme: any) =>
     scorePercentage: {
       fontSize: 56,
       fontFamily: commonTokens.typography.displayMd.fontFamily,
-      color: '#FFFFFF',
+      color: theme.colors.onAccent,
       fontWeight: '700',
     },
     scoreLabel: {

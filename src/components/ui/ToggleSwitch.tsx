@@ -74,7 +74,7 @@ export function ToggleSwitch({
               width: 28,
               height: 28,
               borderRadius: 14,
-              backgroundColor: '#FFFFFF',
+              backgroundColor: theme.colors.switchThumb,
               justifyContent: 'center',
               alignItems: 'center',
             },

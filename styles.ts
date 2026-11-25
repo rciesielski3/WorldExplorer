@@ -9,6 +9,13 @@ interface Theme {
     buttonText: string;
     card: string;
     border: string;
+    onAccent: string;
+    shadow: string;
+    textMuted: string;
+    successStrong: string;
+    errorStrong: string;
+    info: string;
+    countryAction: string;
   };
 }
 
@@ -93,7 +100,7 @@ export const getStyles = (theme: Theme) =>
       borderWidth: 1,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.card,
-      shadowColor: "#000",
+      shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 3 },
       shadowOpacity: 0.13,
       shadowRadius: 6,
@@ -171,7 +178,7 @@ export const getStyles = (theme: Theme) =>
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.card,
       position: "relative",
-      shadowColor: "#000",
+      shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 3 },
       shadowOpacity: 0.14,
       shadowRadius: 7,
@@ -195,7 +202,7 @@ export const getStyles = (theme: Theme) =>
       backgroundColor: theme.colors.card,
       alignItems: "center",
       justifyContent: "center",
-      shadowColor: "#000",
+      shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.13,
       shadowRadius: 4,
@@ -292,7 +299,7 @@ export const getStyles = (theme: Theme) =>
       marginBottom: 10,
       borderWidth: 1,
       borderColor: theme.colors.border,
-      shadowColor: "#000",
+      shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -410,7 +417,7 @@ export const getStyles = (theme: Theme) =>
       overflow: "hidden",
       backgroundColor: theme.colors.card,
       marginBottom: 16,
-      shadowColor: "#000",
+      shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 3 },
       shadowOpacity: 0.14,
       shadowRadius: 7,
@@ -431,7 +438,7 @@ export const getStyles = (theme: Theme) =>
       bottom: 14,
     },
     countryHeroName: {
-      color: "#FFFFFF",
+      color: theme.colors.onAccent,
       fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 28,
       textShadowColor: "rgba(0, 0, 0, 0.45)",
@@ -439,7 +446,7 @@ export const getStyles = (theme: Theme) =>
       textShadowRadius: 4,
     },
     countryHeroRegion: {
-      color: "#FFFFFF",
+      color: theme.colors.onAccent,
       fontFamily: commonTokens.typography.bodyMd.fontFamily,
       fontSize: 15,
       marginTop: 4,
@@ -602,7 +609,7 @@ export const getStyles = (theme: Theme) =>
       borderColor: theme.colors.border,
       marginTop: -8,
       marginHorizontal: 0,
-      shadowColor: "#000",
+      shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 3 },
       shadowOpacity: 0.12,
       shadowRadius: 6,
@@ -647,7 +654,7 @@ export const getStyles = (theme: Theme) =>
       backgroundColor: theme.colors.card,
       borderWidth: 1,
       borderColor: theme.colors.border,
-      shadowColor: "#000",
+      shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -696,7 +703,7 @@ export const getStyles = (theme: Theme) =>
     buttonContainerCountryDetails: {
       marginTop: 16,
       alignItems: "center",
-      backgroundColor: "#6200ee",
+      backgroundColor: theme.colors.countryAction,
       padding: 12,
       borderRadius: 8,
     },
@@ -720,7 +727,7 @@ export const getStyles = (theme: Theme) =>
       borderWidth: 1,
       borderColor: theme.colors.border,
       marginBottom: 10,
-      shadowColor: "#000",
+      shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.08,
       shadowRadius: 4,
@@ -790,7 +797,7 @@ export const getStyles = (theme: Theme) =>
       borderWidth: 1,
       borderColor: theme.colors.border,
       marginBottom: 12,
-      shadowColor: "#000",
+      shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -843,7 +850,7 @@ export const getStyles = (theme: Theme) =>
     },
     capitalText: {
       fontSize: 14,
-      color: "#666666",
+      color: theme.colors.textMuted,
       fontFamily: commonTokens.typography.displayMd.fontFamily,
     },
     countryMetaText: {
@@ -862,17 +869,17 @@ export const getStyles = (theme: Theme) =>
       marginBottom: 12,
     },
     correctOption: {
-      backgroundColor: "#1B7F4C",
+      backgroundColor: theme.colors.successStrong,
     },
     incorrectOption: {
-      backgroundColor: "#B42318",
+      backgroundColor: theme.colors.errorStrong,
     },
     quizFeedbackCard: {
       padding: 16,
       borderRadius: 8,
       backgroundColor: theme.colors.card,
       marginBottom: 16,
-      shadowColor: "#000",
+      shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -903,7 +910,7 @@ export const getStyles = (theme: Theme) =>
       padding: 12,
       backgroundColor: theme.colors.card,
       borderRadius: 8,
-      shadowColor: "#000",
+      shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -914,7 +921,7 @@ export const getStyles = (theme: Theme) =>
       padding: 12,
       backgroundColor: theme.colors.card,
       borderRadius: 8,
-      shadowColor: "#000",
+      shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
@@ -934,7 +941,7 @@ export const getStyles = (theme: Theme) =>
       opacity: 0.8,
     },
     settingError: {
-      color: "#B42318",
+      color: theme.colors.errorStrong,
       fontFamily: commonTokens.typography.displayMd.fontFamily,
       fontSize: 13,
       marginTop: 8,
@@ -956,7 +963,7 @@ export const getStyles = (theme: Theme) =>
       paddingVertical: 10,
     },
     settingActionButtonSecondary: {
-      backgroundColor: "#3B82F6",
+      backgroundColor: theme.colors.info,
       borderRadius: 8,
       paddingHorizontal: 14,
       paddingVertical: 10,
@@ -970,7 +977,7 @@ export const getStyles = (theme: Theme) =>
       fontSize: 14,
     },
     settingLinkText: {
-      color: "#3B82F6",
+      color: theme.colors.info,
       textDecorationLine: "underline",
     },
     picker: {
@@ -993,7 +1000,7 @@ export const getStyles = (theme: Theme) =>
       backgroundColor: theme.colors.card,
       marginTop: 20,
       marginBottom: 14,
-      shadowColor: "#000",
+      shadowColor: theme.colors.shadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,
