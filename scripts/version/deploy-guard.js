@@ -10,7 +10,8 @@
 //   - a REAL publish is requested from a ref other than refs/heads/main.
 // A dry run never fails on "already uploaded" (re-running a dry run of current
 // code is legitimate); it prints a WARNING line instead.
-// Only the exact string DRY_RUN=false means a real publish; anything else is a dry run.
+// Only DRY_RUN=false (trimmed, case-insensitive, like GitHub expressions) means a real
+// publish; anything else, including unset, is a dry run.
 // Exit codes: 0 ok, 1 guard failed, 2 usage/parse error.
 /* eslint-disable @typescript-eslint/no-require-imports -- CommonJS script */
 "use strict";
@@ -38,11 +39,11 @@ function evaluate({ versionCode, highestTagCode, sourcesConsistent, ref, dryRun 
   if (highestTagCode != null && versionCode <= highestTagCode) {
     if (dryRun) {
       warnings.push(
-        `versionCode ${versionCode} was already uploaded (tag build-${highestTagCode}); a real publish would be refused. Run npm run bump before publishing`,
+        `versionCode ${versionCode} was already uploaded (tag build-${highestTagCode}); a real publish would be refused. Bump all version sources (npm run bump when available) before publishing`,
       );
     } else {
       failures.push(
-        `versionCode ${versionCode} was already uploaded (tag build-${highestTagCode}); run npm run bump`,
+        `versionCode ${versionCode} was already uploaded (tag build-${highestTagCode}); bump all version sources (npm run bump when available) before publishing`,
       );
     }
   }
@@ -79,7 +80,11 @@ function run(argv, env) {
     if (check.code === 2) return { code: 2, lines: [check.out] };
     const sourcesConsistent = check.code === 0;
     const versionCode = readVersions(root).gradleCode;
-    const dryRun = env.DRY_RUN !== "false";
+    // Defensive normalization; the workflow already passes exactly 'false' or 'true'.
+    const dryRun =
+      String(env.DRY_RUN ?? "")
+        .trim()
+        .toLowerCase() !== "false";
     const { failures, warnings } = evaluate({
       versionCode,
       highestTagCode: highestBuildTag(root),
@@ -87,10 +92,7 @@ function run(argv, env) {
       ref: env.REF || "",
       dryRun,
     });
-    const lines = [
-      ...warnings.map((w) => `WARNING: ${w}`),
-      ...failures.map((f) => `FAIL: ${f}`),
-    ];
+    const lines = [...warnings.map((w) => `WARNING: ${w}`), ...failures.map((f) => `FAIL: ${f}`)];
     if (failures.length === 0) {
       lines.push(
         `Deploy guard passed: versionCode ${versionCode} (${dryRun ? "dry run" : "real publish"})`,

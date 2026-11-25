@@ -57,7 +57,8 @@ jobs:
       # Uses the runner's preinstalled Node; scripts/version has no dependencies.
       - name: Deploy guard
         env:
-          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          # Same normalization as the publish conditions: only 'false' publishes.
+          DRY_RUN: ${{ github.event.inputs.dry_run == 'false' && 'false' || 'true' }}
           REF: ${{ github.ref }}
         run: node scripts/version/deploy-guard.js
 
@@ -164,7 +165,9 @@ jobs:
 
   tag-build:
     needs: build
-    if: ${{ github.event.inputs.dry_run == 'false' && github.ref == 'refs/heads/main' && needs.build.outputs.uploaded == 'true' }}
+    # always(): tag even if a step after the upload (e.g. Summary) failed the build job;
+    # an uploaded versionCode must never be left without its tag.
+    if: ${{ always() && needs.build.result != 'cancelled' && needs.build.outputs.uploaded == 'true' && github.event.inputs.dry_run == 'false' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:

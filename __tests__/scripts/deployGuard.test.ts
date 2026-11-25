@@ -80,7 +80,7 @@ describe("evaluate", () => {
   it("fails a real run when the code equals the highest tag", () => {
     const r = evaluate({ ...base, versionCode: 155 });
     expect(r.failures).toEqual([
-      "versionCode 155 was already uploaded (tag build-155); run npm run bump",
+      "versionCode 155 was already uploaded (tag build-155); bump all version sources (npm run bump when available) before publishing",
     ]);
   });
 
@@ -127,7 +127,7 @@ describe("deploy-guard CLI", () => {
     const r = runGuard(dir, "false", MAIN);
     expect(r.status).toBe(1);
     expect(r.out).toContain(
-      "FAIL: versionCode 155 was already uploaded (tag build-155); run npm run bump",
+      "FAIL: versionCode 155 was already uploaded (tag build-155); bump all version sources (npm run bump when available) before publishing",
     );
   });
 
@@ -139,11 +139,25 @@ describe("deploy-guard CLI", () => {
     expect(r.out).not.toContain("FAIL");
   });
 
-  it("treats a missing or odd DRY_RUN as a dry run", () => {
-    const dir = makeRepo(155, ["build-155"]);
-    expect(runGuard(dir, undefined, "refs/heads/feature").status).toBe(0);
-    expect(runGuard(dir, "False", "refs/heads/feature").status).toBe(0);
-  });
+  it.each([undefined, "", "true", "TRUE", "yes", "0"])(
+    "treats DRY_RUN=%p as a dry run",
+    (value) => {
+      const dir = makeRepo(155, ["build-155"]);
+      const r = runGuard(dir, value, "refs/heads/feature");
+      expect(r.status).toBe(0);
+      expect(r.out).toContain("WARNING");
+    },
+  );
+
+  it.each(["false", "False", "FALSE", " false ", "false\n"])(
+    "treats DRY_RUN=%p as a real publish",
+    (value) => {
+      const dir = makeRepo(155, ["build-155"]);
+      const r = runGuard(dir, value, MAIN);
+      expect(r.status).toBe(1);
+      expect(r.out).toContain("FAIL: versionCode 155 was already uploaded");
+    },
+  );
 
   it("passes a higher versionCode on a real run from main", () => {
     const dir = makeRepo(156, ["build-154", "build-155"]);
