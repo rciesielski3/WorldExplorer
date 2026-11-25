@@ -16,6 +16,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import { ScreenBackground } from "../src/components/ScreenBackground";
+import { ContentContainer } from "../src/components/ContentContainer";
 import { getDailyCountry } from "../utils/dailyCountry";
 import { fetchCountries, getLocalizedCountryName } from "../utils/countries";
 import { FLAG_ASSETS } from "../utils/flagAssets";
@@ -199,6 +200,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       ]}
     >
       <ScreenBackground gradient="home" />
+      <ContentContainer>
       <ScrollView
         style={styles.homeScroll}
         contentContainerStyle={styles.homeScrollContent}
@@ -336,6 +338,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           )}
         </View>
       </ScrollView>
+      </ContentContainer>
     </View>
   );
 };

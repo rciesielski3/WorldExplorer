@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Animated,
-  Dimensions,
+  useWindowDimensions,
 } from "react-native";
 import MapView, { Marker, Callout } from "react-native-maps";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -23,8 +23,6 @@ import { logger } from "../utils/logger";
 import { triggerLightHaptic } from "../utils/haptics";
 import { getLocalizedCountryName } from "../utils/countries";
 import type { RootStackParamList } from "../types/navigation";
-
-const { width, height } = Dimensions.get("window");
 
 const DARK_MAP_STYLE = [
   { elementType: "geometry", stylers: [{ color: "#1d2c4d" }] },
@@ -101,6 +99,8 @@ const CountryInfoCard = ({
   onClose,
   theme,
   animationValue,
+  windowWidth,
+  windowHeight,
 }: {
   country?: CountryData;
   countryName: string;
@@ -108,11 +108,15 @@ const CountryInfoCard = ({
   onClose: () => void;
   theme: any;
   animationValue: Animated.Value;
+  windowWidth: number;
+  windowHeight: number;
 }) => {
   const translateY = animationValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [400, 0],
+    outputRange: [windowHeight, 0],
   });
+  // Cap the card width on wide screens and keep it centered.
+  const cardWidth = Math.min(windowWidth, commonTokens.layout.maxContentWidth);
 
   if (!isVisible) return null;
 
@@ -120,9 +124,13 @@ const CountryInfoCard = ({
 
   return (
     <Animated.View
+      testID="map-info-card"
       style={[
         styles.infoCard,
         {
+          width: cardWidth,
+          left: (windowWidth - cardWidth) / 2,
+          right: undefined,
           transform: [{ translateY }],
           backgroundColor: theme.colors.card,
           borderColor: theme.colors.border,
@@ -237,6 +245,8 @@ const TopBar = ({
 );
 
 const MapScreen: React.FC<MapScreenProps> = ({ route, navigation }) => {
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  const isLandscape = windowWidth > windowHeight;
   const { theme } = useTheme();
   const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
@@ -366,11 +376,14 @@ const MapScreen: React.FC<MapScreenProps> = ({ route, navigation }) => {
       />
 
       <View
+        testID="map-fab-container"
         style={[
           styles.fabContainer,
           {
-            right: 16,
-            bottom: insets.bottom + 100,
+            right: commonTokens.spacing.md + insets.right,
+            bottom:
+              insets.bottom +
+              (isLandscape ? commonTokens.spacing.lg : 100),
           },
         ]}
       >
@@ -403,6 +416,8 @@ const MapScreen: React.FC<MapScreenProps> = ({ route, navigation }) => {
         onClose={hideInfoCard}
         theme={theme}
         animationValue={animationValue}
+        windowWidth={windowWidth}
+        windowHeight={windowHeight}
       />
     </View>
   );

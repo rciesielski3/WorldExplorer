@@ -19,6 +19,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useFavorites } from "../context/FavoritesContext";
 import { getStyles } from "../styles";
 import { ScreenBackground } from "../src/components/ScreenBackground";
+import { ContentContainer } from "../src/components/ContentContainer";
 import AdBanner from "../src/components/AdBanner";
 import { FLAG_ASSETS } from "../utils/flagAssets";
 import { fetchHistoricalFacts } from "../utils/historicalFacts";
@@ -201,6 +202,7 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
       ]}
     >
       <ScreenBackground gradient="explore" />
+      <ContentContainer>
       <ScrollView
         style={styles.containerScrollView}
         contentContainerStyle={styles.countryDetailsContent}
@@ -414,6 +416,7 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
           </TouchableOpacity>
         </View>
       </ScrollView>
+      </ContentContainer>
       <AdBanner />
     </View>
   );

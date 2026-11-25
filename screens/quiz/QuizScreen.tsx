@@ -19,6 +19,7 @@ import { QuestionCard } from "../../src/components/ui/QuestionCard";
 import { Button } from "../../src/components/ui/Button";
 import { FloatingNavBar } from "../../src/components/Navigation/FloatingNavBar";
 import { ScreenBackground } from "../../src/components/ScreenBackground";
+import { ContentContainer } from "../../src/components/ContentContainer";
 import AdBanner from "../../src/components/AdBanner";
 import { FLAG_ASSETS } from "../../utils/flagAssets";
 import { triggerMediumHaptic } from "../../utils/haptics";
@@ -196,6 +197,7 @@ const QuizScreen = ({ route, navigation }: any) => {
     <View style={{ flex: 1 }}>
       <ScreenBackground gradient="map" />
       <View style={{ flex: 1 }}>
+        <ContentContainer>
         {/* Top Bar */}
         <TopBar title={t("quiz")} />
 
@@ -546,6 +548,8 @@ const QuizScreen = ({ route, navigation }: any) => {
             </View>
           </ScrollView>
         )}
+
+        </ContentContainer>
 
         {/* Floating Navigation Bar */}
         <FloatingNavBar

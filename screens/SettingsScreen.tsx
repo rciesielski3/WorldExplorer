@@ -21,6 +21,7 @@ import { ToggleSwitch } from '../src/components/ui/ToggleSwitch';
 import { TopBar } from '../src/components/Navigation/TopBar';
 import { FloatingNavBar } from '../src/components/Navigation/FloatingNavBar';
 import { ScreenBackground } from '../src/components/ScreenBackground';
+import { ContentContainer } from '../src/components/ContentContainer';
 import { commonTokens } from '../theme/tokens';
 import { Picker } from '@react-native-picker/picker';
 import { logger } from '../utils/logger';
@@ -200,6 +201,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
       <ScreenBackground gradient="default" />
       <TopBar title={t('settings')} />
 
+      <ContentContainer>
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{
@@ -856,6 +858,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
           </View>
         </Card>
       </ScrollView>
+      </ContentContainer>
 
       {/* Floating Navigation Bar */}
       <FloatingNavBar

@@ -15,6 +15,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import { ScreenBackground } from "../src/components/ScreenBackground";
+import { ContentContainer } from "../src/components/ContentContainer";
 import AdBanner from "../src/components/AdBanner";
 import { SearchBar } from "../src/components/ui/SearchBar";
 import {
@@ -156,6 +157,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
       ]}
     >
       <ScreenBackground gradient="explore" />
+      <ContentContainer>
       <View style={styles.containerContent}>
         <View style={styles.exploreHeaderCard}>
           <Text style={styles.title}>{t("exploreCountries")}</Text>
@@ -227,6 +229,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
           />
         )}
       </View>
+      </ContentContainer>
       <AdBanner />
     </View>
   );

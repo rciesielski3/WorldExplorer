@@ -32,7 +32,7 @@ jest.mock('react-native/Libraries/Utilities/Dimensions', () => ({
       scale: 2,
       fontScale: 1,
     })),
-    addEventListener: jest.fn(),
+    addEventListener: jest.fn(() => ({ remove: jest.fn() })),
     removeEventListener: jest.fn(),
     setUseNativeDriver: jest.fn(),
   },
