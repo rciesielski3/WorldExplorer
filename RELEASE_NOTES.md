@@ -1,6 +1,33 @@
 # WorldExplorer Release Notes
 
-## 🚀 Latest Release: v2.1
+## 🚀 Latest Release: v2.1.1
+
+**Release Date:** November 2026
+**Version:** 2.1.1 (versionCode 155)
+**Platform:** Android (Google Play Store)
+
+**Large Screens, Rotation & Edge-to-Edge**
+
+Everything in v2.1.0, plus support for tablets, foldables and landscape, and a cleaner full-screen look on Android 15 and 16.
+
+**What's New:**
+- 📱 **Rotation & Large Screens** - Use WorldExplorer in landscape, on tablets, foldables and in split-screen; content stays centered and readable on wide displays
+- 🖼️ **Edge-to-Edge Display** - Content now fits correctly around the status bar and gesture/navigation bar on Android 15 and 16
+- 🎨 **Status Bar Icons** - Status bar icons follow the light/dark theme
+- 💎 **Premium** - Ad banner is hidden for premium users
+- ⚙️ **Under the Hood** - Hardened release pipeline and native crash symbols for faster stability fixes
+
+**Compatibility:**
+- Requires Android 11+ (API 30)
+- Targets Android 16 (API 36)
+
+**Build Info:**
+- **versionCode:** 155
+- **versionName:** 2.1.1
+
+---
+
+## v2.1.0
 
 **Release Date:** October 2026
 **Version:** 2.1.0 (versionCode 154)
