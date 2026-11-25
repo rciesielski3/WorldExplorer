@@ -97,7 +97,8 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
       <TouchableOpacity
         onPress={() => navigation.navigate("CountryDetails", { country: item })}
         accessibilityRole="button"
-        accessibilityLabel={t("a11yViewCountryDetails", {
+        accessibilityLabel={`${getLocalizedCountryName(item, i18n.language)}, ${metadata.join(", ")}`}
+        accessibilityHint={t("a11yViewCountryDetails", {
           name: getLocalizedCountryName(item, i18n.language),
         })}
         activeOpacity={0.78}

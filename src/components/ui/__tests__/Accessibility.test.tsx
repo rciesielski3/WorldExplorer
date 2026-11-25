@@ -27,21 +27,26 @@ describe('Accessibility labels', () => {
     expect(getByTestId('search-input').props.value).toBe('');
   });
 
-  it('Card exposes a button role and label only when pressable', async () => {
+  it('Card exposes a button role only when pressable', async () => {
     const onPress = jest.fn();
-    const { getByLabelText } = render(
+    const { getByTestId } = render(
       <ThemeProvider>
-        <Card onPress={onPress} accessibilityLabel="Open card">
+        <Card onPress={onPress} testID="pressable-card" accessibilityLabel="Open card">
+          <Text>Body</Text>
+        </Card>
+        <Card testID="static-card">
           <Text>Body</Text>
         </Card>
       </ThemeProvider>
     );
     await act(async () => {});
 
-    const card = getByLabelText('Open card');
+    const card = getByTestId('pressable-card');
     expect(card.props.accessibilityRole).toBe('button');
+    expect(card.props.accessibilityLabel).toBe('Open card');
     fireEvent.press(card);
     expect(onPress).toHaveBeenCalled();
+    expect(getByTestId('static-card').props.accessibilityRole).toBeUndefined();
   });
 
   it('RetryErrorBanner labels retry and dismiss actions', async () => {
@@ -60,7 +65,7 @@ describe('Accessibility labels', () => {
     expect(onDismiss).toHaveBeenCalled();
   });
 
-  it('DailyChallengeCard button label includes the country name', async () => {
+  it('DailyChallengeCard button label is the visible text and hint names the country', async () => {
     const onPress = jest.fn();
     const { getByLabelText } = render(
       <ThemeProvider>
@@ -69,7 +74,9 @@ describe('Accessibility labels', () => {
     );
     await act(async () => {});
 
-    fireEvent.press(getByLabelText('Start daily challenge: Japan'));
+    const button = getByLabelText('Learn & Quiz');
+    expect(button.props.accessibilityHint).toBe('Start daily challenge: Japan');
+    fireEvent.press(button);
     expect(onPress).toHaveBeenCalled();
   });
 });

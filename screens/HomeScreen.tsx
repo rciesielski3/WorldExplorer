@@ -244,7 +244,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                   style={styles.homeActionCard}
                   onPress={() => navigation.navigate(item.screen)}
                   accessibilityRole="button"
-                  accessibilityLabel={item.label}
+                  accessibilityLabel={`${item.label}. ${item.subtitle}`}
                   activeOpacity={0.78}
                 >
                   <View style={styles.homeActionIcon}>
@@ -259,7 +259,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               <TouchableOpacity
                 onPress={() => navigation.navigate("QuizStats")}
                 accessibilityRole="button"
-                accessibilityLabel={t("a11yViewQuizStats")}
+                accessibilityLabel={`${stats.totalQuizzes} ${t("quizzes")}`}
+                accessibilityHint={t("a11yViewQuizStats")}
                 style={localStyles.statsBtn}
                 testID="quiz-stats-btn"
               >
@@ -284,9 +285,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                   })
                 }
                 accessibilityRole="button"
-                accessibilityLabel={t("a11yViewCountryDetails", {
-                  name: getLocalizedCountryName(dailyCountry, i18n.language),
-                })}
+                accessibilityLabel={`${getLocalizedCountryName(dailyCountry, i18n.language)}. ${t("dailyCountrySubtitle", {
+                  capital: dailyCountry.capital,
+                })}. ${t("viewCountry")}`}
               >
                 <View style={styles.dailyCountryContent}>
                   <Image

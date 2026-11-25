@@ -58,7 +58,8 @@ export const FavoritesScreen: React.FC<FavoritesScreenProps> = ({
       style={[styles.countryCard, localStyles.favCard]}
       onPress={() => navigation.navigate("CountryDetails", { country: item })}
       accessibilityRole="button"
-      accessibilityLabel={t("a11yViewCountryDetails", {
+      accessibilityLabel={`${getLocalizedCountryName(item, i18n.language)}, ${item.capital}`}
+      accessibilityHint={t("a11yViewCountryDetails", {
         name: getLocalizedCountryName(item, i18n.language),
       })}
       activeOpacity={0.78}
