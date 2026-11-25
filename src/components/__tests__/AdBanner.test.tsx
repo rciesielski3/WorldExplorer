@@ -10,7 +10,7 @@ jest.mock("../../../context/PremiumContext", () => ({
 
 // react-native-google-mobile-ads needs native modules unavailable under Jest.
 jest.mock("react-native-google-mobile-ads", () => {
-  const ReactActual = require("react");
+  const ReactActual = jest.requireActual<typeof import("react")>("react");
   return {
     BannerAd: (props: object) =>
       ReactActual.createElement("BannerAd", { testID: "banner-ad", ...props }),
