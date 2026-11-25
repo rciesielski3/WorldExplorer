@@ -191,12 +191,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   };
 
   return (
-    <View
-      style={[
-        styles.screenRoot,
-        { paddingTop: insets.top, paddingBottom: insets.bottom },
-      ]}
-    >
+    <View style={[styles.screenRoot, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <ScreenBackground gradient="home" />
       <ContentContainer>
         <ScrollView

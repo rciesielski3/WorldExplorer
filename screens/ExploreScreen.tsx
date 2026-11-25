@@ -127,12 +127,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
   };
 
   return (
-    <View
-      style={[
-        styles.screenRoot,
-        { paddingTop: insets.top, paddingBottom: insets.bottom },
-      ]}
-    >
+    <View style={[styles.screenRoot, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <ScreenBackground gradient="explore" />
       <ContentContainer>
         <View style={styles.containerContent}>

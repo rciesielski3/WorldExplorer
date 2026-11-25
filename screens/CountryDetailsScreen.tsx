@@ -175,12 +175,7 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({ route, navi
   };
 
   return (
-    <View
-      style={[
-        styles.screenRoot,
-        { paddingTop: insets.top, paddingBottom: insets.bottom },
-      ]}
-    >
+    <View style={[styles.screenRoot, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <ScreenBackground gradient="explore" />
       <ContentContainer>
         <ScrollView
