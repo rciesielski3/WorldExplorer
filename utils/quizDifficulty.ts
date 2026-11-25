@@ -116,7 +116,7 @@ export function generateQuestionsByDifficulty(
   // empty capital string. They can't be asked about and an empty string must
   // never show up as an answer option, so drop them before anything else.
   const countriesWithCapital = countries.filter(
-    (country) => country.capital.trim() !== ''
+    (country) => !!country.capital?.trim()
   );
 
   // Filter countries based on difficulty

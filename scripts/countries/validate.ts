@@ -16,7 +16,7 @@ const dataset: CountriesDataset = JSON.parse(
   fs.readFileSync(DATASET_PATH, "utf8"),
 );
 
-const OPTIONAL_CAPITAL = new Set(["BV", "HM", "UM", "MO"]);
+const OPTIONAL_CAPITAL = new Set(["AQ", "BV", "HM", "UM", "MO"]);
 
 if (!dataset.generatedAt) fail("Missing generatedAt");
 if (!dataset.source) fail("Missing source");
