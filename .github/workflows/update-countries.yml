@@ -11,6 +11,9 @@ jobs:
   update:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      # Local git hooks (gitleaks pre-commit) must not run in CI commits.
+      HUSKY: "0"
     permissions:
       contents: write
       pull-requests: write
