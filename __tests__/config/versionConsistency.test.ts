@@ -38,4 +38,18 @@ describe("version consistency across package.json, app.config.js and build.gradl
       versionCode: appConfig.android.versionCode,
     }).toEqual({ source: "app.config.js", versionCode: gradleVersionCode });
   });
+
+  describe("lockfile, README and RELEASE_NOTES", () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const v = require(path.join(root, "scripts/version/read.js")).readVersions(root);
+
+    it.each([
+      ["package-lock.json top-level version", v.lockVersion],
+      ["package-lock.json packages[''] version", v.lockRoot],
+      ["README.md 'current version in this repo'", v.readme],
+      ["RELEASE_NOTES.md top version heading", v.releaseNotes],
+    ])("%s matches package.json version", (source, version) => {
+      expect({ source, version }).toEqual({ source, version: pkgVersion });
+    });
+  });
 });
