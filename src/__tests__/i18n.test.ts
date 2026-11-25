@@ -45,7 +45,7 @@ describe('i18n Completeness', () => {
   });
 
   describe('Key Consistency Across Locales', () => {
-    let localeData: { [key: string]: Record<string, string> } = {};
+    const localeData: { [key: string]: Record<string, string> } = {};
 
     beforeAll(() => {
       locales.forEach(locale => {
@@ -116,7 +116,7 @@ describe('i18n Completeness', () => {
   });
 
   describe('Key Tokens Used in App', () => {
-    let localeData: { [key: string]: Record<string, string> } = {};
+    const localeData: { [key: string]: Record<string, string> } = {};
 
     beforeAll(() => {
       locales.forEach(locale => {
@@ -274,7 +274,7 @@ describe('i18n Completeness', () => {
   });
 
   describe('Translation Content', () => {
-    let localeData: { [key: string]: Record<string, string> } = {};
+    const localeData: { [key: string]: Record<string, string> } = {};
 
     beforeAll(() => {
       locales.forEach(locale => {
@@ -331,7 +331,7 @@ describe('i18n Completeness', () => {
   });
 
   describe('Key Naming Conventions', () => {
-    let localeData: { [key: string]: Record<string, string> } = {};
+    const localeData: { [key: string]: Record<string, string> } = {};
 
     beforeAll(() => {
       const filePath = path.join(localesDir, 'en.json');
