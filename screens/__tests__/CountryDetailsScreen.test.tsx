@@ -8,12 +8,11 @@ import { countries } from "../../utils/countries";
 // Side effect: initializes the shared i18next instance (resources + default
 // "en" language) so `useTranslation()` inside the screen resolves real
 // strings instead of returning undefined, matching how App.tsx bootstraps it.
+import { WithSafeArea } from "../../tests/safeAreaTestUtils";
 import "../../i18n";
 
 jest.mock("../../utils/historicalFacts", () => ({
-  fetchHistoricalFacts: jest.fn(() =>
-    Promise.resolve(["Fact one", "Fact two"])
-  ),
+  fetchHistoricalFacts: jest.fn(() => Promise.resolve(["Fact one", "Fact two"])),
 }));
 
 // react-native-maps ships an untranspiled JSX build under Jest's CJS
@@ -39,16 +38,18 @@ const mockCountry = countries[0];
 
 const renderScreen = () =>
   render(
-    <NavigationContainer>
-      <ThemeProvider>
-        <FavoritesProvider>
-          <CountryDetailsScreen
-            route={{ params: { country: mockCountry } } as any}
-            navigation={{ setOptions: jest.fn(), navigate: jest.fn(), goBack: jest.fn() } as any}
-          />
-        </FavoritesProvider>
-      </ThemeProvider>
-    </NavigationContainer>
+    <WithSafeArea>
+      <NavigationContainer>
+        <ThemeProvider>
+          <FavoritesProvider>
+            <CountryDetailsScreen
+              route={{ params: { country: mockCountry } } as any}
+              navigation={{ setOptions: jest.fn(), navigate: jest.fn(), goBack: jest.fn() } as any}
+            />
+          </FavoritesProvider>
+        </ThemeProvider>
+      </NavigationContainer>
+    </WithSafeArea>,
   );
 
 describe("CountryDetailsScreen", () => {

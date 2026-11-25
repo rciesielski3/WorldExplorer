@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -48,6 +49,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     React.useState<boolean>(true);
 
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
   const styles = getStyles(theme);
   const { getStats } = useQuizHistory();
   const stats = getStats();
@@ -190,7 +192,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.screenRoot}>
+    <View
+      style={[
+        styles.screenRoot,
+        { paddingTop: insets.top, paddingBottom: insets.bottom },
+      ]}
+    >
       <ScreenBackground gradient="home" />
       <ScrollView
         style={styles.homeScroll}

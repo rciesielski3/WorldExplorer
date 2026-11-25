@@ -1,7 +1,7 @@
 import React from "react";
+import { StyleSheet } from "react-native";
 import { render, act } from "@testing-library/react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider } from "../../context/ThemeContext";
 import { FavoritesProvider } from "../../context/FavoritesContext";
 import { QuizHistoryProvider } from "../../context/QuizHistoryContext";
@@ -9,6 +9,11 @@ import { QuizStatsScreen } from "../QuizStatsScreen";
 import { ComparisonScreen } from "../ComparisonScreen";
 import { FavoritesScreen } from "../FavoritesScreen";
 import { QuizResultsScreen } from "../quiz/QuizResultsScreen";
+import HomeScreen from "../HomeScreen";
+import ExploreScreen from "../ExploreScreen";
+import CountryDetailsScreen from "../CountryDetailsScreen";
+import { countries } from "../../utils/countries";
+import { WithSafeArea, TEST_SAFE_AREA_METRICS } from "../../tests/safeAreaTestUtils";
 // Side effect: initializes the shared i18next instance, matching App.tsx.
 import "../../i18n";
 
@@ -41,6 +46,15 @@ jest.mock("react-native-reanimated", () => {
   };
 });
 
+jest.mock("../../src/components/AdBanner", () => "AdBanner");
+jest.mock("react-native-maps", () => {
+  const { View } = require("react-native");
+  return { __esModule: true, default: View, Marker: View };
+});
+jest.mock("../../utils/historicalFacts", () => ({
+  fetchHistoricalFacts: jest.fn(() => Promise.resolve([])),
+}));
+
 // Stable references: QuizResultsScreen runs an effect keyed on these, so fresh
 // objects per render would loop forever.
 const mockRoute = { params: { score: 3, questions: [], difficulty: "easy", timeTaken: 10 } };
@@ -55,17 +69,13 @@ jest.mock("@react-navigation/native", () => {
   };
 });
 
-const TEST_SAFE_AREA_METRICS = {
-  frame: { x: 0, y: 0, width: 375, height: 812 },
-  insets: { top: 44, left: 0, right: 0, bottom: 34 },
-};
-
 // The native view backing react-native-safe-area-context's SafeAreaView.
 const NATIVE_SAFE_AREA_VIEW = "RNCSafeAreaView";
+const { top, bottom } = TEST_SAFE_AREA_METRICS.insets;
 
 const renderWithInsets = (ui: React.ReactElement) =>
   render(
-    <SafeAreaProvider initialMetrics={TEST_SAFE_AREA_METRICS}>
+    <WithSafeArea>
       <NavigationContainer>
         <ThemeProvider>
           <FavoritesProvider>
@@ -73,10 +83,10 @@ const renderWithInsets = (ui: React.ReactElement) =>
           </FavoritesProvider>
         </ThemeProvider>
       </NavigationContainer>
-    </SafeAreaProvider>
+    </WithSafeArea>,
   );
 
-const screens: Array<[string, () => React.ReactElement]> = [
+const safeAreaScreens: Array<[string, () => React.ReactElement]> = [
   ["QuizStatsScreen", () => <QuizStatsScreen navigation={{ navigate: jest.fn() }} />],
   [
     "ComparisonScreen",
@@ -94,14 +104,71 @@ const screens: Array<[string, () => React.ReactElement]> = [
   ["QuizResultsScreen", () => <QuizResultsScreen />],
 ];
 
-describe("edge-to-edge safe area wrapping", () => {
-  it.each(screens)(
-    "%s renders inside react-native-safe-area-context SafeAreaView",
+const insetPaddingScreens: Array<[string, () => React.ReactElement]> = [
+  [
+    "HomeScreen",
+    () => <HomeScreen navigation={{ navigate: jest.fn() } as never} route={{} as never} />,
+  ],
+  [
+    "ExploreScreen",
+    () => (
+      <ExploreScreen
+        navigation={{ navigate: jest.fn() } as never}
+        route={{ key: "Explore", name: "Explore" } as never}
+      />
+    ),
+  ],
+  [
+    "CountryDetailsScreen",
+    () => (
+      <CountryDetailsScreen
+        route={{ params: { country: countries[0] } } as never}
+        navigation={{ setOptions: jest.fn(), navigate: jest.fn(), goBack: jest.fn() } as never}
+      />
+    ),
+  ],
+];
+
+type FlatStyle = { paddingTop?: number; paddingBottom?: number };
+
+const collectStyles = (tree: unknown): FlatStyle[] => {
+  const found: FlatStyle[] = [];
+  const walk = (node: unknown): void => {
+    if (!node || typeof node !== "object") return;
+    const n = node as { props?: { style?: unknown }; children?: unknown[] };
+    if (n.props?.style) {
+      found.push((StyleSheet.flatten(n.props.style as never) ?? {}) as FlatStyle);
+    }
+    (n.children ?? []).forEach(walk);
+  };
+  (Array.isArray(tree) ? tree : [tree]).forEach(walk);
+  return found;
+};
+
+describe("edge-to-edge safe area handling", () => {
+  it.each(safeAreaScreens)(
+    "%s is wrapped in a SafeAreaView that applies top and bottom insets",
     async (_name, build) => {
       const { UNSAFE_getAllByType } = renderWithInsets(build());
       await act(async () => {});
 
-      expect(UNSAFE_getAllByType(NATIVE_SAFE_AREA_VIEW as never).length).toBeGreaterThan(0);
-    }
+      const views = UNSAFE_getAllByType(NATIVE_SAFE_AREA_VIEW as never);
+      expect(views.length).toBeGreaterThan(0);
+      // Native edge modes: "off" would mean that inset is ignored.
+      const edges = views[0].props.edges as Record<string, string>;
+      expect(edges.top).not.toBe("off");
+      expect(edges.bottom).not.toBe("off");
+    },
+  );
+
+  it.each(insetPaddingScreens)(
+    "%s pads its root view by the top and bottom insets",
+    async (_name, build) => {
+      const { toJSON } = renderWithInsets(build());
+      await act(async () => {});
+
+      const styles = collectStyles(toJSON());
+      expect(styles.some((s) => s.paddingTop === top && s.paddingBottom === bottom)).toBe(true);
+    },
   );
 });

@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -67,6 +68,7 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
   navigation,
 }) => {
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const styles = getStyles(theme);
   const [activeTab, setActiveTab] = React.useState<string>("info");
@@ -192,7 +194,12 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
   };
 
   return (
-    <View style={styles.screenRoot}>
+    <View
+      style={[
+        styles.screenRoot,
+        { paddingTop: insets.top, paddingBottom: insets.bottom },
+      ]}
+    >
       <ScreenBackground gradient="explore" />
       <ScrollView
         style={styles.containerScrollView}

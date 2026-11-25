@@ -108,6 +108,7 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({ route }) => 
       <Modal
         visible={showPicker}
         transparent
+        statusBarTranslucent
         animationType="slide"
         onRequestClose={() => setShowPicker(false)}
       >
