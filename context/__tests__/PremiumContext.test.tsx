@@ -60,8 +60,11 @@ const loadModules = (env: Record<string, string | undefined>) => {
 };
 
 const renderProvider = (premium: PremiumModule) => {
+  const latest: { current?: ReturnType<PremiumModule["usePremium"]> } = {};
   const Probe = () => {
-    const { isPremium, isLoading } = premium.usePremium();
+    const value = premium.usePremium();
+    latest.current = value;
+    const { isPremium, isLoading } = value;
     return (
       <Text testID="state">{`${isPremium ? "premium" : "free"}|${
         isLoading ? "loading" : "ready"
@@ -75,6 +78,7 @@ const renderProvider = (premium: PremiumModule) => {
   );
   return {
     ...utils,
+    latest,
     state: () => utils.getByTestId("state").props.children as string,
   };
 };
@@ -253,5 +257,83 @@ describe("PremiumContext loading", () => {
 
     expect(view.state()).toBe("free|ready");
     expect(purchases.configure).not.toHaveBeenCalled();
+  });
+
+  it("clears the timeout timer on a fast response", async () => {
+    const { premium, purchases } = loadModules({});
+    purchases.getCustomerInfo.mockResolvedValue(freeInfo);
+    purchases.getOfferings.mockResolvedValue(offerings);
+    const clearSpy = jest.spyOn(global, "clearTimeout");
+
+    renderProvider(premium);
+    await flush();
+
+    expect(clearSpy).toHaveBeenCalled();
+    clearSpy.mockRestore();
+  });
+
+  it("ignores a late response after unmount that follows the timeout", async () => {
+    const { premium, purchases, logger } = loadModules({});
+    const request = deferred<CustomerInfo>();
+    purchases.getCustomerInfo.mockReturnValue(request.promise);
+    purchases.getOfferings.mockReturnValue(new Promise(() => {}));
+
+    const view = renderProvider(premium);
+    await act(async () => {
+      jest.advanceTimersByTime(premium.CUSTOMER_INFO_TIMEOUT_MS);
+    });
+    expect(logger.warn).toHaveBeenCalledTimes(1);
+    view.unmount();
+
+    await act(async () => {
+      request.resolve(premiumInfo);
+    });
+
+    expect(logger.warn).toHaveBeenCalledTimes(1);
+    expect(errorSpy).not.toHaveBeenCalled();
+  });
+
+  it("allows restore after a timeout without waiting for customer info", async () => {
+    const { premium, purchases } = loadModules({});
+    purchases.getCustomerInfo.mockReturnValue(new Promise(() => {}));
+    purchases.getOfferings.mockReturnValue(new Promise(() => {}));
+    purchases.restorePurchases.mockResolvedValue(premiumInfo);
+
+    const view = renderProvider(premium);
+    await act(async () => {
+      jest.advanceTimersByTime(premium.CUSTOMER_INFO_TIMEOUT_MS);
+    });
+    expect(view.latest.current?.isConfigured).toBe(true);
+
+    let restored = false;
+    await act(async () => {
+      restored = (await view.latest.current?.restorePurchases()) ?? false;
+    });
+
+    expect(restored).toBe(true);
+    expect(purchases.restorePurchases).toHaveBeenCalledTimes(1);
+    expect(view.latest.current?.error).toBeNull();
+    expect(view.state()).toBe("premium|ready");
+  });
+
+  it("keeps an offerings error when a late customer info response arrives", async () => {
+    const { premium, purchases } = loadModules({});
+    const request = deferred<CustomerInfo>();
+    purchases.getCustomerInfo.mockReturnValue(request.promise);
+    purchases.getOfferings.mockRejectedValue(new Error("offerings down"));
+
+    const view = renderProvider(premium);
+    await act(async () => {
+      jest.advanceTimersByTime(premium.CUSTOMER_INFO_TIMEOUT_MS);
+    });
+    await flush();
+    expect(view.latest.current?.error).toBe("offerings down");
+
+    await act(async () => {
+      request.resolve(premiumInfo);
+    });
+
+    expect(view.state()).toBe("premium|ready");
+    expect(view.latest.current?.error).toBe("offerings down");
   });
 });

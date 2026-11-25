@@ -244,6 +244,9 @@ export const PremiumProvider: React.FC<PremiumProviderProps> = ({ children }) =>
       try {
         Purchases.setLogLevel(__DEV__ ? LOG_LEVEL.DEBUG : LOG_LEVEL.WARN);
         Purchases.configure({ apiKey });
+        // configure() is synchronous and the SDK serves later calls itself,
+        // so purchases/restores must not wait for the first customer info.
+        setIsConfigured(true);
         Purchases.addCustomerInfoUpdateListener(customerInfoListener);
 
         const customerInfoRequest = Purchases.getCustomerInfo();
@@ -268,15 +271,12 @@ export const PremiumProvider: React.FC<PremiumProviderProps> = ({ children }) =>
             (lateCustomerInfo) => {
               if (isMounted) {
                 applyCustomerInfo(lateCustomerInfo);
-                setIsConfigured(true);
-                setError(null);
               }
             },
             () => {}
           );
         } else if (isMounted) {
           applyCustomerInfo(customerInfo);
-          setIsConfigured(true);
           setError(null);
           shouldLoadOfferings = true;
         }
