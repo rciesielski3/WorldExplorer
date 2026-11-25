@@ -20,7 +20,25 @@ The version always comes from `versionName` in `android/app/build.gradle`; there
 **Job `build`:** read version, Node from `.nvmrc`, `npm ci`, `npx tsc --noEmit`, `npm test -- --ci --maxWorkers=2`, Android build, signing verification, AAB artifact upload (14 days, every run), Play upload (only when `dry_run` is false and ref is `main`), run summary.
 **Job `release`:** creates the GitHub release/tag `v<versionName>` only when `dry_run` is false, the track is `production` and the ref is `main`. It is the only job with `contents: write`.
 
-Real publishes are serialized in the `release-publish` concurrency group (queued, never cancelled); each dry run gets its own group so it cannot replace a queued deploy. Build timeout: 40 minutes.
+Real publishes are serialized in the `release-publish` concurrency group and a running publish is never cancelled. GitHub keeps only the newest pending run per group, so if a second publish is queued behind a running one and a third is dispatched, the second is cancelled; dispatch publishes one at a time. Each dry run gets its own group so it cannot replace a queued deploy. Build timeout: 40 minutes.
+
+#### Deploy guard and `build-<versionCode>` tags
+
+The first steps of `build` (full-history checkout with tags, then `scripts/version/deploy-guard.js`) fail within seconds, before Node setup, `npm ci` or Gradle. The guard fails when:
+
+- the version sources disagree (same check as `npm run version:check`);
+- a **real** publish uses a `versionCode` <= the highest `build-<N>` tag ("versionCode X was already uploaded (tag build-N); bump all version sources (npm run bump when available) before publishing");
+- a **real** publish is requested from a ref other than `refs/heads/main`.
+
+A dry run never fails on an already used `versionCode` (re-running a dry run of current code is legitimate); it prints a `WARNING:` line and the step summary still builds.
+
+**Tag convention:** after a successful Play upload the `tag-build` job (the only other job with `contents: write`) creates and pushes the annotated tag `build-<versionCode>` at the deployed commit. It fails loudly if that tag already exists on a different commit. `v<versionName>` GitHub releases are unchanged (production only). `build-154` and `build-155` were seeded manually for uploads made before the guard existed.
+
+`tag-build` runs with `always()` (but not when the run was cancelled), so a step failing in `build` after a successful upload (for example the summary) still leaves the `build-<versionCode>` tag. It is skipped for dry runs, non-main refs and whenever the upload step did not succeed.
+
+**Recommended (repo owner):** protect `build-*` tags with a tag ruleset (restrict deletion and updates) so a used versionCode cannot be erased from the guard's view.
+
+**If the guard fails:** bump all version sources (`npm run bump` once the bump script lands), merge, and dispatch again. If a code was uploaded to Play without a tag, create the tag by hand at the uploaded commit: `git tag -a build-<N> <sha> -m "..." && git push origin build-<N>`.
 
 **To use:**
 

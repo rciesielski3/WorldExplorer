@@ -43,9 +43,24 @@ jobs:
     timeout-minutes: 40
     outputs:
       version: ${{ steps.version.outputs.version }}
+      version_code: ${{ steps.version.outputs.version_code }}
+      uploaded: ${{ steps.upload.outcome == 'success' }}
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      # Fail fast (seconds, before Node/npm/Gradle) on reused versionCode,
+      # disagreeing version sources, or a real publish from a non-main ref.
+      # Uses the runner's preinstalled Node; scripts/version has no dependencies.
+      - name: Deploy guard
+        env:
+          # Same normalization as the publish conditions: only 'false' publishes.
+          DRY_RUN: ${{ github.event.inputs.dry_run == 'false' && 'false' || 'true' }}
+          REF: ${{ github.ref }}
+        run: node scripts/version/deploy-guard.js
 
       - name: Determine version
         id: version
@@ -147,6 +162,42 @@ jobs:
             echo "| AAB size | $SIZE |"
             echo "| Signing SHA1 | \`$SIGNING_SHA1\` (matches expected) |"
           } >> "$GITHUB_STEP_SUMMARY"
+
+  tag-build:
+    needs: build
+    # always(): tag even if a step after the upload (e.g. Summary) failed the build job;
+    # an uploaded versionCode must never be left without its tag.
+    if: ${{ always() && needs.build.result != 'cancelled' && needs.build.outputs.uploaded == 'true' && github.event.inputs.dry_run == 'false' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Tag uploaded build
+        env:
+          VERSION_CODE: ${{ needs.build.outputs.version_code }}
+          VERSION: ${{ needs.build.outputs.version }}
+          TRACK: ${{ github.event.inputs.track }}
+        run: |
+          TAG="build-${VERSION_CODE}"
+          EXISTING=$(git rev-parse -q --verify "refs/tags/${TAG}^{commit}" || true)
+          if [ -n "$EXISTING" ]; then
+            if [ "$EXISTING" = "$GITHUB_SHA" ]; then
+              echo "Tag ${TAG} already points at ${GITHUB_SHA}; nothing to do"
+              exit 0
+            fi
+            echo "::error::Tag ${TAG} already exists on ${EXISTING}, not ${GITHUB_SHA}; versionCode was uploaded from a different commit"
+            exit 1
+          fi
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            tag -a "$TAG" "$GITHUB_SHA" -m "Play upload: versionCode ${VERSION_CODE}, v${VERSION}, track ${TRACK}"
+          git push origin "refs/tags/${TAG}"
 
   release:
     needs: build
