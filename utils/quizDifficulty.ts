@@ -112,8 +112,18 @@ export function generateQuestionsByDifficulty(
     return [];
   }
 
+  // Territories without a capital (e.g. Antarctica, Bouvet Island) have an
+  // empty capital string. They can't be asked about and an empty string must
+  // never show up as an answer option, so drop them before anything else.
+  const countriesWithCapital = countries.filter(
+    (country) => country.capital.trim() !== ''
+  );
+
   // Filter countries based on difficulty
-  const filteredCountries = filterCountriesByDifficulty(countries, difficulty);
+  const filteredCountries = filterCountriesByDifficulty(
+    countriesWithCapital,
+    difficulty
+  );
 
   // If we don't have enough countries, return what we can
   const questionsToGenerate = Math.min(count, filteredCountries.length);

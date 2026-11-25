@@ -366,4 +366,22 @@ describe('generateQuestionsByDifficulty', () => {
     generateQuestionsByDifficulty(mockCountries, 'medium', 5);
     expect(mockCountries).toHaveLength(countryCount);
   });
+
+  it('never asks about, or offers, a country without a capital', () => {
+    // Regression for #68: territories such as Antarctica have capital "".
+    // A blank answer option can't be selected in the UI, so the quiz stalled.
+    const noCapital: Country = { ...mockCountries[0], code: 'XX', capital: '' };
+    const pool = [noCapital, ...mockCountries];
+    const difficulties: Difficulty[] = ['easy', 'medium', 'hard'];
+
+    difficulties.forEach((difficulty) => {
+      for (let i = 0; i < 25; i++) {
+        const questions = generateQuestionsByDifficulty(pool, difficulty, pool.length);
+        questions.forEach((question) => {
+          expect(question.answer).not.toBe('');
+          expect(question.options).not.toContain('');
+        });
+      }
+    });
+  });
 });
