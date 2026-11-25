@@ -6,6 +6,7 @@ import { ThemeProvider } from "../../context/ThemeContext";
 // Side effect: initializes the shared i18next instance (resources + default
 // "en" language) so `useTranslation()` inside ExploreScreen resolves real
 // strings instead of returning undefined, matching how App.tsx bootstraps it.
+import { WithSafeArea } from "../../tests/safeAreaTestUtils";
 import "../../i18n";
 
 // AdBanner renders a native react-native-google-mobile-ads component that
@@ -17,14 +18,16 @@ const navigate = jest.fn();
 
 const renderExploreScreen = () =>
   render(
-    <NavigationContainer>
-      <ThemeProvider>
-        <ExploreScreen
-          navigation={{ navigate } as any}
-          route={{ key: "Explore", name: "Explore" } as any}
-        />
-      </ThemeProvider>
-    </NavigationContainer>
+    <WithSafeArea>
+      <NavigationContainer>
+        <ThemeProvider>
+          <ExploreScreen
+            navigation={{ navigate } as any}
+            route={{ key: "Explore", name: "Explore" } as any}
+          />
+        </ThemeProvider>
+      </NavigationContainer>
+    </WithSafeArea>,
   );
 
 describe("ExploreScreen", () => {
@@ -70,10 +73,8 @@ describe("ExploreScreen", () => {
     expect(navigate).toHaveBeenCalledWith(
       "Comparison",
       expect.objectContaining({
-        initialCountries: expect.arrayContaining([
-          expect.objectContaining({ code: "AD" }),
-        ]),
-      })
+        initialCountries: expect.arrayContaining([expect.objectContaining({ code: "AD" })]),
+      }),
     );
   });
 });

@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Animated,
-  Dimensions,
+  useWindowDimensions,
 } from "react-native";
 import MapView, { Marker, Callout } from "react-native-maps";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -23,8 +23,6 @@ import { logger } from "../utils/logger";
 import { triggerLightHaptic } from "../utils/haptics";
 import { getLocalizedCountryName } from "../utils/countries";
 import type { RootStackParamList } from "../types/navigation";
-
-const { width, height } = Dimensions.get("window");
 
 const DARK_MAP_STYLE = [
   { elementType: "geometry", stylers: [{ color: "#1d2c4d" }] },
@@ -68,7 +66,7 @@ type MapScreenProps = StackScreenProps<RootStackParamList, "Map">;
 const getInitialRouteData = (
   route: MapScreenProps["route"],
   fallbackName: string,
-  language: string
+  language: string,
 ) => {
   const rawCountry = route?.params?.country;
   const country: CountryData | undefined = rawCountry
@@ -83,8 +81,7 @@ const getInitialRouteData = (
     : undefined;
   const latitude = route?.params?.latitude ?? country?.lat ?? 51.9194;
   const longitude = route?.params?.longitude ?? country?.lng ?? 19.1451;
-  const countryName =
-    route?.params?.countryName ?? country?.name ?? fallbackName;
+  const countryName = route?.params?.countryName ?? country?.name ?? fallbackName;
 
   return {
     country,
@@ -101,6 +98,9 @@ const CountryInfoCard = ({
   onClose,
   theme,
   animationValue,
+  windowWidth,
+  insetLeft,
+  insetRight,
 }: {
   country?: CountryData;
   countryName: string;
@@ -108,11 +108,17 @@ const CountryInfoCard = ({
   onClose: () => void;
   theme: any;
   animationValue: Animated.Value;
+  windowWidth: number;
+  insetLeft: number;
+  insetRight: number;
 }) => {
   const translateY = animationValue.interpolate({
     inputRange: [0, 1],
     outputRange: [400, 0],
   });
+  // Cap the card width on wide screens and keep it centered.
+  const availableWidth = windowWidth - insetLeft - insetRight;
+  const cardWidth = Math.min(availableWidth, commonTokens.layout.maxContentWidth);
 
   if (!isVisible) return null;
 
@@ -120,9 +126,13 @@ const CountryInfoCard = ({
 
   return (
     <Animated.View
+      testID="map-info-card"
       style={[
         styles.infoCard,
         {
+          width: cardWidth,
+          left: insetLeft + (availableWidth - cardWidth) / 2,
+          right: undefined,
           transform: [{ translateY }],
           backgroundColor: theme.colors.card,
           borderColor: theme.colors.border,
@@ -139,16 +149,11 @@ const CountryInfoCard = ({
 
       <View style={styles.infoCardContent}>
         {country?.flagPath ? (
-          <Image
-            source={FLAG_ASSETS[country.flagPath]}
-            style={styles.infoCardFlag}
-          />
+          <Image source={FLAG_ASSETS[country.flagPath]} style={styles.infoCardFlag} />
         ) : null}
 
         <View style={styles.infoCardText}>
-          <Text style={[styles.infoCardName, { color: theme.colors.text }]}>
-            {countryName}
-          </Text>
+          <Text style={[styles.infoCardName, { color: theme.colors.text }]}>{countryName}</Text>
           {meta.length > 0 ? (
             <Text style={[styles.infoCardMeta, { color: theme.colors.text }]}>
               {meta.join(" · ")}
@@ -209,9 +214,7 @@ const TopBar = ({
     style={[
       styles.topBar,
       {
-        backgroundColor: theme.isDarkMode
-          ? "rgba(11, 11, 22, 0.95)"
-          : "rgba(248, 250, 252, 0.95)",
+        backgroundColor: theme.isDarkMode ? "rgba(11, 11, 22, 0.95)" : "rgba(248, 250, 252, 0.95)",
         borderColor: theme.colors.border,
         paddingTop: insets.top || 12,
       },
@@ -223,20 +226,16 @@ const TopBar = ({
       hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
       style={styles.topBarButton}
     >
-      <MaterialCommunityIcons
-        name="arrow-left"
-        size={24}
-        color={theme.colors.text}
-      />
+      <MaterialCommunityIcons name="arrow-left" size={24} color={theme.colors.text} />
     </TouchableOpacity>
-    <Text style={[styles.topBarTitle, { color: theme.colors.text }]}>
-      {title}
-    </Text>
+    <Text style={[styles.topBarTitle, { color: theme.colors.text }]}>{title}</Text>
     <View style={styles.topBarSpacer} />
   </View>
 );
 
 const MapScreen: React.FC<MapScreenProps> = ({ route, navigation }) => {
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  const isLandscape = windowWidth > windowHeight;
   const { theme } = useTheme();
   const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
@@ -245,7 +244,7 @@ const MapScreen: React.FC<MapScreenProps> = ({ route, navigation }) => {
   const { country, latitude, longitude, countryName } = getInitialRouteData(
     route,
     t("worldMap"),
-    i18n.language
+    i18n.language,
   );
 
   const initialRegion = useMemo(
@@ -255,7 +254,7 @@ const MapScreen: React.FC<MapScreenProps> = ({ route, navigation }) => {
       latitudeDelta: country ? 14 : 30,
       longitudeDelta: country ? 14 : 30,
     }),
-    [country, latitude, longitude]
+    [country, latitude, longitude],
   );
 
   const [region, setRegion] = useState(initialRegion);
@@ -273,14 +272,8 @@ const MapScreen: React.FC<MapScreenProps> = ({ route, navigation }) => {
     const currentRegion = regionRef.current;
     const nextRegion = {
       ...currentRegion,
-      latitudeDelta: Math.min(
-        Math.max(currentRegion.latitudeDelta * 0.62, 2),
-        80
-      ),
-      longitudeDelta: Math.min(
-        Math.max(currentRegion.longitudeDelta * 0.62, 2),
-        80
-      ),
+      latitudeDelta: Math.min(Math.max(currentRegion.latitudeDelta * 0.62, 2), 80),
+      longitudeDelta: Math.min(Math.max(currentRegion.longitudeDelta * 0.62, 2), 80),
     };
     animateToRegion(nextRegion);
   }, [animateToRegion]);
@@ -289,14 +282,8 @@ const MapScreen: React.FC<MapScreenProps> = ({ route, navigation }) => {
     const currentRegion = regionRef.current;
     const nextRegion = {
       ...currentRegion,
-      latitudeDelta: Math.min(
-        Math.max(currentRegion.latitudeDelta * 1.38, 2),
-        80
-      ),
-      longitudeDelta: Math.min(
-        Math.max(currentRegion.longitudeDelta * 1.38, 2),
-        80
-      ),
+      latitudeDelta: Math.min(Math.max(currentRegion.latitudeDelta * 1.38, 2), 80),
+      longitudeDelta: Math.min(Math.max(currentRegion.longitudeDelta * 1.38, 2), 80),
     };
     animateToRegion(nextRegion);
   }, [animateToRegion]);
@@ -305,14 +292,17 @@ const MapScreen: React.FC<MapScreenProps> = ({ route, navigation }) => {
     animateToRegion(initialRegion);
   }, [animateToRegion, initialRegion]);
 
-  const showInfoCard = useCallback((markerCountry: CountryData) => {
-    setSelectedMarker(markerCountry);
-    Animated.timing(animationValue, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  }, [animationValue]);
+  const showInfoCard = useCallback(
+    (markerCountry: CountryData) => {
+      setSelectedMarker(markerCountry);
+      Animated.timing(animationValue, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    },
+    [animationValue],
+  );
 
   const hideInfoCard = useCallback(() => {
     Animated.timing(animationValue, {
@@ -349,60 +339,38 @@ const MapScreen: React.FC<MapScreenProps> = ({ route, navigation }) => {
       >
         <Marker coordinate={{ latitude, longitude }} onPress={handleMarkerPress}>
           <View style={styles.mapPin}>
-            <MaterialCommunityIcons
-              name="map-marker"
-              size={34}
-              color={theme.colors.button}
-            />
+            <MaterialCommunityIcons name="map-marker" size={34} color={theme.colors.button} />
           </View>
         </Marker>
       </MapView>
 
-      <TopBar
-        title={countryName}
-        onBackPress={handleBackPress}
-        theme={theme}
-        insets={insets}
-      />
+      <TopBar title={countryName} onBackPress={handleBackPress} theme={theme} insets={insets} />
 
       <View
+        testID="map-fab-container"
         style={[
           styles.fabContainer,
           {
-            right: 16,
-            bottom: insets.bottom + 100,
+            right: commonTokens.spacing.md + insets.right,
+            bottom: insets.bottom + (isLandscape ? commonTokens.spacing.lg : 100),
           },
         ]}
       >
-        <FAB
-          icon="plus"
-          onPress={handleZoomIn}
-          label={t("zoomIn")}
-          theme={theme}
-        />
-        <FAB
-          icon="minus"
-          onPress={handleZoomOut}
-          label={t("zoomOut")}
-          theme={theme}
-        />
-        <FAB
-          icon="crosshairs-gps"
-          onPress={handleResetMap}
-          label={t("resetMap")}
-          theme={theme}
-        />
+        <FAB icon="plus" onPress={handleZoomIn} label={t("zoomIn")} theme={theme} />
+        <FAB icon="minus" onPress={handleZoomOut} label={t("zoomOut")} theme={theme} />
+        <FAB icon="crosshairs-gps" onPress={handleResetMap} label={t("resetMap")} theme={theme} />
       </View>
 
       <CountryInfoCard
         country={selectedMarker || country}
-        countryName={
-          selectedMarker ? selectedMarker.name : countryName
-        }
+        countryName={selectedMarker ? selectedMarker.name : countryName}
         isVisible={selectedMarker !== null}
         onClose={hideInfoCard}
         theme={theme}
         animationValue={animationValue}
+        windowWidth={windowWidth}
+        insetLeft={insets.left}
+        insetRight={insets.right}
       />
     </View>
   );

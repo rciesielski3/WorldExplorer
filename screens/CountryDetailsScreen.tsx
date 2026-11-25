@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -18,6 +19,7 @@ import { useTheme } from "../context/ThemeContext";
 import { useFavorites } from "../context/FavoritesContext";
 import { getStyles } from "../styles";
 import { ScreenBackground } from "../src/components/ScreenBackground";
+import { ContentContainer } from "../src/components/ContentContainer";
 import AdBanner from "../src/components/AdBanner";
 import { FLAG_ASSETS } from "../utils/flagAssets";
 import { fetchHistoricalFacts } from "../utils/historicalFacts";
@@ -45,10 +47,7 @@ interface DetailTab {
   labelKey: string;
 }
 
-type CountryDetailsScreenProps = StackScreenProps<
-  RootStackParamList,
-  "CountryDetails"
->;
+type CountryDetailsScreenProps = StackScreenProps<RootStackParamList, "CountryDetails">;
 
 const DETAIL_TABS: DetailTab[] = [
   { key: "info", labelKey: "countryInfo" },
@@ -62,11 +61,9 @@ const getCoordinates = (country: Country | undefined): Coordinates => ({
   longitude: country?.lng ?? 0,
 });
 
-const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
-  route,
-  navigation,
-}) => {
+const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({ route, navigation }) => {
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const styles = getStyles(theme);
   const [activeTab, setActiveTab] = React.useState<string>("info");
@@ -96,9 +93,7 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
   const population = formatPopulation(country.population) ?? t("noData");
   const currencies = formatCurrencies(country.currencies) ?? t("noData");
   const languages = formatLanguages(country.languages) ?? t("noData");
-  const regionLine = [country.region, country.subregion]
-    .filter(Boolean)
-    .join(" · ");
+  const regionLine = [country.region, country.subregion].filter(Boolean).join(" · ");
 
   const infoStats: Stat[] = [
     { label: t("capital"), value: capital },
@@ -150,11 +145,7 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
     </View>
   );
 
-  const renderInfoCard = (
-    title: string,
-    value: string,
-    icon?: string
-  ): React.JSX.Element => (
+  const renderInfoCard = (title: string, value: string, icon?: string): React.JSX.Element => (
     <View style={styles.countryInfoCard}>
       <View style={styles.countryInfoCardHeader}>
         {icon && (
@@ -165,19 +156,11 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
             style={styles.countryInfoCardIcon}
           />
         )}
-        <Text
-          style={styles.countryInfoCardTitle}
-          numberOfLines={1}
-          ellipsizeMode="tail"
-        >
+        <Text style={styles.countryInfoCardTitle} numberOfLines={1} ellipsizeMode="tail">
           {title}
         </Text>
       </View>
-      <Text
-        style={styles.countryInfoCardValue}
-        numberOfLines={2}
-        ellipsizeMode="tail"
-      >
+      <Text style={styles.countryInfoCardValue} numberOfLines={2} ellipsizeMode="tail">
         {value}
       </Text>
     </View>
@@ -192,221 +175,194 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({
   };
 
   return (
-    <View style={styles.screenRoot}>
+    <View style={[styles.screenRoot, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <ScreenBackground gradient="explore" />
-      <ScrollView
-        style={styles.containerScrollView}
-        contentContainerStyle={styles.countryDetailsContent}
-      >
-        <View style={[styles.countryBackRow, styles.countryTopBar]}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            activeOpacity={0.6}
-            style={styles.countryTopBarButton}
-          >
-            <MaterialCommunityIcons
-              name="arrow-left"
-              size={24}
-              color={theme.colors.text}
-            />
-          </TouchableOpacity>
-          <Text style={styles.countryBackText}>{t("back")}</Text>
-          <View style={styles.countryTopBarSpacer} />
-          <TouchableOpacity
-            onPress={() => toggleFavorite(country.code)}
-            activeOpacity={0.6}
-            style={styles.countryTopBarButton}
-            testID="favorite-btn"
-            accessibilityRole="button"
-            accessibilityLabel={
-              isFavorited(country.code)
-                ? t("removeFromFavorites")
-                : t("addToFavorites")
-            }
-          >
-            <MaterialCommunityIcons
-              name={isFavorited(country.code) ? "heart" : "heart-outline"}
-              size={24}
-              color={theme.colors.error}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={handleNavigateToSettings}
-            activeOpacity={0.6}
-            style={styles.countryTopBarButton}
-          >
-            <MaterialCommunityIcons
-              name="cog"
-              size={24}
-              color={theme.colors.text}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.countryHeroSection}>
-          <View style={styles.countryHeroCard}>
-            <Image
-              source={FLAG_ASSETS[country.flagPath]}
-              style={styles.countryHeroFlag}
-              resizeMode="cover"
-            />
-            <View style={styles.countryHeroOverlay} />
-            <View style={styles.countryHeroText}>
-              <Text style={styles.countryHeroName}>{countryName}</Text>
-              <Text style={styles.countryHeroRegion}>
-                {regionLine || t("noData")}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.countryHeaderCard}>
-            <View>
-              <Text style={styles.countryHeaderName}>{countryName}</Text>
-              <Text style={styles.countryHeaderCapital}>
-                {t("capital")}: {capital}
-              </Text>
-            </View>
-            <View style={styles.countryRegionBadge}>
-              <Text style={styles.countryRegionBadgeText}>
-                {country.region ?? t("noData")}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.countryTabRow}>
-          {DETAIL_TABS.map((tab) => {
-            const isActive = activeTab === tab.key;
-
-            return (
-              <TouchableOpacity
-                key={tab.key}
-                style={[styles.countryTab, isActive && styles.countryTabActive]}
-                onPress={() => setActiveTab(tab.key)}
-                activeOpacity={0.78}
-              >
-                <Text
-                  style={[
-                    styles.countryTabText,
-                    isActive && styles.countryTabTextActive,
-                  ]}
-                >
-                  {t(tab.labelKey)}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-
-        {activeTab === "info" && (
-          <View>
-            <View style={styles.countryInfoSection}>
-              {renderInfoCard(t("population"), population, "people")}
-              {renderInfoCard(
-                t("area"),
-                `${formatNumber(country.area) ?? t("noData")} km²`,
-                "map"
-              )}
-              {renderInfoCard(t("languages"), languages, "translate")}
-            </View>
-
-            <View style={styles.countryFactCard}>
-              <View style={styles.countryFactHeader}>
-                <MaterialCommunityIcons
-                  name="sparkles"
-                  size={16}
-                  color={theme.colors.button}
-                />
-                <Text style={styles.countryFactLabel}>{t("countryFact")}</Text>
-              </View>
-              <Text style={styles.countryFactText}>
-                {t("countryFactText", {
-                  country: countryName,
-                  region: country.region ?? t("noData"),
-                  capital,
-                })}
-              </Text>
-            </View>
-          </View>
-        )}
-
-        {activeTab === "stats" && renderStatGrid(extendedStats)}
-
-        {activeTab === "map" && (
-          <View style={styles.countryMiniMapCard}>
-            <MapView
-              style={styles.countryMiniMap}
-              initialRegion={{
-                latitude: coordinates.latitude,
-                longitude: coordinates.longitude,
-                latitudeDelta: 20,
-                longitudeDelta: 20,
-              }}
-              scrollEnabled={false}
-              zoomEnabled={false}
-              pitchEnabled={false}
-              rotateEnabled={false}
+      <ContentContainer>
+        <ScrollView
+          style={styles.containerScrollView}
+          contentContainerStyle={styles.countryDetailsContent}
+        >
+          <View style={[styles.countryBackRow, styles.countryTopBar]}>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              activeOpacity={0.6}
+              style={styles.countryTopBarButton}
             >
-              <Marker coordinate={coordinates} title={countryName} />
-            </MapView>
+              <MaterialCommunityIcons name="arrow-left" size={24} color={theme.colors.text} />
+            </TouchableOpacity>
+            <Text style={styles.countryBackText}>{t("back")}</Text>
+            <View style={styles.countryTopBarSpacer} />
+            <TouchableOpacity
+              onPress={() => toggleFavorite(country.code)}
+              activeOpacity={0.6}
+              style={styles.countryTopBarButton}
+              testID="favorite-btn"
+              accessibilityRole="button"
+              accessibilityLabel={
+                isFavorited(country.code) ? t("removeFromFavorites") : t("addToFavorites")
+              }
+            >
+              <MaterialCommunityIcons
+                name={isFavorited(country.code) ? "heart" : "heart-outline"}
+                size={24}
+                color={theme.colors.error}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleNavigateToSettings}
+              activeOpacity={0.6}
+              style={styles.countryTopBarButton}
+            >
+              <MaterialCommunityIcons name="cog" size={24} color={theme.colors.text} />
+            </TouchableOpacity>
           </View>
-        )}
 
-        {activeTab === "facts" && (
-          <View style={styles.tabContent}>
-            {factsLoading ? (
-              <ActivityIndicator color={theme.colors.button} />
-            ) : facts.length > 0 ? (
-              <FlatList
-                data={facts}
-                renderItem={({ item, index }) => (
-                  <View key={index} style={styles.factItem}>
-                    <Text style={styles.factText}>{item}</Text>
-                  </View>
+          <View style={styles.countryHeroSection}>
+            <View style={styles.countryHeroCard}>
+              <Image
+                source={FLAG_ASSETS[country.flagPath]}
+                style={styles.countryHeroFlag}
+                resizeMode="cover"
+              />
+              <View style={styles.countryHeroOverlay} />
+              <View style={styles.countryHeroText}>
+                <Text style={styles.countryHeroName}>{countryName}</Text>
+                <Text style={styles.countryHeroRegion}>{regionLine || t("noData")}</Text>
+              </View>
+            </View>
+
+            <View style={styles.countryHeaderCard}>
+              <View>
+                <Text style={styles.countryHeaderName}>{countryName}</Text>
+                <Text style={styles.countryHeaderCapital}>
+                  {t("capital")}: {capital}
+                </Text>
+              </View>
+              <View style={styles.countryRegionBadge}>
+                <Text style={styles.countryRegionBadgeText}>{country.region ?? t("noData")}</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.countryTabRow}>
+            {DETAIL_TABS.map((tab) => {
+              const isActive = activeTab === tab.key;
+
+              return (
+                <TouchableOpacity
+                  key={tab.key}
+                  style={[styles.countryTab, isActive && styles.countryTabActive]}
+                  onPress={() => setActiveTab(tab.key)}
+                  activeOpacity={0.78}
+                >
+                  <Text style={[styles.countryTabText, isActive && styles.countryTabTextActive]}>
+                    {t(tab.labelKey)}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          {activeTab === "info" && (
+            <View>
+              <View style={styles.countryInfoSection}>
+                {renderInfoCard(t("population"), population, "people")}
+                {renderInfoCard(
+                  t("area"),
+                  `${formatNumber(country.area) ?? t("noData")} km²`,
+                  "map",
                 )}
-                keyExtractor={(_, idx) => String(idx)}
+                {renderInfoCard(t("languages"), languages, "translate")}
+              </View>
+
+              <View style={styles.countryFactCard}>
+                <View style={styles.countryFactHeader}>
+                  <MaterialCommunityIcons name="sparkles" size={16} color={theme.colors.button} />
+                  <Text style={styles.countryFactLabel}>{t("countryFact")}</Text>
+                </View>
+                <Text style={styles.countryFactText}>
+                  {t("countryFactText", {
+                    country: countryName,
+                    region: country.region ?? t("noData"),
+                    capital,
+                  })}
+                </Text>
+              </View>
+            </View>
+          )}
+
+          {activeTab === "stats" && renderStatGrid(extendedStats)}
+
+          {activeTab === "map" && (
+            <View style={styles.countryMiniMapCard}>
+              <MapView
+                style={styles.countryMiniMap}
+                initialRegion={{
+                  latitude: coordinates.latitude,
+                  longitude: coordinates.longitude,
+                  latitudeDelta: 20,
+                  longitudeDelta: 20,
+                }}
                 scrollEnabled={false}
-              />
-            ) : (
-              <Text style={styles.noFactsText}>{t("factsAvailableSoon")}</Text>
-            )}
+                zoomEnabled={false}
+                pitchEnabled={false}
+                rotateEnabled={false}
+              >
+                <Marker coordinate={coordinates} title={countryName} />
+              </MapView>
+            </View>
+          )}
+
+          {activeTab === "facts" && (
+            <View style={styles.tabContent}>
+              {factsLoading ? (
+                <ActivityIndicator color={theme.colors.button} />
+              ) : facts.length > 0 ? (
+                <FlatList
+                  data={facts}
+                  renderItem={({ item, index }) => (
+                    <View key={index} style={styles.factItem}>
+                      <Text style={styles.factText}>{item}</Text>
+                    </View>
+                  )}
+                  keyExtractor={(_, idx) => String(idx)}
+                  scrollEnabled={false}
+                />
+              ) : (
+                <Text style={styles.noFactsText}>{t("factsAvailableSoon")}</Text>
+              )}
+            </View>
+          )}
+
+          <View style={styles.countryCtaSection}>
+            <TouchableOpacity
+              style={[styles.button, styles.countryQuizButton]}
+              onPress={handleNavigateToQuiz}
+              activeOpacity={0.82}
+            >
+              <View style={styles.countryCtaContent}>
+                <MaterialCommunityIcons name="brain" size={20} color={theme.colors.buttonText} />
+                <Text style={styles.buttonText}>{t("testKnowledge") || "Test Your Knowledge"}</Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.button, styles.countryMapButton]}
+              onPress={handleShowOnMap}
+              activeOpacity={0.82}
+            >
+              <View style={styles.countryCtaContent}>
+                <MaterialCommunityIcons
+                  name="map-marker"
+                  size={20}
+                  color={theme.colors.buttonText}
+                />
+                <Text style={styles.buttonText}>{t("showOnMap")}</Text>
+              </View>
+            </TouchableOpacity>
           </View>
-        )}
-
-        <View style={styles.countryCtaSection}>
-          <TouchableOpacity
-            style={[styles.button, styles.countryQuizButton]}
-            onPress={handleNavigateToQuiz}
-            activeOpacity={0.82}
-          >
-            <View style={styles.countryCtaContent}>
-              <MaterialCommunityIcons
-                name="brain"
-                size={20}
-                color={theme.colors.buttonText}
-              />
-              <Text style={styles.buttonText}>
-                {t("testKnowledge") || "Test Your Knowledge"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.button, styles.countryMapButton]}
-            onPress={handleShowOnMap}
-            activeOpacity={0.82}
-          >
-            <View style={styles.countryCtaContent}>
-              <MaterialCommunityIcons
-                name="map-marker"
-                size={20}
-                color={theme.colors.buttonText}
-              />
-              <Text style={styles.buttonText}>{t("showOnMap")}</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </ContentContainer>
       <AdBanner />
     </View>
   );

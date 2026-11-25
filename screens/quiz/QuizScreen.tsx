@@ -19,17 +19,14 @@ import { QuestionCard } from "../../src/components/ui/QuestionCard";
 import { Button } from "../../src/components/ui/Button";
 import { FloatingNavBar } from "../../src/components/Navigation/FloatingNavBar";
 import { ScreenBackground } from "../../src/components/ScreenBackground";
+import { ContentContainer } from "../../src/components/ContentContainer";
 import AdBanner from "../../src/components/AdBanner";
 import { FLAG_ASSETS } from "../../utils/flagAssets";
 import { triggerMediumHaptic } from "../../utils/haptics";
 import { useQuizDifficulty } from "../../src/hooks/useQuizDifficulty";
 import { Difficulty } from "../../utils/quizDifficulty";
 
-const {
-  answerQuestion,
-  countCorrectAnswers,
-  getScoreMessageKey,
-} = require("./quizSession");
+const { answerQuestion, countCorrectAnswers, getScoreMessageKey } = require("./quizSession");
 
 interface Question {
   type: "flag" | "capital" | "country";
@@ -46,13 +43,10 @@ const QuizScreen = ({ route, navigation }: any) => {
   const [currentQuestion, setCurrentQuestion] = React.useState(0);
   const [questions, setQuestions] = React.useState<Question[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [selectedAnswer, setSelectedAnswer] = React.useState<string | null>(
-    null,
-  );
+  const [selectedAnswer, setSelectedAnswer] = React.useState<string | null>(null);
   const { theme } = useTheme();
   const { t } = useTranslation();
-  const { startQuiz, selectedDifficulty, questions: difficultyQuestions } =
-    useQuizDifficulty();
+  const { startQuiz, selectedDifficulty, questions: difficultyQuestions } = useQuizDifficulty();
   const practiceQuestions = route.params?.practiceQuestions;
   // Daily challenge deep link (see HomeScreen's DailyChallengeCard): the
   // country picker step doesn't exist in this screen today (quizzes always
@@ -70,11 +64,7 @@ const QuizScreen = ({ route, navigation }: any) => {
       quizStartTimeRef.current = Date.now();
       setQuestions(
         practiceQuestions.map(
-          ({
-            selectedAnswer: _selectedAnswer,
-            isCorrect: _isCorrect,
-            ...question
-          }: any) => ({
+          ({ selectedAnswer: _selectedAnswer, isCorrect: _isCorrect, ...question }: any) => ({
             ...question,
             difficulty: getDifficultyForQuestion(question),
           }),
@@ -120,9 +110,7 @@ const QuizScreen = ({ route, navigation }: any) => {
     }
   }, [practiceQuestions, preSelectedCountryCode, preSelectedDifficulty]);
 
-  const getDifficultyForQuestion = (
-    question: Question,
-  ): "easy" | "medium" | "hard" => {
+  const getDifficultyForQuestion = (question: Question): "easy" | "medium" | "hard" => {
     // Derive difficulty from question type
     // flag questions are easier, capital questions are harder
     switch (question.type) {
@@ -175,9 +163,7 @@ const QuizScreen = ({ route, navigation }: any) => {
     return (
       <View style={{ flex: 1 }}>
         <ScreenBackground gradient="map" />
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
         </View>
       </View>
@@ -199,360 +185,354 @@ const QuizScreen = ({ route, navigation }: any) => {
         {/* Top Bar */}
         <TopBar title={t("quiz")} />
 
-        {/* Progress Bar */}
-        <View style={{ paddingHorizontal: commonTokens.spacing.lg }}>
-          <ProgressBar progress={progress} />
-        </View>
+        <ContentContainer>
+          {/* Progress Bar */}
+          <View style={{ paddingHorizontal: commonTokens.spacing.lg }}>
+            <ProgressBar progress={progress} />
+          </View>
 
-        {/* Difficulty Selector */}
-        {!questions.length && (
-          <ScrollView
-            style={{ flex: 1 }}
-            contentContainerStyle={{ flexGrow: 1, paddingBottom: 100, justifyContent: 'center', alignItems: 'center' }}
-            scrollEventThrottle={16}
-          >
-            <View style={localStyles.difficultySelector}>
-              <Text style={localStyles.difficultyTitle}>
-                {t("selectDifficulty")}
-              </Text>
-              {(["easy", "medium", "hard"] as Difficulty[]).map((diff) => {
-                const isActive = selectedDifficulty === diff;
-                return (
-                  <TouchableOpacity
-                    key={diff}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected: isActive }}
-                    accessibilityLabel={t(`difficulty_${diff}`)}
-                    style={[
-                      localStyles.difficultyButton,
-                      isActive && localStyles.difficultyButtonActive,
-                    ]}
-                    onPress={() => startQuiz(diff)}
-                  >
-                    <Text
-                      style={[
-                        localStyles.difficultyButtonText,
-                        isActive && localStyles.difficultyButtonTextActive,
-                      ]}
-                    >
-                      {t(`difficulty_${diff}`)}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </ScrollView>
-        )}
-
-        {/* Content */}
-        {questions.length === 0 ? null : currentQuestion < questions.length ? (
-          <ScrollView
-            style={{ flex: 1 }}
-            contentContainerStyle={{
-              padding: commonTokens.spacing.lg,
-              paddingBottom: 100, // Space for floating nav
-              flexGrow: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-            scrollEventThrottle={16}
-          >
-            {/* Question Card */}
-            <QuestionCard
-              question={answeredQuestion.question}
-              questionType={answeredQuestion.type}
-              difficulty={answeredQuestion.difficulty || "medium"}
-              flagSource={
-                answeredQuestion.type === "flag" && answeredQuestion.flag
-                  ? FLAG_ASSETS[answeredQuestion.flag]
-                  : undefined
-              }
-            />
-
-            {/* Answer Buttons */}
-            <View
-              style={{
-                gap: commonTokens.spacing.md,
-                marginBottom: commonTokens.spacing.lg,
+          {/* Difficulty Selector */}
+          {!questions.length && (
+            <ScrollView
+              style={{ flex: 1 }}
+              contentContainerStyle={{
+                flexGrow: 1,
+                paddingBottom: 100,
+                justifyContent: "center",
+                alignItems: "center",
               }}
+              scrollEventThrottle={16}
             >
-              {answeredQuestion.options.map((option: string, index: number) => {
-                const letter = String.fromCharCode(65 + index); // A, B, C, D, E, ...
-                const isSelected = option === selectedAnswer;
-                const isCorrect = option === answeredQuestion.answer;
-                const showFeedback = hasAnsweredCurrentQuestion;
+              <View style={localStyles.difficultySelector}>
+                <Text style={localStyles.difficultyTitle}>{t("selectDifficulty")}</Text>
+                {(["easy", "medium", "hard"] as Difficulty[]).map((diff) => {
+                  const isActive = selectedDifficulty === diff;
+                  return (
+                    <TouchableOpacity
+                      key={diff}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: isActive }}
+                      accessibilityLabel={t(`difficulty_${diff}`)}
+                      style={[
+                        localStyles.difficultyButton,
+                        isActive && localStyles.difficultyButtonActive,
+                      ]}
+                      onPress={() => startQuiz(diff)}
+                    >
+                      <Text
+                        style={[
+                          localStyles.difficultyButtonText,
+                          isActive && localStyles.difficultyButtonTextActive,
+                        ]}
+                      >
+                        {t(`difficulty_${diff}`)}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </ScrollView>
+          )}
 
-                let backgroundColor = theme.colors.surface;
-                let borderColor = theme.colors.primary;
-                let textColor = theme.colors.text;
-                let badgeBackgroundColor = theme.colors.surfaceSubtle;
-                let badgeTextColor = theme.colors.text;
-
-                if (showFeedback && isSelected && isCorrect) {
-                  backgroundColor = theme.colors.success;
-                  borderColor = theme.colors.success;
-                  textColor = "#FFFFFF";
-                  badgeBackgroundColor = theme.colors.success;
-                  badgeTextColor = "#FFFFFF";
-                } else if (showFeedback && isSelected && !isCorrect) {
-                  backgroundColor = theme.colors.error;
-                  borderColor = theme.colors.error;
-                  textColor = "#FFFFFF";
-                  badgeBackgroundColor = theme.colors.error;
-                  badgeTextColor = "#FFFFFF";
-                } else if (showFeedback && !isSelected && isCorrect) {
-                  backgroundColor = theme.colors.successBg;
-                  borderColor = theme.colors.success;
-                  textColor = theme.colors.success;
-                  badgeBackgroundColor = theme.colors.success;
-                  badgeTextColor = "#FFFFFF";
-                } else if (hasAnsweredCurrentQuestion && !isSelected) {
-                  backgroundColor = theme.colors.surfaceSubtle;
-                  borderColor = theme.colors.textTertiary;
-                  textColor = theme.colors.textTertiary;
+          {/* Content */}
+          {questions.length === 0 ? null : currentQuestion < questions.length ? (
+            <ScrollView
+              style={{ flex: 1 }}
+              contentContainerStyle={{
+                padding: commonTokens.spacing.lg,
+                paddingBottom: 100, // Space for floating nav
+                flexGrow: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              scrollEventThrottle={16}
+            >
+              {/* Question Card */}
+              <QuestionCard
+                question={answeredQuestion.question}
+                questionType={answeredQuestion.type}
+                difficulty={answeredQuestion.difficulty || "medium"}
+                flagSource={
+                  answeredQuestion.type === "flag" && answeredQuestion.flag
+                    ? FLAG_ASSETS[answeredQuestion.flag]
+                    : undefined
                 }
+              />
 
-                return (
-                  <View
-                    key={index}
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: commonTokens.spacing.md,
-                    }}
-                  >
-                    <View
-                      style={{
-                        width: 44,
-                        height: 44,
-                        borderRadius: 10,
-                        backgroundColor: badgeBackgroundColor,
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text
-                        testID={`quiz-answer-letter-${index}`}
-                        style={{
-                          fontSize: commonTokens.typography.titleLg.fontSize,
-                          fontFamily:
-                            commonTokens.typography.titleLg.fontFamily,
-                          fontWeight: "700",
-                          color: badgeTextColor,
-                        }}
-                      >
-                        {letter}
-                      </Text>
-                    </View>
-                    <Pressable
-                      testID={`quiz-answer-option-${index}`}
-                      onPress={() => handleAnswer(option)}
-                      disabled={hasAnsweredCurrentQuestion}
-                      style={({ pressed }) => ({
-                        flex: 1,
-                        height: 48,
-                        borderRadius: commonTokens.borderRadius.md,
-                        backgroundColor,
-                        borderWidth: 2,
-                        borderColor,
-                        justifyContent: "center",
-                        paddingHorizontal: commonTokens.spacing.md,
-                        opacity: pressed ? 0.8 : 1,
-                      })}
-                    >
-                      <Text
-                        style={{
-                          fontSize: commonTokens.typography.bodyMd.fontSize,
-                          fontFamily: commonTokens.typography.bodyMd.fontFamily,
-                          color: textColor,
-                        }}
-                      >
-                        {option}
-                      </Text>
-                    </Pressable>
-                  </View>
-                );
-              })}
-            </View>
-
-            {/* Feedback and Next Button */}
-            {hasAnsweredCurrentQuestion && (
+              {/* Answer Buttons */}
               <View
                 style={{
-                  backgroundColor: answeredQuestion.isCorrect
-                    ? theme.colors.successBg
-                    : theme.colors.errorBg,
-                  borderRadius: commonTokens.borderRadius.lg,
-                  padding: commonTokens.spacing.lg,
+                  gap: commonTokens.spacing.md,
                   marginBottom: commonTokens.spacing.lg,
-                  borderLeftWidth: 4,
-                  borderLeftColor: answeredQuestion.isCorrect
-                    ? theme.colors.success
-                    : theme.colors.error,
                 }}
               >
-                <Text
+                {answeredQuestion.options.map((option: string, index: number) => {
+                  const letter = String.fromCharCode(65 + index); // A, B, C, D, E, ...
+                  const isSelected = option === selectedAnswer;
+                  const isCorrect = option === answeredQuestion.answer;
+                  const showFeedback = hasAnsweredCurrentQuestion;
+
+                  let backgroundColor = theme.colors.surface;
+                  let borderColor = theme.colors.primary;
+                  let textColor = theme.colors.text;
+                  let badgeBackgroundColor = theme.colors.surfaceSubtle;
+                  let badgeTextColor = theme.colors.text;
+
+                  if (showFeedback && isSelected && isCorrect) {
+                    backgroundColor = theme.colors.success;
+                    borderColor = theme.colors.success;
+                    textColor = "#FFFFFF";
+                    badgeBackgroundColor = theme.colors.success;
+                    badgeTextColor = "#FFFFFF";
+                  } else if (showFeedback && isSelected && !isCorrect) {
+                    backgroundColor = theme.colors.error;
+                    borderColor = theme.colors.error;
+                    textColor = "#FFFFFF";
+                    badgeBackgroundColor = theme.colors.error;
+                    badgeTextColor = "#FFFFFF";
+                  } else if (showFeedback && !isSelected && isCorrect) {
+                    backgroundColor = theme.colors.successBg;
+                    borderColor = theme.colors.success;
+                    textColor = theme.colors.success;
+                    badgeBackgroundColor = theme.colors.success;
+                    badgeTextColor = "#FFFFFF";
+                  } else if (hasAnsweredCurrentQuestion && !isSelected) {
+                    backgroundColor = theme.colors.surfaceSubtle;
+                    borderColor = theme.colors.textTertiary;
+                    textColor = theme.colors.textTertiary;
+                  }
+
+                  return (
+                    <View
+                      key={index}
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: commonTokens.spacing.md,
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: 44,
+                          height: 44,
+                          borderRadius: 10,
+                          backgroundColor: badgeBackgroundColor,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text
+                          testID={`quiz-answer-letter-${index}`}
+                          style={{
+                            fontSize: commonTokens.typography.titleLg.fontSize,
+                            fontFamily: commonTokens.typography.titleLg.fontFamily,
+                            fontWeight: "700",
+                            color: badgeTextColor,
+                          }}
+                        >
+                          {letter}
+                        </Text>
+                      </View>
+                      <Pressable
+                        testID={`quiz-answer-option-${index}`}
+                        onPress={() => handleAnswer(option)}
+                        disabled={hasAnsweredCurrentQuestion}
+                        style={({ pressed }) => ({
+                          flex: 1,
+                          height: 48,
+                          borderRadius: commonTokens.borderRadius.md,
+                          backgroundColor,
+                          borderWidth: 2,
+                          borderColor,
+                          justifyContent: "center",
+                          paddingHorizontal: commonTokens.spacing.md,
+                          opacity: pressed ? 0.8 : 1,
+                        })}
+                      >
+                        <Text
+                          style={{
+                            fontSize: commonTokens.typography.bodyMd.fontSize,
+                            fontFamily: commonTokens.typography.bodyMd.fontFamily,
+                            color: textColor,
+                          }}
+                        >
+                          {option}
+                        </Text>
+                      </Pressable>
+                    </View>
+                  );
+                })}
+              </View>
+
+              {/* Feedback and Next Button */}
+              {hasAnsweredCurrentQuestion && (
+                <View
                   style={{
-                    fontSize: commonTokens.typography.titleMd.fontSize,
-                    fontFamily: commonTokens.typography.titleMd.fontFamily,
-                    fontWeight: "600",
-                    color: theme.colors.text,
-                    marginBottom: commonTokens.spacing.md,
+                    backgroundColor: answeredQuestion.isCorrect
+                      ? theme.colors.successBg
+                      : theme.colors.errorBg,
+                    borderRadius: commonTokens.borderRadius.lg,
+                    padding: commonTokens.spacing.lg,
+                    marginBottom: commonTokens.spacing.lg,
+                    borderLeftWidth: 4,
+                    borderLeftColor: answeredQuestion.isCorrect
+                      ? theme.colors.success
+                      : theme.colors.error,
                   }}
                 >
-                  {answeredQuestion.isCorrect
-                    ? t("quizAnswerCorrect")
-                    : t("quizAnswerIncorrect")}
-                </Text>
+                  <Text
+                    style={{
+                      fontSize: commonTokens.typography.titleMd.fontSize,
+                      fontFamily: commonTokens.typography.titleMd.fontFamily,
+                      fontWeight: "600",
+                      color: theme.colors.text,
+                      marginBottom: commonTokens.spacing.md,
+                    }}
+                  >
+                    {answeredQuestion.isCorrect ? t("quizAnswerCorrect") : t("quizAnswerIncorrect")}
+                  </Text>
 
-                <Text
-                  style={{
-                    fontSize: commonTokens.typography.bodyMd.fontSize,
-                    fontFamily: commonTokens.typography.bodyMd.fontFamily,
-                    color: theme.colors.textSecondary,
-                    marginBottom: commonTokens.spacing.sm,
-                  }}
-                >
-                  {t("quizYourAnswer")}: {selectedAnswer}
-                </Text>
-
-                {!answeredQuestion.isCorrect && (
                   <Text
                     style={{
                       fontSize: commonTokens.typography.bodyMd.fontSize,
                       fontFamily: commonTokens.typography.bodyMd.fontFamily,
                       color: theme.colors.textSecondary,
-                      marginBottom: commonTokens.spacing.md,
+                      marginBottom: commonTokens.spacing.sm,
                     }}
                   >
-                    {t("quizCorrectAnswer")}: {answeredQuestion.answer}
+                    {t("quizYourAnswer")}: {selectedAnswer}
                   </Text>
-                )}
 
-                <Button
-                  label={
-                    currentQuestion + 1 === questions.length
-                      ? t("quizFinish")
-                      : t("quizNextQuestion")
-                  }
-                  onPress={handleNextQuestion}
-                />
-              </View>
-            )}
+                  {!answeredQuestion.isCorrect && (
+                    <Text
+                      style={{
+                        fontSize: commonTokens.typography.bodyMd.fontSize,
+                        fontFamily: commonTokens.typography.bodyMd.fontFamily,
+                        color: theme.colors.textSecondary,
+                        marginBottom: commonTokens.spacing.md,
+                      }}
+                    >
+                      {t("quizCorrectAnswer")}: {answeredQuestion.answer}
+                    </Text>
+                  )}
 
-            {/* Question Progress */}
-            <Text
-              testID="question-progress"
-              style={{
-                fontSize: commonTokens.typography.bodyMd.fontSize,
-                fontFamily: commonTokens.typography.bodyMd.fontFamily,
-                color: theme.colors.textSecondary,
-                textAlign: "center",
-                marginTop: commonTokens.spacing.md,
+                  <Button
+                    label={
+                      currentQuestion + 1 === questions.length
+                        ? t("quizFinish")
+                        : t("quizNextQuestion")
+                    }
+                    onPress={handleNextQuestion}
+                  />
+                </View>
+              )}
+
+              {/* Question Progress */}
+              <Text
+                testID="question-progress"
+                style={{
+                  fontSize: commonTokens.typography.bodyMd.fontSize,
+                  fontFamily: commonTokens.typography.bodyMd.fontFamily,
+                  color: theme.colors.textSecondary,
+                  textAlign: "center",
+                  marginTop: commonTokens.spacing.md,
+                }}
+              >
+                {t("questionProgress", {
+                  current: currentQuestion + 1,
+                  total: questions.length,
+                })}
+              </Text>
+            </ScrollView>
+          ) : (
+            /* Quiz Complete Screen */
+            <ScrollView
+              style={{ flex: 1 }}
+              contentContainerStyle={{
+                padding: commonTokens.spacing.lg,
+                paddingBottom: 100,
+                justifyContent: "center",
               }}
             >
-              {t("questionProgress", {
-                current: currentQuestion + 1,
-                total: questions.length,
-              })}
-            </Text>
-          </ScrollView>
-        ) : (
-          /* Quiz Complete Screen */
-          <ScrollView
-            style={{ flex: 1 }}
-            contentContainerStyle={{
-              padding: commonTokens.spacing.lg,
-              paddingBottom: 100,
-              justifyContent: "center",
-            }}
-          >
-            <View
-              style={{ alignItems: "center", gap: commonTokens.spacing.lg }}
-            >
-              <Text
-                style={{
-                  fontSize: commonTokens.typography.displayMd.fontSize,
-                  fontFamily: commonTokens.typography.displayMd.fontFamily,
-                  fontWeight: "700",
-                  color: theme.colors.primary,
-                  marginBottom: commonTokens.spacing.lg,
-                }}
-              >
-                {t("quizScore")}
-              </Text>
-
-              <View
-                style={{
-                  alignItems: "center",
-                  backgroundColor: theme.colors.surface,
-                  borderRadius: commonTokens.borderRadius.lg,
-                  padding: commonTokens.spacing.xl,
-                  width: "100%",
-                  ...commonTokens.shadows.md,
-                }}
-              >
+              <View style={{ alignItems: "center", gap: commonTokens.spacing.lg }}>
                 <Text
                   style={{
-                    fontSize: 64,
-                    fontFamily: commonTokens.typography.display.fontFamily,
+                    fontSize: commonTokens.typography.displayMd.fontSize,
+                    fontFamily: commonTokens.typography.displayMd.fontFamily,
                     fontWeight: "700",
                     color: theme.colors.primary,
+                    marginBottom: commonTokens.spacing.lg,
                   }}
                 >
-                  {score}/{questions.length}
+                  {t("quizScore")}
                 </Text>
 
-                <Text
+                <View
                   style={{
-                    fontSize: commonTokens.typography.bodyLg.fontSize,
-                    fontFamily: commonTokens.typography.bodyLg.fontFamily,
-                    color: theme.colors.textSecondary,
-                    marginTop: commonTokens.spacing.md,
-                    textAlign: "center",
+                    alignItems: "center",
+                    backgroundColor: theme.colors.surface,
+                    borderRadius: commonTokens.borderRadius.lg,
+                    padding: commonTokens.spacing.xl,
+                    width: "100%",
+                    ...commonTokens.shadows.md,
                   }}
                 >
-                  {t(getScoreMessageKey(score, questions.length))}
-                </Text>
-              </View>
+                  <Text
+                    style={{
+                      fontSize: 64,
+                      fontFamily: commonTokens.typography.display.fontFamily,
+                      fontWeight: "700",
+                      color: theme.colors.primary,
+                    }}
+                  >
+                    {score}/{questions.length}
+                  </Text>
 
-              <View style={{ width: "100%", gap: commonTokens.spacing.md }}>
-                <Button
-                  label={t("quizViewAnswers")}
-                  onPress={() => {
-                    const timeTaken = quizStartTimeRef.current
-                      ? Math.round((Date.now() - quizStartTimeRef.current) / 1000)
-                      : 0;
-                    navigation.navigate("QuizResults", {
-                      score,
-                      questions,
-                      difficulty: practiceQuestions?.length
-                        ? undefined
-                        : selectedDifficulty,
-                      timeTaken,
-                    });
-                  }}
-                />
-                <Button
-                  label={t("quizTryAgain")}
-                  onPress={() => {
-                    setCurrentQuestion(0);
-                    setSelectedAnswer(null);
-                    startQuiz(selectedDifficulty);
-                  }}
-                  variant="outlined"
-                />
+                  <Text
+                    style={{
+                      fontSize: commonTokens.typography.bodyLg.fontSize,
+                      fontFamily: commonTokens.typography.bodyLg.fontFamily,
+                      color: theme.colors.textSecondary,
+                      marginTop: commonTokens.spacing.md,
+                      textAlign: "center",
+                    }}
+                  >
+                    {t(getScoreMessageKey(score, questions.length))}
+                  </Text>
+                </View>
+
+                <View style={{ width: "100%", gap: commonTokens.spacing.md }}>
+                  <Button
+                    label={t("quizViewAnswers")}
+                    onPress={() => {
+                      const timeTaken = quizStartTimeRef.current
+                        ? Math.round((Date.now() - quizStartTimeRef.current) / 1000)
+                        : 0;
+                      navigation.navigate("QuizResults", {
+                        score,
+                        questions,
+                        difficulty: practiceQuestions?.length ? undefined : selectedDifficulty,
+                        timeTaken,
+                      });
+                    }}
+                  />
+                  <Button
+                    label={t("quizTryAgain")}
+                    onPress={() => {
+                      setCurrentQuestion(0);
+                      setSelectedAnswer(null);
+                      startQuiz(selectedDifficulty);
+                    }}
+                    variant="outlined"
+                  />
+                </View>
               </View>
-            </View>
-          </ScrollView>
-        )}
+            </ScrollView>
+          )}
+        </ContentContainer>
 
         {/* Floating Navigation Bar */}
-        <FloatingNavBar
-          currentRoute="Quiz"
-          onNavigate={handleNavigate}
-          items={navItems}
-        />
+        <FloatingNavBar currentRoute="Quiz" onNavigate={handleNavigate} items={navItems} />
 
         {/* Ad Banner */}
         <AdBanner />
@@ -567,8 +547,8 @@ const createLocalStyles = (theme: any) =>
       paddingHorizontal: commonTokens.spacing.lg,
       paddingTop: commonTokens.spacing.md,
       gap: commonTokens.spacing.sm,
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: "center",
+      alignItems: "center",
     },
     difficultyTitle: {
       fontSize: commonTokens.typography.titleMd.fontSize,
