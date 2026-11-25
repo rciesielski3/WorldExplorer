@@ -112,6 +112,7 @@ const CountryInfoCard = ({
   insetLeft: number;
   insetRight: number;
 }) => {
+  const { t } = useTranslation();
   const translateY = animationValue.interpolate({
     inputRange: [0, 1],
     outputRange: [400, 0],
@@ -143,6 +144,8 @@ const CountryInfoCard = ({
       <TouchableOpacity
         style={styles.infoCardClose}
         onPress={onClose}
+        accessibilityRole="button"
+        accessibilityLabel={t("a11yCloseCountryInfo")}
         hitSlop={{ top: 12, right: 12, bottom: 12, left: 12 }}
       >
         <MaterialCommunityIcons name="close" size={20} color={theme.colors.text} />
@@ -211,7 +214,9 @@ const TopBar = ({
   onBackPress: () => void;
   theme: any;
   insets: any;
-}) => (
+}) => {
+  const { t } = useTranslation();
+  return (
   <View
     style={[
       styles.topBar,
@@ -224,6 +229,8 @@ const TopBar = ({
   >
     <TouchableOpacity
       onPress={onBackPress}
+      accessibilityRole="button"
+      accessibilityLabel={t("a11yGoBack")}
       activeOpacity={0.7}
       hitSlop={{ top: 8, right: 8, bottom: 8, left: 8 }}
       style={styles.topBarButton}
@@ -233,7 +240,8 @@ const TopBar = ({
     <Text style={[styles.topBarTitle, { color: theme.colors.text }]}>{title}</Text>
     <View style={styles.topBarSpacer} />
   </View>
-);
+  );
+};
 
 const MapScreen: React.FC<MapScreenProps> = ({ route, navigation }) => {
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();

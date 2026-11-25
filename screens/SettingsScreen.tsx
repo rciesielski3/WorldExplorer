@@ -562,6 +562,8 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
             >
               <TouchableOpacity
                 onPress={handleResetData}
+                accessibilityRole="button"
+                accessibilityLabel={t("resetData")}
                 style={{
                   paddingVertical: commonTokens.spacing.md,
                   paddingHorizontal: commonTokens.spacing.md,
@@ -654,6 +656,9 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
                   <TouchableOpacity
                     disabled={!canBuyPremium}
                     onPress={purchasePremium}
+                    accessibilityRole="button"
+                    accessibilityLabel={t("buyPremium")}
+                    accessibilityState={{ disabled: !canBuyPremium }}
                     style={{
                       paddingVertical: commonTokens.spacing.md,
                       paddingHorizontal: commonTokens.spacing.lg,
@@ -680,6 +685,9 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
                   <TouchableOpacity
                     disabled={!canRestorePremium}
                     onPress={restorePurchases}
+                    accessibilityRole="button"
+                    accessibilityLabel={t("restorePurchases")}
+                    accessibilityState={{ disabled: !canRestorePremium }}
                     style={{
                       paddingVertical: commonTokens.spacing.md,
                       paddingHorizontal: commonTokens.spacing.lg,
@@ -737,6 +745,8 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
 
               <TouchableOpacity
                 onPress={() => navigation.navigate("QuizStats")}
+                accessibilityRole="button"
+                accessibilityLabel={t("a11yViewQuizStats")}
                 style={{
                   paddingVertical: commonTokens.spacing.md,
                   paddingHorizontal: commonTokens.spacing.md,

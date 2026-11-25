@@ -96,6 +96,10 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
     return (
       <TouchableOpacity
         onPress={() => navigation.navigate("CountryDetails", { country: item })}
+        accessibilityRole="button"
+        accessibilityLabel={t("a11yViewCountryDetails", {
+          name: getLocalizedCountryName(item, i18n.language),
+        })}
         activeOpacity={0.78}
       >
         <View style={styles.countryCard}>
@@ -155,6 +159,9 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
                   key={filter.key}
                   style={[styles.regionFilterChip, isActive && styles.regionFilterChipActive]}
                   onPress={() => setSelectedRegion(filter.value)}
+                  accessibilityRole="button"
+                  accessibilityLabel={t(filter.labelKey)}
+                  accessibilityState={{ selected: isActive }}
                   activeOpacity={0.78}
                 >
                   <Text

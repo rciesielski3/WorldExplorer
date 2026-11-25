@@ -129,5 +129,18 @@
   "achievementImproverDesc": "Verbessere Punkte um 20 oder mehr",
   "notifications": "Benachrichtigungen",
   "dailyChallengeReminder": "Tägliche Herausforderungserinnerung",
-  "remindMeAt": "Erinnern Sie mich um"
+  "remindMeAt": "Erinnern Sie mich um",
+  "a11ySearchCountries": "Länder suchen",
+  "a11ySelectCountry": "{{name}} auswählen",
+  "a11yGoBack": "Zurück",
+  "a11yOpenSettings": "Einstellungen öffnen",
+  "a11yViewCountryDetails": "Details zu {{name}} anzeigen",
+  "a11yViewQuizStats": "Quiz-Statistiken anzeigen",
+  "a11yCloseCountryInfo": "Länderinformationen schließen",
+  "a11yCloseResults": "Ergebnisse schließen und zur Startseite zurückkehren",
+  "a11yRetry": "Erneut versuchen",
+  "a11yTryAgain": "Erneut versuchen",
+  "a11yDismiss": "Verwerfen",
+  "a11yStartDailyChallenge": "Tägliche Herausforderung starten: {{name}}",
+  "a11yClearSearch": "Suche löschen"
 }

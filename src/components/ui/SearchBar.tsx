@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ViewStyle,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from '../../../context/ThemeContext';
 import { commonTokens } from '../../../theme/tokens';
@@ -23,6 +24,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 }) => {
   const [query, setQuery] = useState('');
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const { colors } = theme;
 
   const handleClear = () => {
@@ -41,6 +43,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       <TextInput
         style={[styles.input, { color: colors.text, backgroundColor: colors.surfaceVariant }]}
         placeholder={placeholder}
+        accessibilityLabel={placeholder}
         placeholderTextColor={colors.textTertiary}
         value={query}
         onChangeText={(text) => {
@@ -50,7 +53,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         testID="search-input"
       />
       {query.length > 0 && (
-        <TouchableOpacity onPress={handleClear} testID="clear-btn">
+        <TouchableOpacity
+          onPress={handleClear}
+          accessibilityRole="button"
+          accessibilityLabel={t('a11yClearSearch')}
+          testID="clear-btn"
+        >
           <MaterialCommunityIcons
             name="close-circle"
             size={20}

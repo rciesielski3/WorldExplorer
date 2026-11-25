@@ -185,6 +185,8 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({ route, navi
           <View style={[styles.countryBackRow, styles.countryTopBar]}>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
+              accessibilityRole="button"
+              accessibilityLabel={t("a11yGoBack")}
               activeOpacity={0.6}
               style={styles.countryTopBarButton}
             >
@@ -210,6 +212,8 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({ route, navi
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleNavigateToSettings}
+              accessibilityRole="button"
+              accessibilityLabel={t("a11yOpenSettings")}
               activeOpacity={0.6}
               style={styles.countryTopBarButton}
             >
@@ -253,6 +257,9 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({ route, navi
                   key={tab.key}
                   style={[styles.countryTab, isActive && styles.countryTabActive]}
                   onPress={() => setActiveTab(tab.key)}
+                  accessibilityRole="tab"
+                  accessibilityLabel={t(tab.labelKey)}
+                  accessibilityState={{ selected: isActive }}
                   activeOpacity={0.78}
                 >
                   <Text style={[styles.countryTabText, isActive && styles.countryTabTextActive]}>
@@ -338,6 +345,8 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({ route, navi
             <TouchableOpacity
               style={[styles.button, styles.countryQuizButton]}
               onPress={handleNavigateToQuiz}
+              accessibilityRole="button"
+              accessibilityLabel={t("testKnowledge")}
               activeOpacity={0.82}
             >
               <View style={styles.countryCtaContent}>
@@ -349,6 +358,8 @@ const CountryDetailsScreen: React.FC<CountryDetailsScreenProps> = ({ route, navi
             <TouchableOpacity
               style={[styles.button, styles.countryMapButton]}
               onPress={handleShowOnMap}
+              accessibilityRole="button"
+              accessibilityLabel={t("showOnMap")}
               activeOpacity={0.82}
             >
               <View style={styles.countryCtaContent}>

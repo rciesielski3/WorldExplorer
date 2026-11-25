@@ -38,6 +38,8 @@ export const DailyChallengeCard: React.FC<DailyChallengeCardProps> = ({
       <TouchableOpacity
         style={[styles.button, { backgroundColor: colors.primary }]}
         onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={t('a11yStartDailyChallenge', { name: countryName })}
         activeOpacity={0.8}
         testID={`${testID || 'daily-card'}-button`}
       >

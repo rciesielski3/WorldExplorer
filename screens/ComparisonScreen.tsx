@@ -134,6 +134,7 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({ route }) => 
               { borderColor: colors.border, color: colors.text },
             ]}
             placeholder={t("searchCountries")}
+            accessibilityLabel={t("a11ySearchCountries")}
             placeholderTextColor={colors.textTertiary}
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -146,6 +147,10 @@ export const ComparisonScreen: React.FC<ComparisonScreenProps> = ({ route }) => 
               <TouchableOpacity
                 style={[localStyles.pickerItem, { borderBottomColor: colors.border }]}
                 onPress={() => handleSelectCountry(item)}
+                accessibilityRole="button"
+                accessibilityLabel={t("a11ySelectCountry", {
+                  name: getLocalizedCountryName(item, i18n.language),
+                })}
                 testID={`picker-item-${item.code}`}
               >
                 <Text style={{ color: colors.text }}>
