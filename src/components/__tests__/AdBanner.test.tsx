@@ -1,14 +1,18 @@
-import React from "react";
 import { render } from "@testing-library/react-native";
 import { useWindowDimensions } from "react-native";
 import AdBanner, { getAdWidthBucket } from "../AdBanner";
 import { commonTokens } from "../../../theme/tokens";
 
 const mockMount = jest.fn();
+const mockUsePremium = jest.fn();
+
+jest.mock("../../../context/PremiumContext", () => ({
+  usePremium: () => mockUsePremium(),
+}));
 
 jest.mock("react-native-google-mobile-ads", () => {
-  const React = require("react");
-  const { View } = require("react-native");
+  const React = jest.requireActual<typeof import("react")>("react");
+  const { View } = jest.requireActual<typeof import("react-native")>("react-native");
   const BannerAd = () => {
     React.useEffect(() => {
       mockMount();
@@ -32,7 +36,10 @@ const setWidth = (width: number) =>
   mockUseWindowDimensions.mockReturnValue({ width, height: 800, scale: 2, fontScale: 1 });
 
 describe("AdBanner", () => {
-  beforeEach(() => mockMount.mockClear());
+  beforeEach(() => {
+    mockMount.mockClear();
+    mockUsePremium.mockReturnValue({ isPremium: false, isLoading: false });
+  });
 
   it("requests the ad once on mount", () => {
     setWidth(400);
@@ -60,5 +67,29 @@ describe("AdBanner", () => {
 
   it("caps the bucket at the content max width", () => {
     expect(getAdWidthBucket(2000)).toBe(getAdWidthBucket(commonTokens.layout.maxContentWidth));
+  });
+
+  it("renders the banner for a non-premium user", () => {
+    setWidth(400);
+    const { queryByTestId } = render(<AdBanner />);
+    expect(queryByTestId("banner-ad")).toBeTruthy();
+  });
+
+  it("renders nothing for a premium user", () => {
+    setWidth(400);
+    mockUsePremium.mockReturnValue({ isPremium: true, isLoading: false });
+    const { toJSON, queryByTestId } = render(<AdBanner />);
+    expect(queryByTestId("banner-ad")).toBeNull();
+    expect(toJSON()).toBeNull();
+    expect(mockMount).not.toHaveBeenCalled();
+  });
+
+  it("renders nothing while premium state is loading", () => {
+    setWidth(400);
+    mockUsePremium.mockReturnValue({ isPremium: false, isLoading: true });
+    const { toJSON, queryByTestId } = render(<AdBanner />);
+    expect(queryByTestId("banner-ad")).toBeNull();
+    expect(toJSON()).toBeNull();
+    expect(mockMount).not.toHaveBeenCalled();
   });
 });

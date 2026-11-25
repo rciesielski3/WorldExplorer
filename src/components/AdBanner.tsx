@@ -3,6 +3,7 @@ import { View, StyleSheet, useWindowDimensions } from "react-native";
 import { BannerAd, BannerAdSize, TestIds } from "react-native-google-mobile-ads";
 import { ADMOB_BANNER_ID } from "@env";
 import { commonTokens } from "../../theme/tokens";
+import { usePremium } from "../../context/PremiumContext";
 
 const adUnitId = ADMOB_BANNER_ID || TestIds.BANNER;
 
@@ -16,8 +17,15 @@ export const getAdWidthBucket = (windowWidth: number) => {
 };
 
 const AdBanner = () => {
+  const { isPremium, isLoading } = usePremium();
   const { width } = useWindowDimensions();
   const widthBucket = getAdWidthBucket(width);
+
+  // Premium users never see ads. Render nothing while premium state is still
+  // resolving so they don't get a flash of banner on startup.
+  if (isPremium || isLoading) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>
