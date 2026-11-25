@@ -73,7 +73,7 @@ if (!API_KEY) {
 }
 
 // BAD: Never hardcode
-const API_KEY = 'AIzaSyBszkaLmegtG6WUAc8FNgx4CuOFlmMGsc8'; // NEVER DO THIS
+const API_KEY = 'YOUR_MAPS_API_KEY_HERE'; // NEVER DO THIS
 ```
 
 ### What to do if API Keys are Exposed
