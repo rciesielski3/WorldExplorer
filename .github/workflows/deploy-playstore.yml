@@ -29,7 +29,6 @@ jobs:
     permissions:
       contents: write
     outputs:
-      aab-path: ${{ steps.build.outputs.aab-path }}
       version: ${{ steps.version.outputs.version }}
 
     steps:
@@ -37,13 +36,15 @@ jobs:
 
       - name: Determine Version
         id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
         run: |
-          if [ -z "${{ github.event.inputs.version }}" ]; then
+          if [ -z "$INPUT_VERSION" ]; then
             VERSION=$(grep 'versionName' android/app/build.gradle | sed -n 's/.*versionName "\(.*\)".*/\1/p')
           else
-            VERSION="${{ github.event.inputs.version }}"
+            VERSION="$INPUT_VERSION"
           fi
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Version: $VERSION"
 
       - name: Setup Node.js
@@ -81,13 +82,17 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.PLAYSTORE_SERVICE_ACCOUNT_JSON }}
           packageName: com.adateo.WorldExplorer
           releaseFiles: 'android/app/build/outputs/bundle/release/app-release.aab'
-          tracks: ${{ github.event.inputs.track }}
+          tracks: ${{ inputs.track }}
           releaseName: 'v${{ steps.version.outputs.version }}'
           status: completed
 
+      - name: Release date
+        id: date
+        run: echo "date=$(date -u +%F)" >> "$GITHUB_OUTPUT"
+
       - name: Create GitHub Release
-        if: github.event.inputs.track == 'production'
-        uses: softprops/action-gh-release@v1
+        if: inputs.track == 'production'
+        uses: softprops/action-gh-release@v2
         with:
           files: android/app/build/outputs/bundle/release/app-release.aab
           tag_name: v${{ steps.version.outputs.version }}
@@ -95,25 +100,28 @@ jobs:
             # WorldExplorer v${{ steps.version.outputs.version }}
 
             ## Release Track
-            **${{ github.event.inputs.track }}** track deployment
+            **${{ inputs.track }}** track deployment
 
             ## Release Notes
-            ${{ github.event.inputs.release_notes || 'No additional notes provided' }}
+            ${{ inputs.release_notes || 'No additional notes provided' }}
 
             ## Build Details
             - Platform: Android
             - Build Type: release
             - Signing: production keystore
-            - Date: ${{ github.event.repository }} at ${{ github.event.head_commit.timestamp }}
+            - Date: ${{ steps.date.outputs.date }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deployment Summary
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+          RELEASE_TRACK: ${{ inputs.track }}
         run: |
           echo "✅ Deployment completed"
-          echo "📦 Version: v${{ steps.version.outputs.version }}"
-          echo "📍 Track: ${{ github.event.inputs.track }}"
+          echo "📦 Version: v$RELEASE_VERSION"
+          echo "📍 Track: $RELEASE_TRACK"
           echo "🏪 Play Store: app-release.aab uploaded"
-          if [ "${{ github.event.inputs.track }}" == "production" ]; then
-            echo "🏷️ GitHub Release: v${{ steps.version.outputs.version }} created"
+          if [ "$RELEASE_TRACK" = "production" ]; then
+            echo "🏷️ GitHub Release: v$RELEASE_VERSION created"
           fi

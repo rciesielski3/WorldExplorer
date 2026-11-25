@@ -55,13 +55,15 @@ jobs:
           if-no-files-found: error
 
       - name: Build Summary
+        env:
+          RELEASE_NOTES: ${{ inputs.release_notes }}
         run: |
           echo "✅ Build completed successfully"
           echo "📦 Artifact: app-release.aab"
           echo "📍 Size: $(du -h android/app/build/outputs/bundle/release/app-release.aab | cut -f1)"
           echo "🔗 Download from: Actions → Build Android Bundle → Artifacts"
-          if [ -n "${{ github.event.inputs.release_notes }}" ]; then
+          if [ -n "$RELEASE_NOTES" ]; then
             echo ""
             echo "📝 Release Notes:"
-            echo "${{ github.event.inputs.release_notes }}"
+            printf '%s\n' "$RELEASE_NOTES"
           fi
