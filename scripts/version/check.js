@@ -10,6 +10,7 @@
 //      - with --require-bump, any release-relevant file change also needs a
 //        strictly greater versionCode (used by release tooling, not by PR CI).
 // Exit codes: 0 ok, 1 check failed, 2 usage/parse error.
+/* eslint-disable @typescript-eslint/no-require-imports -- CommonJS script */
 "use strict";
 
 const path = require("path");

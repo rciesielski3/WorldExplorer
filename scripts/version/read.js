@@ -1,5 +1,6 @@
 // Reads the app version and versionCode from every place they are recorded.
 // Parsers take file text so they can be reused for content read from git.
+/* eslint-disable @typescript-eslint/no-require-imports -- CommonJS script */
 "use strict";
 
 const fs = require("fs");
