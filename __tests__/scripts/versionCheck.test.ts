@@ -1,64 +1,17 @@
-import { execFileSync, spawnSync } from "child_process";
-import fs from "fs";
-import os from "os";
+import { spawnSync } from "child_process";
 import path from "path";
+import { CODE, V, cleanupTempDirs, commitAll, files, git, makeRepo, write } from "./helpers";
 
 const checkScript = path.resolve(__dirname, "../../scripts/version/check.js");
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { readVersions } = require("../../scripts/version/read.js");
 
-const V = "2.1.1";
-const CODE = 155;
-
-const files = (version = V, code = CODE) => ({
-  "package.json": JSON.stringify({ name: "x", version }, null, 2) + "\n",
-  "package-lock.json":
-    JSON.stringify(
-      { name: "x", version, lockfileVersion: 3, packages: { "": { name: "x", version } } },
-      null,
-      2,
-    ) + "\n",
-  "android/app/build.gradle": `android {\n    defaultConfig {\n        versionCode ${code}\n        versionName "${version}"\n    }\n}\n`,
-  "app.config.js": `module.exports = { expo: { android: {\n  versionCode: ${code}, // keep in sync\n} } };\n`,
-  "README.md": `# X\n\nPublished; current version in this repo: ${version}.\n`,
-  "RELEASE_NOTES.md": `# Release Notes\n\n## Latest Release: v${version}\n\n## v2.1.0\n`,
-});
-
-const tmpDirs: string[] = [];
-const makeRepo = (overrides: Record<string, string> = {}): string => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "versioncheck-"));
-  tmpDirs.push(dir);
-  write(dir, { ...files(), ...overrides });
-  return dir;
-};
-const write = (dir: string, map: Record<string, string>) => {
-  for (const [rel, content] of Object.entries(map)) {
-    const full = path.join(dir, rel);
-    fs.mkdirSync(path.dirname(full), { recursive: true });
-    fs.writeFileSync(full, content);
-  }
-};
-const git = (dir: string, ...args: string[]) =>
-  execFileSync(
-    "git",
-    ["-c", "user.email=t@t", "-c", "user.name=t", "-c", "commit.gpgsign=false", ...args],
-    {
-      cwd: dir,
-      stdio: "pipe",
-    },
-  );
-const commitAll = (dir: string, msg: string) => {
-  git(dir, "add", "-A");
-  git(dir, "commit", "-q", "-m", msg);
-};
 const run = (dir: string, ...args: string[]) => {
   const r = spawnSync("node", [checkScript, "--root", dir, ...args], { encoding: "utf8" });
   return { status: r.status, out: `${r.stdout}${r.stderr}` };
 };
 
-afterAll(() => {
-  for (const d of tmpDirs) fs.rmSync(d, { recursive: true, force: true });
-});
+afterAll(cleanupTempDirs);
 
 describe("readVersions", () => {
   it("reads every source", () => {
