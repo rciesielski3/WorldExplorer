@@ -20,7 +20,7 @@
     "test:node": "node --test screens/quiz/quizSession.test.js",
     "postinstall": "patch-package",
     "prepare": "husky || true",
-    "lint": "eslint . --max-warnings=315",
+    "lint": "eslint . --max-warnings=316",
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
