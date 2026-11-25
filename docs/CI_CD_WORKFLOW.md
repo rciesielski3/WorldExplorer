@@ -91,4 +91,4 @@ WorldExplorer uses GitHub Actions for automated validation and release workflows
 - `.github/workflows/release-build.yml` - Release build workflow
 - `.github/actions/setup-android/action.yml` - Android setup action
 - `.github/actions/build-aab/action.yml` - AAB build action
-- `.github/actions/sign-aab/action.yml` - AAB signing verification
+- `.github/actions/verify-aab-signature/action.yml` - AAB signing verification

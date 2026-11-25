@@ -2,12 +2,6 @@ name: Build Android App Bundle
 description: Build production AAB with Gradle bundleRelease
 
 inputs:
-  java-home:
-    description: Java home directory
-    required: true
-  android-home:
-    description: Android SDK home directory
-    required: true
   keystore-base64:
     description: Base64-encoded production keystore
     required: true
@@ -48,8 +42,6 @@ runs:
       shell: bash
       working-directory: ./android
       env:
-        JAVA_HOME: ${{ inputs.java-home }}
-        ANDROID_HOME: ${{ inputs.android-home }}
         ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_STORE_FILE: ${{ steps.keystore.outputs.path }}
         ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_STORE_PASSWORD: ${{ inputs.keystore-password }}
         ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_KEY_ALIAS: ${{ inputs.key-alias }}
@@ -57,7 +49,7 @@ runs:
         ORG_GRADLE_PROJECT_MAPS_API_KEY: ${{ inputs.maps-api-key }}
       run: |
         chmod +x gradlew
-        ./gradlew bundleRelease --no-daemon --no-build-cache -x lint
+        ./gradlew bundleRelease --no-daemon -x lint
 
     - name: Verify AAB Output
       shell: bash

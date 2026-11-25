@@ -2,72 +2,60 @@
 
 ## Overview
 
-This project has two main build scenarios plus supporting workflows:
+One release workflow builds, verifies and (optionally) publishes the Android app. Supporting workflows are listed below.
 
-### Build Scenarios
+### Release (`deploy-playstore.yml`)
 
-#### 1. **Build-Only** (`build-aab.yml`)
-Generate Android App Bundle without uploading to Play Store.
-
-**When to use:**
-- Local testing and verification
-- CI validation without production deployment
-- Artifact download for manual testing
-
-**Trigger:** Manual (`workflow_dispatch`)
-**Inputs:** Optional release notes (for reference only)
-**Output:** app-release.aab (available as Actions artifact for 30 days)
-
-**To use:**
-```bash
-gh workflow run build-aab.yml --ref main
-```
-
----
-
-#### 2. **Build & Deploy** (`deploy-playstore.yml`)
-Build Android App Bundle and deploy to Google Play Store.
-
-**When to use:**
-- Publishing to Play Store (internal testing, beta, production)
-- Creating GitHub releases (production track only)
+Build the Android App Bundle, verify its signature and deploy it to Google Play.
 
 **Trigger:** Manual (`workflow_dispatch`)
 **Inputs:**
-- `version`: Release version (auto-detected from build.gradle if not provided)
+
 - `track`: Play Store track (internal, alpha, beta, production)
-- `release_notes`: Release notes for Play Store
+- `release_notes`: Notes for the GitHub release (production only)
+- `dry_run`: boolean, default **true**. When true the workflow builds and verifies the AAB and keeps it as an artifact, but does not upload to Play, tag or create a GitHub release. A real publish needs an explicit `-f dry_run=false` (or unchecking the box) and the `main` ref; anything other than the string `false` never publishes. A dry run on a branch uses that branch's workflow file and secrets.
+
+The version always comes from `versionName` in `android/app/build.gradle`; there is no version input.
+
+**Job `build`:** read version, Node from `.nvmrc`, `npm ci`, `npx tsc --noEmit`, `npm test -- --ci --maxWorkers=2`, Android build, signing verification, AAB artifact upload (14 days, every run), Play upload (only when `dry_run` is false and ref is `main`), run summary.
+**Job `release`:** creates the GitHub release/tag `v<versionName>` only when `dry_run` is false, the track is `production` and the ref is `main`. It is the only job with `contents: write`.
+
+Real publishes are serialized in the `release-publish` concurrency group (queued, never cancelled); each dry run gets its own group so it cannot replace a queued deploy. Build timeout: 40 minutes.
 
 **To use:**
-```bash
-# Internal track (testing)
-gh workflow run deploy-playstore.yml --ref main \
-  -f track=internal \
-  -f release_notes="v1.3.0 - Testing"
 
-# Production track (public release)
-gh workflow run deploy-playstore.yml --ref main \
-  -f version=1.3.0 \
-  -f track=production \
-  -f release_notes="v1.3.0 - Released"
+```bash
+# Default is a dry run; safe check from any branch (build and verify only)
+gh workflow run deploy-playstore.yml --ref <branch> -f dry_run=true -f track=internal
+
+# Internal track (real upload: explicit dry_run=false required)
+gh workflow run deploy-playstore.yml --ref main -f dry_run=false -f track=internal
+
+# Production track (real upload + GitHub release)
+gh workflow run deploy-playstore.yml --ref main -f dry_run=false -f track=production -f release_notes="v1.3.0 - Released"
 ```
+
+The expected signing certificate SHA1 is defined once in the workflow-level `env` (`EXPECTED_SIGNING_SHA1`).
 
 ---
 
 ### Supporting Workflows
 
-#### 3. **PR Validation** (`pr-validate.yml`)
+#### **PR Validation** (`pr-validate.yml`)
+
 Automated checks on pull requests.
 
 **Trigger:** On pull requests to main
 **Checks:**
+
 - TypeScript type checking
 - Country data validation
 - Flag assets verification
 
 ---
 
-#### 4. **Update Countries** (`update-countries.yml`)
+#### **Update Countries** (`update-countries.yml`)
+
 Scheduled monthly country dataset updates.
 
 **Trigger:** 1st of month at 3 AM UTC, or manual
@@ -77,16 +65,16 @@ Scheduled monthly country dataset updates.
 
 ## Secrets Required
 
-For both build scenarios to work, configure these GitHub Secrets:
+For the release workflow to work, configure these GitHub Secrets:
 
-| Secret | Purpose |
-|--------|---------|
-| `ANDROID_KEYSTORE_BASE64` | Base64-encoded Android keystore (production) |
-| `ANDROID_KEYSTORE_PASSWORD` | Keystore password |
-| `ANDROID_KEY_ALIAS` | Key alias in keystore |
-| `ANDROID_KEY_PASSWORD` | Key password |
+| Secret                           | Purpose                                           |
+| -------------------------------- | ------------------------------------------------- |
+| `ANDROID_KEYSTORE_BASE64`        | Base64-encoded Android keystore (production)      |
+| `ANDROID_KEYSTORE_PASSWORD`      | Keystore password                                 |
+| `ANDROID_KEY_ALIAS`              | Key alias in keystore                             |
+| `ANDROID_KEY_PASSWORD`           | Key password                                      |
 | `PLAYSTORE_SERVICE_ACCOUNT_JSON` | Google Play service account (for deploy workflow) |
-| `MAPS_API_KEY` | Google Maps API Key (required for map features) |
+| `MAPS_API_KEY`                   | Google Maps API Key (required for map features)   |
 
 ---
 
@@ -94,25 +82,30 @@ For both build scenarios to work, configure these GitHub Secrets:
 
 Custom GitHub Actions used by workflows:
 
-- **setup-android**: Configures JDK, Android SDK, NDK, environment paths
+- **setup-android**: Installs JDK 21 and the Android SDK
 - **build-aab**: Builds AAB using Gradle bundleRelease task
-- **sign-aab**: Verifies AAB is signed with correct production certificate
+- **verify-aab-signature**: Verifies the AAB is signed with the expected production certificate (SHA1 passed in by the workflow)
 
 ---
 
 ## Troubleshooting
 
 ### Build fails with "Certificate not found"
+
 The AAB signing verification failed. Check:
+
 1. ANDROID_KEYSTORE_BASE64 secret is set correctly
 2. Keystore file is valid and accessible
 3. Production keystore SHA1 matches the one configured in Google Play Console (verify with: `keytool -list -v -keystore <path-to-keystore>`)
 
 ### Play Store upload fails
+
 Check:
+
 1. PLAYSTORE_SERVICE_ACCOUNT_JSON secret is configured
 2. Service account has necessary permissions in Google Play Console
 3. Track is valid (internal, alpha, beta, production)
 
 ### GitHub Release not created
-GitHub releases are only created for production track. For other tracks, artifacts are available via Actions tab.
+
+GitHub releases are only created for real (not dry-run) production deploys from `main`. The AAB is attached to every run as an artifact for 14 days.

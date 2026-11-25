@@ -52,41 +52,46 @@ See [RELEASE_NOTES.md](RELEASE_NOTES.md). There is no separate CHANGELOG file.
 
 ## Building & Deployment
 
-### Build Android Bundle (No Upload)
+### Build Android Bundle (Dry Run, No Upload)
 
-Generate a signed AAB artifact without uploading to Play Store.
+Generate a signed AAB artifact without uploading to Play Store. `dry_run` defaults to true, so this is what you get unless you pass `-f dry_run=false`.
 
 ```bash
-gh workflow run build-aab.yml --ref main
+gh workflow run deploy-playstore.yml --ref main -f dry_run=true -f track=internal
 ```
 
-Artifact available via GitHub Actions → Build Android Bundle → Artifacts (30-day retention).
+Artifact available on the run page under Artifacts (14-day retention).
 
 ---
 
 ### Deploy to Play Store
 
-Build and upload AAB to Google Play Store.
+Build and upload AAB to Google Play Store. A real publish requires `-f dry_run=false` and the `main` ref.
 
 **Internal Testing Track:**
+
 ```bash
 gh workflow run deploy-playstore.yml --ref main \
+  -f dry_run=false \
   -f track=internal \
   -f release_notes="v1.3.0 - Testing"
 ```
 
 **Beta Track:**
+
 ```bash
 gh workflow run deploy-playstore.yml --ref main \
+  -f dry_run=false \
   -f track=beta \
   -f release_notes="v1.3.0 - Beta release"
 ```
 
 **Production Release:**
+
 ```bash
 gh workflow run deploy-playstore.yml --ref main \
+  -f dry_run=false \
   -f track=production \
-  -f version=1.3.0 \
   -f release_notes="v1.3.0 - Official release"
 ```
 
@@ -94,10 +99,9 @@ gh workflow run deploy-playstore.yml --ref main \
 
 ## Workflows
 
-Two main CI/CD workflows manage build and deployment:
+One release workflow manages build and deployment:
 
-1. **build-aab.yml** - Build-only (generates artifact for download)
-2. **deploy-playstore.yml** - Build & deploy to Play Store
+1. **deploy-playstore.yml** - Build, verify and deploy to Play Store (`dry_run` builds only)
 
 For detailed workflow documentation, see [.github/WORKFLOWS.md](.github/WORKFLOWS.md).
 
