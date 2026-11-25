@@ -13,10 +13,12 @@ import * as Font from "expo-font";
 import "./i18n";
 import { logger } from "./utils/logger";
 
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import { ErrorBoundary } from "./src/components/ErrorBoundary";
+import { ThemedStatusBar } from "./src/components/ThemedStatusBar";
 import { ThemeProvider } from "./context/ThemeContext";
 import { PremiumProvider } from "./context/PremiumContext";
 import { FavoritesProvider } from "./context/FavoritesContext";
@@ -33,7 +35,7 @@ import { FavoritesScreen } from "./screens/FavoritesScreen";
 import type { RootStackParamList } from "./types/navigation";
 
 const LazyQuizStatsScreen = React.lazy(() =>
-  import("./screens/QuizStatsScreen").then((m) => ({ default: m.QuizStatsScreen }))
+  import("./screens/QuizStatsScreen").then((m) => ({ default: m.QuizStatsScreen })),
 );
 
 // React Navigation only accepts `Stack.Screen`/`Stack.Group` as direct
@@ -93,73 +95,69 @@ export default function App() {
   }
 
   return (
-    <ErrorBoundary>
-      <PremiumProvider>
-        <ThemeProvider>
-          <FavoritesProvider>
-            <QuizHistoryProvider>
-              <NavigationContainer>
-                <Stack.Navigator
-                  initialRouteName="Home"
-                  screenOptions={{ headerShown: false }}
-                >
-                  <Stack.Screen
-                    name="Home"
-                    component={HomeScreen}
-                    options={{ title: "World Explorer" }}
-                  />
-                  <Stack.Screen
-                    name="Explore"
-                    component={ExploreScreen}
-                    options={{ title: t("explore") }}
-                  />
-                  <Stack.Screen
-                    name="Map"
-                    component={MapScreen}
-                    options={{ title: t("map") }}
-                  />
-                  <Stack.Screen
-                    name="Quiz"
-                    component={QuizScreen}
-                    options={{ title: t("quiz") }}
-                  />
-                  <Stack.Screen
-                    name="QuizResults"
-                    component={QuizResultsScreen}
-                    options={{ title: t("yourScore") }}
-                  />
-                  <Stack.Screen
-                    name="Settings"
-                    component={SettingsScreen}
-                    options={{ title: t("settings") }}
-                  />
-                  <Stack.Screen
-                    name="CountryDetails"
-                    component={CountryDetailsScreen}
-                    options={{ title: t("countryDetails") }}
-                  />
-                  <Stack.Screen
-                    name="Comparison"
-                    component={ComparisonScreen}
-                    options={{ title: t("compareCountries") }}
-                  />
-                  <Stack.Screen
-                    name="Favorites"
-                    component={FavoritesScreen}
-                    options={{ title: t("favorites") }}
-                  />
-                  <Stack.Screen
-                    name="QuizStats"
-                    component={QuizStatsScreenWrapper}
-                    options={{ title: t("quizStatistics") }}
-                  />
-                </Stack.Navigator>
-                <Toast />
-              </NavigationContainer>
-            </QuizHistoryProvider>
-          </FavoritesProvider>
-        </ThemeProvider>
-      </PremiumProvider>
-    </ErrorBoundary>
+    <SafeAreaProvider>
+      <ErrorBoundary>
+        <PremiumProvider>
+          <ThemeProvider>
+            <ThemedStatusBar />
+            <FavoritesProvider>
+              <QuizHistoryProvider>
+                <NavigationContainer>
+                  <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+                    <Stack.Screen
+                      name="Home"
+                      component={HomeScreen}
+                      options={{ title: "World Explorer" }}
+                    />
+                    <Stack.Screen
+                      name="Explore"
+                      component={ExploreScreen}
+                      options={{ title: t("explore") }}
+                    />
+                    <Stack.Screen name="Map" component={MapScreen} options={{ title: t("map") }} />
+                    <Stack.Screen
+                      name="Quiz"
+                      component={QuizScreen}
+                      options={{ title: t("quiz") }}
+                    />
+                    <Stack.Screen
+                      name="QuizResults"
+                      component={QuizResultsScreen}
+                      options={{ title: t("yourScore") }}
+                    />
+                    <Stack.Screen
+                      name="Settings"
+                      component={SettingsScreen}
+                      options={{ title: t("settings") }}
+                    />
+                    <Stack.Screen
+                      name="CountryDetails"
+                      component={CountryDetailsScreen}
+                      options={{ title: t("countryDetails") }}
+                    />
+                    <Stack.Screen
+                      name="Comparison"
+                      component={ComparisonScreen}
+                      options={{ title: t("compareCountries") }}
+                    />
+                    <Stack.Screen
+                      name="Favorites"
+                      component={FavoritesScreen}
+                      options={{ title: t("favorites") }}
+                    />
+                    <Stack.Screen
+                      name="QuizStats"
+                      component={QuizStatsScreenWrapper}
+                      options={{ title: t("quizStatistics") }}
+                    />
+                  </Stack.Navigator>
+                  <Toast />
+                </NavigationContainer>
+              </QuizHistoryProvider>
+            </FavoritesProvider>
+          </ThemeProvider>
+        </PremiumProvider>
+      </ErrorBoundary>
+    </SafeAreaProvider>
   );
 }

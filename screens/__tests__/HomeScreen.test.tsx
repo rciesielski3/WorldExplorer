@@ -6,6 +6,7 @@ import { useQuizHistory } from "../../context/QuizHistoryContext";
 // Side effect: initializes the shared i18next instance (resources + default
 // "en" language) so `useTranslation()` inside HomeScreen resolves real
 // strings instead of returning undefined, matching how App.tsx bootstraps it.
+import { WithSafeArea } from "../../tests/safeAreaTestUtils";
 import "../../i18n";
 
 // lottie-react-native renders a native animation view; HomeScreen's hero
@@ -37,12 +38,11 @@ const defaultStats = {
 
 const renderHomeScreen = () =>
   render(
-    <ThemeProvider>
-      <HomeScreen
-        navigation={{ navigate: mockNavigate } as any}
-        route={{} as any}
-      />
-    </ThemeProvider>
+    <WithSafeArea>
+      <ThemeProvider>
+        <HomeScreen navigation={{ navigate: mockNavigate } as any} route={{} as any} />
+      </ThemeProvider>
+    </WithSafeArea>,
   );
 
 describe("HomeScreen", () => {
@@ -127,7 +127,7 @@ describe("HomeScreen", () => {
         "Quiz",
         expect.objectContaining({
           countryCode: expect.any(String),
-        })
+        }),
       );
     });
   });

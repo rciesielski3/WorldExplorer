@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { StackScreenProps } from "@react-navigation/stack";
@@ -50,6 +51,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
   const [selectedRegion, setSelectedRegion] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState<boolean>(true);
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
 
   const { t, i18n } = useTranslation();
   const styles = getStyles(theme);
@@ -147,7 +149,12 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.screenRoot}>
+    <View
+      style={[
+        styles.screenRoot,
+        { paddingTop: insets.top, paddingBottom: insets.bottom },
+      ]}
+    >
       <ScreenBackground gradient="explore" />
       <View style={styles.containerContent}>
         <View style={styles.exploreHeaderCard}>
