@@ -13,26 +13,26 @@ Build the Android App Bundle, verify its signature and deploy it to Google Play.
 
 - `track`: Play Store track (internal, alpha, beta, production)
 - `release_notes`: Notes for the GitHub release (production only)
-- `dry_run`: boolean, default false. When true the workflow builds and verifies the AAB and keeps it as an artifact, but does not upload to Play, tag or create a GitHub release.
+- `dry_run`: boolean, default **true**. When true the workflow builds and verifies the AAB and keeps it as an artifact, but does not upload to Play, tag or create a GitHub release. A real publish needs an explicit `-f dry_run=false` (or unchecking the box) and the `main` ref; anything other than the string `false` never publishes. A dry run on a branch uses that branch's workflow file and secrets.
 
 The version always comes from `versionName` in `android/app/build.gradle`; there is no version input.
 
-**Job `build`:** read version, Node from `.nvmrc`, `npm ci`, `npx tsc --noEmit`, `npm test -- --ci --maxWorkers=2`, Android build, signing verification, AAB artifact upload (14 days, every run), Play upload (skipped on dry run), run summary.
+**Job `build`:** read version, Node from `.nvmrc`, `npm ci`, `npx tsc --noEmit`, `npm test -- --ci --maxWorkers=2`, Android build, signing verification, AAB artifact upload (14 days, every run), Play upload (only when `dry_run` is false and ref is `main`), run summary.
 **Job `release`:** creates the GitHub release/tag `v<versionName>` only when `dry_run` is false, the track is `production` and the ref is `main`. It is the only job with `contents: write`.
 
-Runs are serialized with the `release` concurrency group (queued, never cancelled). Build timeout: 40 minutes.
+Real publishes are serialized in the `release-publish` concurrency group (queued, never cancelled); each dry run gets its own group so it cannot replace a queued deploy. Build timeout: 40 minutes.
 
 **To use:**
 
 ```bash
-# Safe check from any branch: build and verify only
+# Default is a dry run; safe check from any branch (build and verify only)
 gh workflow run deploy-playstore.yml --ref <branch> -f dry_run=true -f track=internal
 
-# Internal track (real upload)
-gh workflow run deploy-playstore.yml --ref main -f track=internal
+# Internal track (real upload: explicit dry_run=false required)
+gh workflow run deploy-playstore.yml --ref main -f dry_run=false -f track=internal
 
 # Production track (real upload + GitHub release)
-gh workflow run deploy-playstore.yml --ref main -f track=production -f release_notes="v1.3.0 - Released"
+gh workflow run deploy-playstore.yml --ref main -f dry_run=false -f track=production -f release_notes="v1.3.0 - Released"
 ```
 
 The expected signing certificate SHA1 is defined once in the workflow-level `env` (`EXPECTED_SIGNING_SHA1`).

@@ -21,10 +21,10 @@ on:
         description: 'Build and verify only: no Play Store upload, no tag, no GitHub release'
         required: false
         type: boolean
-        default: false
+        default: true
 
 concurrency:
-  group: release
+  group: release-${{ github.event.inputs.dry_run == 'false' && 'publish' || github.run_id }}
   cancel-in-progress: false
 
 permissions:
@@ -101,7 +101,8 @@ jobs:
           if-no-files-found: error
 
       - name: Upload to Play Store
-        if: ${{ github.event.inputs.dry_run == 'false' }}
+        id: upload
+        if: ${{ github.event.inputs.dry_run == 'false' && github.ref == 'refs/heads/main' }}
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAYSTORE_SERVICE_ACCOUNT_JSON }}
@@ -117,11 +118,24 @@ jobs:
           VERSION_CODE: ${{ steps.version.outputs.version_code }}
           TRACK: ${{ inputs.track }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
+          REF: ${{ github.ref }}
+          UPLOAD_OUTCOME: ${{ steps.upload.outcome }}
           SIGNING_SHA1: ${{ steps.signature.outputs.sha1 }}
         run: |
           SIZE=$(du -h android/app/build/outputs/bundle/release/app-release.aab | cut -f1)
-          if [ "$DRY_RUN" = "false" ]; then MODE="uploaded to $TRACK"; else MODE="dry run (nothing published)"; fi
+          if [ "$UPLOAD_OUTCOME" = "success" ]; then
+            HEADLINE="PUBLISHED: track=$TRACK versionCode=$VERSION_CODE"
+            MODE="uploaded to $TRACK"
+          elif [ "$DRY_RUN" = "false" ]; then
+            HEADLINE="NOT PUBLISHED: real run refused because ref is $REF (uploads are allowed from refs/heads/main only)"
+            MODE="refused (non-main ref)"
+          else
+            HEADLINE="DRY RUN: nothing was uploaded"
+            MODE="dry run (nothing published)"
+          fi
           {
+            echo "## $HEADLINE"
+            echo ""
             echo "### Release build"
             echo ""
             echo "| | |"
