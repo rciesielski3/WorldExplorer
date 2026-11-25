@@ -181,6 +181,13 @@ When reviewing code, verify:
 4. Create GitHub release from tag
 5. Deploy to Play Store (internal → beta → production)
 
+### Version bump
+
+- Bump with `npm run bump -- <patch|minor|major>` (or `--to X.Y.Z`; add `--dry-run` to preview). Never edit versions by hand.
+- It updates `package.json`, `package-lock.json`, `android/app/build.gradle` (versionName, versionCode +1), `app.config.js`, the README "current version in this repo" line, and adds a stub at the top of `RELEASE_NOTES.md` (fill in "What's New").
+- It does not touch git: review the diff and commit yourself. It refuses to run when the sources already disagree.
+- `npm run version:check` (also in CI) enforces that all sources agree.
+
 ---
 
 ## 📝 Memory System

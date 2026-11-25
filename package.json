@@ -22,7 +22,8 @@
     "prepare": "husky || true",
     "lint": "eslint . --max-warnings=316",
     "lint:fix": "eslint . --fix",
-    "version:check": "node scripts/version/check.js"
+    "version:check": "node scripts/version/check.js",
+    "bump": "node scripts/version/bump.js"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.2.3",
