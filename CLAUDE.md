@@ -145,7 +145,9 @@ gitleaks must be installed locally, otherwise `pre-commit` fails with an install
 
 - `npm run lint` runs ESLint 9 (flat config, `eslint.config.mjs`); `npm run lint:fix` applies autofixes. CI runs `npm run lint` in `pr-validate.yml`.
 - Severity policy: `error` only for rules with zero existing hits; every rule with existing hits is `warn`. Baseline counts per rule are in `docs/lint-baseline.md`.
-- Ratchet: the `lint` script uses `--max-warnings=<total baseline>`. New warnings fail lint. When you fix warnings, lower the number in `package.json` (both scripts) and update `docs/lint-baseline.md`; never raise it.
+- Ratchet: the `lint` script uses `--max-warnings=<total baseline>`. New warnings fail lint. The number lives only in the `lint` script of `package.json` (`lint:fix` has no limit). When you fix warnings, lower it and update the informational table in `docs/lint-baseline.md`; never raise it.
+- If your PR is red because `main` moved (CI lints the merge ref of your branch and `main`): rebase onto `main`, run `npm run lint`, and set the number to the new total, never above the value currently on `main`.
+- Known one-time effect: lint-staged runs Prettier (double quotes per `.prettierrc`) on staged files, and much of the old code uses single quotes, so the first commit touching an old file reformats the whole file. Keep such formatting commits separate from logic changes.
 - Rules: no-explicit-any, no-floating-promises, no-empty, react-hooks/exhaustive-deps, no-console, no hex/rgb color literals outside `theme/tokens.ts` (tests exempt), missing `accessibilityLabel` on interactive elements, plus `eslint-plugin-react-native-a11y`.
 
 Prettier config (`.prettierrc`) matches the existing code style; the repo is not reformatted wholesale, files are formatted as they are touched.

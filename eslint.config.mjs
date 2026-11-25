@@ -109,12 +109,13 @@ export default tseslint.config(
     rules: {
       "no-restricted-syntax": "off",
       "no-console": "off",
+      "react-native-a11y/has-valid-accessibility-descriptors": "off",
       "@typescript-eslint/no-explicit-any": "off",
     },
   },
   {
     // React Native bundles static assets via require(); this is the idiomatic form.
-    files: ["utils/flagAssets.ts", "**/*.{js,cjs,mjs}"],
+    files: ["utils/flagAssets.ts", "*.config.{js,cjs,mjs}", "jest.setup.js", "jest.mocks/**"],
     rules: { "@typescript-eslint/no-require-imports": "off" },
   },
 );

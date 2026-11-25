@@ -21,7 +21,7 @@
     "postinstall": "patch-package",
     "prepare": "husky || true",
     "lint": "eslint . --max-warnings=315",
-    "lint:fix": "eslint . --fix --max-warnings=315"
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.2.3",
