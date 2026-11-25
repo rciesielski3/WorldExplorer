@@ -138,6 +138,11 @@ export const commonTokens = {
   touchTarget: {
     minimum: 48,
   },
+  layout: {
+    // Content wider than this (dp) is capped and centered on tablets,
+    // foldables and phones in landscape.
+    maxContentWidth: 720,
+  },
 } as const;
 
 // ─── Convenience re-exports (backward-compatible) ──────────────────────────
