@@ -6,6 +6,7 @@ import {
   Animated,
   StyleSheet,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from '../../../context/ThemeContext';
 import { fixedColors } from '../../../theme/tokens';
@@ -32,6 +33,7 @@ export const RetryErrorBanner: React.FC<RetryErrorBannerProps> = ({
   showDismiss = true,
 }) => {
   const { theme } = useTheme();
+  const { t } = useTranslation();
   const [animationValue] = React.useState(new Animated.Value(0));
 
   React.useEffect(() => {
@@ -100,6 +102,8 @@ export const RetryErrorBanner: React.FC<RetryErrorBannerProps> = ({
           {!isRetrying && (
             <TouchableOpacity
               onPress={onRetry}
+              accessibilityRole="button"
+              accessibilityLabel={t('a11yRetry')}
               style={[styles.button, styles.retryButton]}
               disabled={isRetrying}
             >
@@ -118,6 +122,8 @@ export const RetryErrorBanner: React.FC<RetryErrorBannerProps> = ({
           {showDismiss && onDismiss && !isRetrying && (
             <TouchableOpacity
               onPress={onDismiss}
+              accessibilityRole="button"
+              accessibilityLabel={t('a11yDismiss')}
               style={[styles.button, styles.dismissButton]}
             >
               <MaterialCommunityIcons

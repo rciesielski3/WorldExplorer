@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { logger } from '../../utils/logger';
 import { fixedColors } from '../../theme/tokens';
+import i18n from '../../i18n';
 
 interface Props {
   children: React.ReactNode;
@@ -121,6 +122,8 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
             <TouchableOpacity
               onPress={this.handleReset}
+              accessibilityRole="button"
+              accessibilityLabel={i18n.t('a11yTryAgain')}
               style={{
                 backgroundColor: fixedColors.errorBoundary.button,
                 paddingVertical: 12,
@@ -150,6 +153,8 @@ export class ErrorBoundary extends React.Component<Props, State> {
                   timestamp: new Date().toISOString(),
                 });
               }}
+              accessibilityRole="button"
+              accessibilityLabel={i18n.t('a11yDismiss')}
               style={{
                 paddingVertical: 12,
                 paddingHorizontal: 32,

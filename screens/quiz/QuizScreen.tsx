@@ -337,6 +337,12 @@ const QuizScreen = ({ route, navigation }: any) => {
                         testID={`quiz-answer-option-${index}`}
                         onPress={() => handleAnswer(option)}
                         disabled={hasAnsweredCurrentQuestion}
+                        accessibilityRole="button"
+                        accessibilityLabel={option}
+                        accessibilityState={{
+                          disabled: hasAnsweredCurrentQuestion,
+                          selected: selectedAnswer === option,
+                        }}
                         style={({ pressed }) => ({
                           flex: 1,
                           height: 48,
@@ -423,6 +429,11 @@ const QuizScreen = ({ route, navigation }: any) => {
                         : t("quizNextQuestion")
                     }
                     onPress={handleNextQuestion}
+                    accessibilityLabel={
+                      currentQuestion + 1 === questions.length
+                        ? t("quizFinish")
+                        : t("quizNextQuestion")
+                    }
                   />
                 </View>
               )}
@@ -504,6 +515,7 @@ const QuizScreen = ({ route, navigation }: any) => {
                 <View style={{ width: "100%", gap: commonTokens.spacing.md }}>
                   <Button
                     label={t("quizViewAnswers")}
+                    accessibilityLabel={t("quizViewAnswers")}
                     onPress={() => {
                       const timeTaken = quizStartTimeRef.current
                         ? Math.round((Date.now() - quizStartTimeRef.current) / 1000)
@@ -518,6 +530,7 @@ const QuizScreen = ({ route, navigation }: any) => {
                   />
                   <Button
                     label={t("quizTryAgain")}
+                    accessibilityLabel={t("quizTryAgain")}
                     onPress={() => {
                       setCurrentQuestion(0);
                       setSelectedAnswer(null);

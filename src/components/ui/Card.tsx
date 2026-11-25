@@ -10,6 +10,7 @@ interface CardProps {
   style?: ViewStyle;
   elevation?: 'sm' | 'md' | 'lg';
   testID?: string;
+  accessibilityLabel?: string;
 }
 
 export function Card({
@@ -17,7 +18,8 @@ export function Card({
   onPress,
   style,
   elevation = 'sm',
-  testID = 'card'
+  testID = 'card',
+  accessibilityLabel,
 }: CardProps) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
@@ -30,6 +32,8 @@ export function Card({
     <Pressable
       testID={testID}
       onPress={onPress}
+      accessibilityRole={onPress ? 'button' : undefined}
+      accessibilityLabel={accessibilityLabel}
       onPressIn={onPress ? () => (scale.value = withSpring(1.02)) : undefined}
       onPressOut={onPress ? () => (scale.value = withSpring(1)) : undefined}
     >

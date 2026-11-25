@@ -83,6 +83,24 @@ describe("CountryDetailsScreen", () => {
     expect(getByText("Fact two")).toBeTruthy();
   });
 
+  it("should label navigation, tabs and call-to-action buttons", async () => {
+    const { getByLabelText, getByRole } = renderScreen();
+
+    await act(async () => {});
+
+    expect(getByLabelText("Go back").props.accessibilityRole).toBe("button");
+    expect(getByLabelText("Open settings").props.accessibilityRole).toBe("button");
+    expect(getByLabelText("Test Your Knowledge").props.accessibilityRole).toBe("button");
+    expect(getByLabelText("Show on map").props.accessibilityRole).toBe("button");
+
+    const factsTab = getByLabelText("Facts");
+    expect(factsTab.props.accessibilityRole).toBe("tab");
+    expect(factsTab.props.accessibilityState).toEqual({ selected: false });
+    fireEvent.press(factsTab);
+    expect(getByLabelText("Facts").props.accessibilityState).toEqual({ selected: true });
+    expect(getByRole("tab", { name: "Facts", selected: true })).toBeTruthy();
+  });
+
   it("should display the testKnowledge translation key", async () => {
     const { getByText } = renderScreen();
 

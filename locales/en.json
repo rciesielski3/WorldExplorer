@@ -129,5 +129,18 @@
   "achievementImproverDesc": "Score 20+ points higher than previous attempt",
   "notifications": "Notifications",
   "dailyChallengeReminder": "Daily Challenge Reminder",
-  "remindMeAt": "Remind me at"
+  "remindMeAt": "Remind me at",
+  "a11ySearchCountries": "Search countries",
+  "a11ySelectCountry": "Select {{name}}",
+  "a11yGoBack": "Go back",
+  "a11yOpenSettings": "Open settings",
+  "a11yViewCountryDetails": "View details for {{name}}",
+  "a11yViewQuizStats": "View quiz statistics",
+  "a11yCloseCountryInfo": "Close country information",
+  "a11yCloseResults": "Close results and return to home",
+  "a11yRetry": "Retry",
+  "a11yTryAgain": "Try again",
+  "a11yDismiss": "Dismiss",
+  "a11yStartDailyChallenge": "Start daily challenge: {{name}}",
+  "a11yClearSearch": "Clear search"
 }

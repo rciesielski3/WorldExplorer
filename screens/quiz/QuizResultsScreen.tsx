@@ -139,6 +139,8 @@ export function QuizResultsScreen() {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             navigation.replace('Home');
           }}
+          accessibilityRole="button"
+          accessibilityLabel={t('a11yCloseResults')}
           style={styles.closeButton}
         >
           <MaterialCommunityIcons name="close" size={24} color={theme.colors.text} />
@@ -238,12 +240,14 @@ export function QuizResultsScreen() {
           <Button
             label={t('quizPlayAgain', { defaultValue: 'Play Again' })}
             onPress={handlePlayAgain}
+            accessibilityLabel={t('quizPlayAgain', { defaultValue: 'Play Again' })}
             variant="filled"
             style={styles.primaryButton}
           />
           <Button
             label={t('quizShareScore', { defaultValue: 'Share Score' })}
             onPress={handleShareScore}
+            accessibilityLabel={t('quizShareScore', { defaultValue: 'Share Score' })}
             variant="outlined"
             style={styles.secondaryButton}
           />

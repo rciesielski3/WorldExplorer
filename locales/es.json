@@ -129,5 +129,18 @@
   "achievementImproverDesc": "Puntuación 20 puntos o más alta que el intento anterior",
   "notifications": "Notificaciones",
   "dailyChallengeReminder": "Recordatorio de Desafío Diario",
-  "remindMeAt": "Recordarme a las"
+  "remindMeAt": "Recordarme a las",
+  "a11ySearchCountries": "Buscar países",
+  "a11ySelectCountry": "Seleccionar {{name}}",
+  "a11yGoBack": "Volver",
+  "a11yOpenSettings": "Abrir ajustes",
+  "a11yViewCountryDetails": "Ver detalles de {{name}}",
+  "a11yViewQuizStats": "Ver estadísticas del cuestionario",
+  "a11yCloseCountryInfo": "Cerrar información del país",
+  "a11yCloseResults": "Cerrar resultados y volver al inicio",
+  "a11yRetry": "Reintentar",
+  "a11yTryAgain": "Intentar de nuevo",
+  "a11yDismiss": "Descartar",
+  "a11yStartDailyChallenge": "Empezar el desafío diario: {{name}}",
+  "a11yClearSearch": "Borrar búsqueda"
 }

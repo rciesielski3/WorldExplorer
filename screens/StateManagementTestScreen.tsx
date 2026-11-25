@@ -184,6 +184,8 @@ const StateManagementTestScreen: React.FC = () => {
           <TouchableOpacity
             style={[styles.testButton, { borderColor: colors.error }]}
             onPress={() => dispatch({ type: 'SHOW_NETWORK_ERROR' })}
+            accessibilityRole="button"
+            accessibilityLabel="Network Error"
           >
             <MaterialCommunityIcons name="wifi-off" size={20} color={colors.error} />
             <Text style={styles.testButtonText}>Network Error</Text>
@@ -192,6 +194,8 @@ const StateManagementTestScreen: React.FC = () => {
           <TouchableOpacity
             style={[styles.testButton, { borderColor: colors.error }]}
             onPress={() => dispatch({ type: 'SHOW_NOT_FOUND_ERROR' })}
+            accessibilityRole="button"
+            accessibilityLabel="Not Found (404)"
           >
             <MaterialCommunityIcons name="file-not-found" size={20} color={colors.error} />
             <Text style={styles.testButtonText}>Not Found (404)</Text>
@@ -200,6 +204,8 @@ const StateManagementTestScreen: React.FC = () => {
           <TouchableOpacity
             style={[styles.testButton, { borderColor: colors.error }]}
             onPress={() => dispatch({ type: 'SHOW_SERVER_ERROR' })}
+            accessibilityRole="button"
+            accessibilityLabel="Server Error (500)"
           >
             <MaterialCommunityIcons name="server-network-off" size={20} color={colors.error} />
             <Text style={styles.testButtonText}>Server Error (500)</Text>
@@ -208,6 +214,8 @@ const StateManagementTestScreen: React.FC = () => {
           <TouchableOpacity
             style={[styles.testButton, { borderColor: colors.error }]}
             onPress={() => dispatch({ type: 'SHOW_INVALID_DATA_ERROR' })}
+            accessibilityRole="button"
+            accessibilityLabel="Invalid Data"
           >
             <MaterialCommunityIcons name="alert-circle" size={20} color={colors.error} />
             <Text style={styles.testButtonText}>Invalid Data</Text>
@@ -246,6 +254,8 @@ const StateManagementTestScreen: React.FC = () => {
         <TouchableOpacity
           style={[styles.testButton, { borderColor: colors.primary }]}
           onPress={() => dispatch({ type: 'TOGGLE_EMPTY_STATE' })}
+          accessibilityRole="button"
+          accessibilityLabel={`${state.emptyStateShown ? 'Hide' : 'Show'} Empty State`}
         >
           <MaterialCommunityIcons name="inbox-outline" size={20} color={colors.primary} />
           <Text style={styles.testButtonText}>
@@ -303,6 +313,8 @@ const StateManagementTestScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>Test Log</Text>
           <TouchableOpacity
             onPress={() => dispatch({ type: 'CLEAR_LOG' })}
+            accessibilityRole="button"
+            accessibilityLabel="Clear test log"
             style={styles.clearLogButton}
           >
             <MaterialCommunityIcons name="trash-can-outline" size={16} color={colors.textSecondary} />
