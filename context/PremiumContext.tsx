@@ -7,6 +7,7 @@ import Purchases, {
   PurchasesOfferings,
   PurchasesError,
 } from "react-native-purchases";
+import { logger } from "../utils/logger";
 
 const PREMIUM_ENABLED = process.env.EXPO_PUBLIC_PREMIUM_ENABLED === "true";
 const PREMIUM_ENTITLEMENT_ID =
@@ -14,6 +15,12 @@ const PREMIUM_ENTITLEMENT_ID =
 const PREMIUM_PRODUCT_ID =
   process.env.EXPO_PUBLIC_REVENUECAT_PREMIUM_PRODUCT_ID ||
   "worldexplorer_premium_lifetime";
+
+// Max wait for the first customer info before the app stops treating premium
+// state as "loading" (ads wait for it). A late response still applies.
+export const CUSTOMER_INFO_TIMEOUT_MS = 8000;
+
+const CUSTOMER_INFO_TIMED_OUT = Symbol("customerInfoTimedOut");
 
 const REVENUECAT_API_KEYS: Record<string, string | undefined> = {
   android: process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY,
@@ -212,42 +219,84 @@ export const PremiumProvider: React.FC<PremiumProviderProps> = ({ children }) =>
       }
     };
 
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    const loadOfferings = async () => {
+      try {
+        const offerings = await Purchases.getOfferings();
+
+        if (isMounted) {
+          setPremiumPackage(getPremiumPackage(offerings));
+        }
+      } catch (offeringsError: unknown) {
+        if (isMounted) {
+          setPremiumPackage(null);
+          setError(
+            getErrorMessage(offeringsError, "RevenueCat offerings load failed.")
+          );
+        }
+      }
+    };
+
     const configurePurchases = async () => {
+      let shouldLoadOfferings = false;
+
       try {
         Purchases.setLogLevel(__DEV__ ? LOG_LEVEL.DEBUG : LOG_LEVEL.WARN);
         Purchases.configure({ apiKey });
         Purchases.addCustomerInfoUpdateListener(customerInfoListener);
 
-        const customerInfo = await Purchases.getCustomerInfo();
+        const customerInfoRequest = Purchases.getCustomerInfo();
+        const timeout = new Promise<typeof CUSTOMER_INFO_TIMED_OUT>((resolve) => {
+          timeoutId = setTimeout(
+            () => resolve(CUSTOMER_INFO_TIMED_OUT),
+            CUSTOMER_INFO_TIMEOUT_MS
+          );
+        });
+        const customerInfo = await Promise.race([customerInfoRequest, timeout]);
 
-        if (isMounted) {
+        if (customerInfo === CUSTOMER_INFO_TIMED_OUT) {
+          logger.warn("RevenueCat customer info timed out", {
+            context: "PremiumContext",
+            timestamp: new Date().toISOString(),
+            metadata: { timeoutMs: CUSTOMER_INFO_TIMEOUT_MS },
+          });
+          shouldLoadOfferings = true;
+
+          // A late response must still update premium state.
+          customerInfoRequest.then(
+            (lateCustomerInfo) => {
+              if (isMounted) {
+                applyCustomerInfo(lateCustomerInfo);
+                setIsConfigured(true);
+                setError(null);
+              }
+            },
+            () => {}
+          );
+        } else if (isMounted) {
           applyCustomerInfo(customerInfo);
           setIsConfigured(true);
           setError(null);
-        }
-
-        try {
-          const offerings = await Purchases.getOfferings();
-
-          if (isMounted) {
-            setPremiumPackage(getPremiumPackage(offerings));
-          }
-        } catch (offeringsError: unknown) {
-          if (isMounted) {
-            setPremiumPackage(null);
-            setError(
-              getErrorMessage(offeringsError, "RevenueCat offerings load failed.")
-            );
-          }
+          shouldLoadOfferings = true;
         }
       } catch (configurationError: unknown) {
         if (isMounted) {
           setError(getErrorMessage(configurationError, "RevenueCat setup failed."));
         }
       } finally {
+        if (timeoutId !== undefined) {
+          clearTimeout(timeoutId);
+        }
+
         if (isMounted) {
           setIsLoading(false);
         }
+      }
+
+      // Offerings never block the premium/loading decision.
+      if (shouldLoadOfferings) {
+        await loadOfferings();
       }
     };
 
@@ -255,6 +304,9 @@ export const PremiumProvider: React.FC<PremiumProviderProps> = ({ children }) =>
 
     return () => {
       isMounted = false;
+      if (timeoutId !== undefined) {
+        clearTimeout(timeoutId);
+      }
       Purchases.removeCustomerInfoUpdateListener(customerInfoListener);
     };
   }, [applyCustomerInfo]);
