@@ -2,6 +2,7 @@ import React from "react";
 import { Text, StyleSheet, useWindowDimensions } from "react-native";
 import type { ViewStyle } from "react-native";
 import { render } from "@testing-library/react-native";
+import { SafeAreaInsetsContext } from "react-native-safe-area-context";
 import { ContentContainer } from "../ContentContainer";
 import { commonTokens } from "../../../theme/tokens";
 
@@ -55,5 +56,25 @@ describe("ContentContainer", () => {
     setWidth(1200);
     rerender(ui());
     expect(flatStyle(getByTestId).maxWidth).toBe(max);
+  });
+
+  it("pads horizontally by the safe-area insets", () => {
+    setWidth(800);
+    const { getByTestId } = render(
+      <SafeAreaInsetsContext.Provider value={{ top: 0, bottom: 0, left: 40, right: 24 }}>
+        {ui()}
+      </SafeAreaInsetsContext.Provider>,
+    );
+    const style = flatStyle(getByTestId);
+    expect(style.paddingLeft).toBe(40);
+    expect(style.paddingRight).toBe(24);
+  });
+
+  it("falls back to zero padding without a safe-area provider", () => {
+    setWidth(400);
+    const { getByTestId } = render(ui());
+    const style = flatStyle(getByTestId);
+    expect(style.paddingLeft).toBe(0);
+    expect(style.paddingRight).toBe(0);
   });
 });

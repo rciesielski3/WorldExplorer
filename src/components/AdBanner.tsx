@@ -1,31 +1,28 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, StyleSheet, useWindowDimensions } from "react-native";
-import type { LayoutChangeEvent } from "react-native";
-import {
-  BannerAd,
-  BannerAdSize,
-  TestIds,
-} from "react-native-google-mobile-ads";
+import { BannerAd, BannerAdSize, TestIds } from "react-native-google-mobile-ads";
 import { ADMOB_BANNER_ID } from "@env";
+import { commonTokens } from "../../theme/tokens";
 
 const adUnitId = ADMOB_BANNER_ID || TestIds.BANNER;
 
-const AdBanner = () => {
-  const { width: windowWidth } = useWindowDimensions();
-  // Track the real container width so the adaptive banner is re-requested at
-  // the correct width after rotation or inside a width-capped container.
-  const [layoutWidth, setLayoutWidth] = useState<number | null>(null);
-  const availableWidth = Math.round(layoutWidth ?? windowWidth);
+// Width changes smaller than this (dp) do not re-request the ad, so freeform
+// window resizing cannot trigger a reload on every pixel.
+export const AD_WIDTH_BUCKET = 100;
 
-  const handleLayout = (e: LayoutChangeEvent) => {
-    const next = e.nativeEvent.layout.width;
-    if (next > 0) setLayoutWidth(next);
-  };
+export const getAdWidthBucket = (windowWidth: number) => {
+  const capped = Math.min(windowWidth, commonTokens.layout.maxContentWidth);
+  return Math.max(AD_WIDTH_BUCKET, Math.round(capped / AD_WIDTH_BUCKET) * AD_WIDTH_BUCKET);
+};
+
+const AdBanner = () => {
+  const { width } = useWindowDimensions();
+  const widthBucket = getAdWidthBucket(width);
 
   return (
-    <View style={styles.container} onLayout={handleLayout}>
+    <View style={styles.container}>
       <BannerAd
-        key={availableWidth}
+        key={widthBucket}
         unitId={adUnitId}
         size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
         requestOptions={{

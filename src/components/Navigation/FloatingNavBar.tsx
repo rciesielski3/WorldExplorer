@@ -1,10 +1,10 @@
-import React from 'react';
-import { useWindowDimensions } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Animated from 'react-native-reanimated';
-import { useTheme } from '../../../context/ThemeContext';
-import { commonTokens } from '../../../theme/tokens';
-import { NavBarIcon } from './NavBarIcon';
+import React from "react";
+import { useWindowDimensions } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Animated from "react-native-reanimated";
+import { useTheme } from "../../../context/ThemeContext";
+import { commonTokens } from "../../../theme/tokens";
+import { NavBarIcon } from "./NavBarIcon";
 
 interface NavItem {
   name: string;
@@ -23,7 +23,7 @@ export function FloatingNavBar({
   currentRoute,
   onNavigate,
   items,
-  testID = 'floating-nav-bar'
+  testID = "floating-nav-bar",
 }: FloatingNavBarProps) {
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
@@ -42,23 +42,23 @@ export function FloatingNavBar({
   const sideRight = commonTokens.spacing.lg + insets.right;
   const extra = Math.max(
     0,
-    (windowWidth - sideLeft - sideRight - commonTokens.layout.maxContentWidth) / 2
+    (windowWidth - sideLeft - sideRight - commonTokens.layout.maxContentWidth) / 2,
   );
 
   return (
     <Animated.View
       testID={testID}
       style={{
-        position: 'absolute',
+        position: "absolute",
         bottom: insets.bottom + 16,
         left: sideLeft + extra,
         right: sideRight + extra,
         height: 56,
         borderRadius: 28,
         backgroundColor: navBarBackgroundColor,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-around',
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-around",
         zIndex: 1000,
         ...theme.shadows.lg,
       }}

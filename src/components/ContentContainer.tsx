@@ -1,7 +1,8 @@
-import React from 'react';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
-import type { StyleProp, ViewStyle } from 'react-native';
-import { commonTokens } from '../../theme/tokens';
+import React, { useContext } from "react";
+import { StyleSheet, View, useWindowDimensions } from "react-native";
+import type { StyleProp, ViewStyle } from "react-native";
+import { SafeAreaInsetsContext } from "react-native-safe-area-context";
+import { commonTokens } from "../../theme/tokens";
 
 export interface ContentContainerProps {
   children?: React.ReactNode;
@@ -17,16 +18,23 @@ export interface ContentContainerProps {
 export function ContentContainer({
   children,
   style,
-  testID = 'content-container',
+  testID = "content-container",
 }: ContentContainerProps) {
   const { width } = useWindowDimensions();
+  // Context (not useSafeAreaInsets) so a missing provider falls back to zero.
+  const insets = useContext(SafeAreaInsetsContext);
   const maxWidth = commonTokens.layout.maxContentWidth;
   const isConstrained = width > maxWidth;
 
   return (
     <View
       testID={testID}
-      style={[styles.root, isConstrained && { maxWidth }, style]}
+      style={[
+        styles.root,
+        isConstrained && { maxWidth },
+        { paddingLeft: insets?.left ?? 0, paddingRight: insets?.right ?? 0 },
+        style,
+      ]}
     >
       {children}
     </View>
@@ -36,8 +44,8 @@ export function ContentContainer({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    width: '100%',
-    alignSelf: 'center',
+    width: "100%",
+    alignSelf: "center",
   },
 });
 

@@ -39,12 +39,26 @@ describe("rotation safety", () => {
   it("manifest has no orientation or resizability restrictions", () => {
     const manifest = fs.readFileSync(
       path.join(ROOT, "android/app/src/main/AndroidManifest.xml"),
-      "utf8"
+      "utf8",
     );
     expect(manifest).not.toMatch(/screenOrientation/);
     expect(manifest).not.toMatch(/resizeableActivity="false"/);
-    expect(manifest).toMatch(
-      /configChanges="[^"]*orientation\|screenSize\|screenLayout/
-    );
+    const match = manifest.match(/android:configChanges="([^"]*)"/);
+    expect(match).not.toBeNull();
+    const flags = (match?.[1] ?? "").split("|");
+    // Foldable and multi-window resizes must not recreate MainActivity
+    // (quiz and map state is plain useState).
+    for (const flag of [
+      "keyboard",
+      "keyboardHidden",
+      "orientation",
+      "screenSize",
+      "screenLayout",
+      "uiMode",
+      "smallestScreenSize",
+      "density",
+    ]) {
+      expect(flags).toContain(flag);
+    }
   });
 });
