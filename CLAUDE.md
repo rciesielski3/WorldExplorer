@@ -21,11 +21,13 @@ Merge to Main
 ```
 
 ### 1. **Implementation**
+
 - Complete feature/fix on feature branch (e.g., `feat/feature-name`, `fix/bug-name`)
 - Commit regularly with clear messages
 - Push to remote
 
 ### 2. **Code Review** (Assign Agent)
+
 - Dispatch code-review agent to assess:
   - Spec compliance (does it match requirements?)
   - Code quality (patterns, style, types, error handling)
@@ -35,6 +37,7 @@ Merge to Main
   - i18n (all user-facing strings localized)
 
 **Agent Assignment** (defined in `.claude/agents/`):
+
 ```
 - `reviewer`    — always; spec + checklist review, verifies every finding in code before reporting
 - `correctness` — for non-trivial logic (async, effects, AsyncStorage, Firebase, streak/date logic)
@@ -44,12 +47,14 @@ Minor (nice to have), report findings ranked by severity
 ```
 
 ### 3. **Fix Code Review Issues**
+
 - Address Critical findings immediately
 - Address Important findings before merge
 - Document Minor findings (fix in next iteration if time permits)
 - Re-run code review if significant changes made
 
 ### 4. **Test Coverage** (Assign Agent)
+
 - Dispatch a general-purpose agent to write tests for changed areas, then run the `reviewer` agent (`.claude/agents/reviewer.md`) over the test diff to check assertions are meaningful, deterministic and cover negative paths
 - Target coverage:
   - Unit tests for new functions/components
@@ -58,11 +63,13 @@ Minor (nice to have), report findings ranked by severity
   - Accessibility tests (if UI changed)
 
 **Test Requirements:**
+
 - Tests must pass locally (`npm test`)
 - Tests must pass in CI workflow
 - No test files in root `/docs/superpowers/` (keep repo clean)
 
 ### 5. **Verify Tests Pass**
+
 ```bash
 npm test                  # Local tests
 npx tsc --noEmit         # TypeScript validation
@@ -70,6 +77,7 @@ npm ci                   # Dependency resolution
 ```
 
 ### 6. **Merge to Main**
+
 - Create PR with description of changes
 - Merge only after code review + tests both pass
 - Delete feature branch after merge
@@ -79,6 +87,7 @@ npm ci                   # Dependency resolution
 ## 📋 Exception: Docs-Only Changes
 
 **Skip code review + tests if:**
+
 - Changes are docs-only (README, RELEASE_NOTES, comments)
 - No code changes, no dependency changes
 - Example: Typo fixes, formatting, documentation updates
@@ -88,12 +97,14 @@ npm ci                   # Dependency resolution
 ## 🛠️ Tools & Conventions
 
 ### Import Paths
+
 - All components: `src/components/` (no root `components/` folder)
 - All screens: `src/screens/` or `screens/`
 - Theme/context: `src/context/`, `src/theme/`
 - Tests: `__tests__/` folder in same directory as source
 
 ### Naming Conventions
+
 - Components: PascalCase (e.g., `Button.tsx`)
 - Files: Match component name
 - Tests: `ComponentName.test.tsx`
@@ -101,15 +112,36 @@ npm ci                   # Dependency resolution
 - Commits: `type: short message` (feat:, fix:, refactor:, docs:, test:, chore:)
 
 ### Design System
+
 - Use design tokens from `src/theme/tokens.ts` (no hardcoded colors/spacing)
 - Follow Material Design 3 patterns (rounded corners 12-16dp, elevation, ripples)
 - Support dark/light modes via `useTheme()` hook
 - Ensure WCAG AA accessibility (4.5:1 contrast, 48dp touch targets, semantic labels)
 
 ### i18n
+
 - All user-facing strings via `useTranslation()` from react-i18next
 - Add translation keys to `src/locales/*.json` (en, es, fr, de, pl)
 - Test with `npm run countries:validate` (i18n completeness)
+
+---
+
+## 🔒 Local Quality Gates
+
+Git hooks (husky 9, installed by `npm install` via `prepare`) run automatically:
+
+- `pre-commit`: Prettier `--write` on staged files only (lint-staged), then `gitleaks git --staged --redact --no-banner`.
+- `commit-msg`: commitlint (`@commitlint/config-conventional`, e.g. `feat: add x`) and `.claude/hooks/no-ai-trailers.sh`.
+- `pre-push`: `npx tsc --noEmit` and `npm test -- --ci` (about 40 s).
+
+In each git worktree run `npm ci` or `npx husky` once: husky sets the shared `core.hooksPath`, so a worktree without an install can lose its hooks.
+
+The PR title is also checked with commitlint in CI (`pr-title` job in `pr-validate.yml`).
+
+gitleaks must be installed locally, otherwise `pre-commit` fails with an install hint:
+`brew install gitleaks` (macOS) or see https://github.com/gitleaks/gitleaks#installing.
+
+Prettier config (`.prettierrc`) matches the existing code style; the repo is not reformatted wholesale, files are formatted as they are touched.
 
 ---
 
@@ -145,6 +177,7 @@ When reviewing code, verify:
 ## 📝 Memory System
 
 Development decisions and workflow guidelines are stored in:
+
 - `.claude/projects/.../memory/MEMORY.md` (index of all memories)
 - `feedback_dev_workflow_rules.md` — This workflow
 - `feedback_no_ai_attribution.md` — Git commit conventions
@@ -157,6 +190,7 @@ Check memory on each new task to maintain consistency.
 ## ❓ Questions?
 
 Refer to:
+
 - [GitHub Issues](https://github.com/rciesielski3/WorldExplorer/issues) for feature requests/bugs
 - [Design Spec](docs/superpowers/specs/) for current features
 - [Implementation Plans](docs/superpowers/plans/) for ongoing work

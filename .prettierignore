@@ -1,0 +1,13 @@
+node_modules
+android
+ios
+.expo
+dist
+web-build
+coverage
+assets
+data
+patches
+package-lock.json
+*.lock
+docs
