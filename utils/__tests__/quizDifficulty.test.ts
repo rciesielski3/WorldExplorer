@@ -384,4 +384,23 @@ describe('generateQuestionsByDifficulty', () => {
       }
     });
   });
+
+  it('skips countries with a missing or whitespace-only capital without throwing', () => {
+    // Runtime data may omit the field even though the type says string.
+    const withCapital = (capital: unknown, code: string): Country =>
+      ({ ...mockCountries[0], code, capital }) as Country;
+    const bad = [
+      withCapital(undefined, 'X1'),
+      withCapital(null, 'X2'),
+      withCapital('   ', 'X3'),
+    ];
+    const pool = [...bad, ...mockCountries];
+
+    expect(() => generateQuestionsByDifficulty(pool, 'easy', pool.length)).not.toThrow();
+    const questions = generateQuestionsByDifficulty(pool, 'easy', pool.length);
+    questions.forEach((question) => {
+      expect(question.answer.trim()).not.toBe('');
+      expect(question.options.every((o) => typeof o === 'string' && o.trim() !== '')).toBe(true);
+    });
+  });
 });
