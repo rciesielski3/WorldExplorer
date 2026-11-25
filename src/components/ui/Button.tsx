@@ -70,7 +70,7 @@ export function Button({
   };
 
   const getTextColor = () => {
-    if (variant === 'filled') return '#FFFFFF';
+    if (variant === 'filled') return theme.colors.onAccent;
     if (variant === 'outlined') return disabled ? theme.colors.textTertiary : theme.colors.secondary;
     return theme.colors.primary;
   };

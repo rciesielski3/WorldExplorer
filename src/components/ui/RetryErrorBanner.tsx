@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from '../../../context/ThemeContext';
+import { fixedColors } from '../../../theme/tokens';
 
 interface RetryErrorBannerProps {
   visible: boolean;
@@ -71,7 +72,7 @@ export const RetryErrorBanner: React.FC<RetryErrorBannerProps> = ({
         {
           height: heightInterpolation,
           opacity: opacityInterpolation,
-          backgroundColor: theme.colors.error || '#EF4444',
+          backgroundColor: theme.colors.error || fixedColors.errorBoundary.icon,
         },
       ]}
     >
@@ -122,10 +123,10 @@ export const RetryErrorBanner: React.FC<RetryErrorBannerProps> = ({
               <MaterialCommunityIcons
                 name="close"
                 size={16}
-                color={theme.colors.text || '#ffffff'}
+                color={theme.colors.text || fixedColors.errorBoundary.title}
                 style={styles.buttonIcon}
               />
-              <Text style={[styles.buttonText, { color: theme.colors.text || '#ffffff' }]}>
+              <Text style={[styles.buttonText, { color: theme.colors.text || fixedColors.errorBoundary.title }]}>
                 Dismiss
               </Text>
             </TouchableOpacity>

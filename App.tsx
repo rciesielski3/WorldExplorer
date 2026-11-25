@@ -33,6 +33,7 @@ import QuizResultsScreen from "./screens/quiz/QuizResultsScreen";
 import { ComparisonScreen } from "./screens/ComparisonScreen";
 import { FavoritesScreen } from "./screens/FavoritesScreen";
 import type { RootStackParamList } from "./types/navigation";
+import { fixedColors } from "./theme/tokens";
 
 const LazyQuizStatsScreen = React.lazy(() =>
   import("./screens/QuizStatsScreen").then((m) => ({ default: m.QuizStatsScreen })),
@@ -44,7 +45,7 @@ const LazyQuizStatsScreen = React.lazy(() =>
 // and `Stack.Screen`.
 function QuizStatsScreenWrapper(props: React.ComponentProps<typeof LazyQuizStatsScreen>) {
   return (
-    <Suspense fallback={<ActivityIndicator size="large" color="#6366F1" />}>
+    <Suspense fallback={<ActivityIndicator size="large" color={fixedColors.loader} />}>
       <LazyQuizStatsScreen {...props} />
     </Suspense>
   );
@@ -88,7 +89,7 @@ export default function App() {
     return (
       <ActivityIndicator
         size="large"
-        color="#6366F1"
+        color={fixedColors.loader}
         style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
       />
     );
