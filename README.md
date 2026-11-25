@@ -4,7 +4,7 @@
 
 [![Get it on Google Play](https://img.shields.io/badge/Google%20Play-Get%20it%20on%20Google%20Play-3DDC84?logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=com.adateo.WorldExplorer)
 
-An Android app for exploring countries, capitals, flags and geography, built with React Native and Expo. Published on Google Play; current version in this repo: 2.1.0.
+An Android app for exploring countries, capitals, flags and geography, built with React Native and Expo. Published on Google Play; current version in this repo: 2.1.1.
 
 ## Screenshots
 

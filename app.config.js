@@ -25,7 +25,7 @@ module.exports = {
     },
     android: {
       package: "com.adateo.WorldExplorer",
-      versionCode: 154, // keep in sync with android/app/build.gradle (enforced by test)
+      versionCode: 155, // keep in sync with android/app/build.gradle (enforced by test)
       permissions: [
         "com.google.android.gms.permission.AD_ID",
         "com.android.vending.BILLING",
