@@ -12,7 +12,7 @@ global.__DEV__ = false;
 // "Cannot read properties of undefined (reading 'roundToNearestPixel')".
 // Mirror the real `__esModule`/`default` shape so both ESM `import` and CJS
 // `.default` access resolve to the same mock object.
-jest.mock('react-native/Libraries/Utilities/PixelRatio', () => ({
+jest.mock("react-native/Libraries/Utilities/PixelRatio", () => ({
   __esModule: true,
   default: {
     get: jest.fn(() => 2),
@@ -23,7 +23,7 @@ jest.mock('react-native/Libraries/Utilities/PixelRatio', () => ({
 }));
 
 // Mock Dimensions
-jest.mock('react-native/Libraries/Utilities/Dimensions', () => ({
+jest.mock("react-native/Libraries/Utilities/Dimensions", () => ({
   __esModule: true,
   default: {
     get: jest.fn(() => ({
@@ -32,17 +32,17 @@ jest.mock('react-native/Libraries/Utilities/Dimensions', () => ({
       scale: 2,
       fontScale: 1,
     })),
-    addEventListener: jest.fn(),
+    addEventListener: jest.fn(() => ({ remove: jest.fn() })),
     removeEventListener: jest.fn(),
     setUseNativeDriver: jest.fn(),
   },
 }));
 
 // Mock Platform
-jest.mock('react-native/Libraries/Utilities/Platform', () => ({
+jest.mock("react-native/Libraries/Utilities/Platform", () => ({
   __esModule: true,
   default: {
-    OS: 'ios',
+    OS: "ios",
     Version: 14,
     select: jest.fn((obj) => obj.ios),
   },
@@ -59,7 +59,7 @@ jest.mock('react-native/Libraries/Utilities/Platform', () => ({
 // already-resolved Promise here keeps behavior async (a consumer still needs
 // `await`/`act`) while matching the real module's contract.
 const asyncStorageStore = {};
-jest.mock('@react-native-async-storage/async-storage', () => ({
+jest.mock("@react-native-async-storage/async-storage", () => ({
   getItem: jest.fn((key) => Promise.resolve(asyncStorageStore[key] || null)),
   setItem: jest.fn((key, value) => {
     asyncStorageStore[key] = value;
@@ -70,7 +70,7 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
     return Promise.resolve();
   }),
   clear: jest.fn(() => {
-    Object.keys(asyncStorageStore).forEach(key => delete asyncStorageStore[key]);
+    Object.keys(asyncStorageStore).forEach((key) => delete asyncStorageStore[key]);
     return Promise.resolve();
   }),
 }));
@@ -81,19 +81,19 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 // evaluate eagerly, which pulls in StyleSheet.js before PixelRatio's mock is
 // fully wired up and crashes every RN component test. Mutating the actual
 // module in place preserves its lazy getters.
-jest.mock('react-native', () => {
-  const actual = jest.requireActual('react-native');
-  actual.useColorScheme = jest.fn(() => 'light');
+jest.mock("react-native", () => {
+  const actual = jest.requireActual("react-native");
+  actual.useColorScheme = jest.fn(() => "light");
   return actual;
 });
 
 // Mock react-native-reanimated
-jest.mock('react-native-reanimated', () => ({
+jest.mock("react-native-reanimated", () => ({
   useAnimatedStyle: jest.fn(() => ({})),
   useSharedValue: jest.fn((value) => ({ value })),
   withSpring: jest.fn((value) => value),
   withTiming: jest.fn((value) => value),
-  View: 'View',
+  View: "View",
   ZoomIn: {
     springify: jest.fn(() => ({})),
   },
@@ -103,21 +103,21 @@ jest.mock('react-native-reanimated', () => ({
 // Includes the ImpactFeedbackStyle/NotificationFeedbackType enums (mirroring
 // the real module's string values) since several components reference them
 // directly, e.g. `Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)`.
-jest.mock('expo-haptics', () => ({
+jest.mock("expo-haptics", () => ({
   impactAsync: jest.fn(),
   notificationAsync: jest.fn(),
   selectionAsync: jest.fn(),
   ImpactFeedbackStyle: {
-    Light: 'light',
-    Medium: 'medium',
-    Heavy: 'heavy',
-    Soft: 'soft',
-    Rigid: 'rigid',
+    Light: "light",
+    Medium: "medium",
+    Heavy: "heavy",
+    Soft: "soft",
+    Rigid: "rigid",
   },
   NotificationFeedbackType: {
-    Success: 'success',
-    Warning: 'warning',
-    Error: 'error',
+    Success: "success",
+    Warning: "warning",
+    Error: "error",
   },
 }));
 
@@ -127,31 +127,31 @@ jest.mock('expo-haptics', () => ({
 // under Jest even with transformIgnorePatterns allowing it through Babel.
 // Render it as a plain View so components using <ScreenBackground> (which
 // wraps LinearGradient) can still be tested.
-jest.mock('expo-linear-gradient', () => {
-  const React = require('react');
-  const { View } = require('react-native');
+jest.mock("expo-linear-gradient", () => {
+  const React = require("react");
+  const { View } = require("react-native");
   const LinearGradient = React.forwardRef((props, ref) =>
-    React.createElement(View, { ...props, ref })
+    React.createElement(View, { ...props, ref }),
   );
-  LinearGradient.displayName = 'LinearGradient';
+  LinearGradient.displayName = "LinearGradient";
   return { LinearGradient };
 });
 
 // Mock @react-native-community/netinfo
-jest.mock('@react-native-community/netinfo', () => ({
+jest.mock("@react-native-community/netinfo", () => ({
   useNetInfo: jest.fn(() => ({
     isConnected: true,
     isInternetReachable: true,
-    type: 'wifi',
+    type: "wifi",
   })),
 }));
 
 // Mock firebase modules
-jest.mock('firebase/app', () => ({
+jest.mock("firebase/app", () => ({
   initializeApp: jest.fn(),
 }));
 
-jest.mock('firebase/firestore', () => ({
+jest.mock("firebase/firestore", () => ({
   getFirestore: jest.fn(),
   connectFirestoreEmulator: jest.fn(),
   collection: jest.fn(),
@@ -164,13 +164,13 @@ jest.mock('firebase/firestore', () => ({
   where: jest.fn(),
 }));
 
-jest.mock('firebase/auth', () => ({
+jest.mock("firebase/auth", () => ({
   getAuth: jest.fn(),
   connectAuthEmulator: jest.fn(),
 }));
 
 // Mock firebase-config
-jest.mock('./firebase-config', () => ({
+jest.mock("./firebase-config", () => ({
   db: {},
   auth: {},
   default: {},
@@ -182,22 +182,26 @@ const originalError = console.error;
 
 beforeAll(() => {
   console.warn = jest.fn((...args) => {
-    const message = String(args[0] || '');
-    if (message.includes('Cannot update a component') ||
-        message.includes('TurboModule') ||
-        message.includes('Invariant') ||
-        message.includes('Non-serializable')) {
+    const message = String(args[0] || "");
+    if (
+      message.includes("Cannot update a component") ||
+      message.includes("TurboModule") ||
+      message.includes("Invariant") ||
+      message.includes("Non-serializable")
+    ) {
       return;
     }
     originalWarn.call(console, ...args);
   });
 
   console.error = jest.fn((...args) => {
-    const message = String(args[0] || '');
-    if (message.includes('Warning:') ||
-        message.includes('TurboModule') ||
-        message.includes('Invariant') ||
-        message.includes('Error: ')) {
+    const message = String(args[0] || "");
+    if (
+      message.includes("Warning:") ||
+      message.includes("TurboModule") ||
+      message.includes("Invariant") ||
+      message.includes("Error: ")
+    ) {
       return;
     }
     originalError.call(console, ...args);

@@ -14,7 +14,7 @@ module.exports = {
     sdkVersion: "53.0.0",
     platforms: ["android"],
     version: require("./package.json").version,
-    orientation: "portrait",
+    orientation: "default",
     icon: "./assets/world.png",
     userInterfaceStyle: "light",
     newArchEnabled: false,

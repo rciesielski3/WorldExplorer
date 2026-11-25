@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  FlatList,
-  Text,
-  View,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { FlatList, Text, View, Image, TouchableOpacity, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -15,6 +8,7 @@ import { StackScreenProps } from "@react-navigation/stack";
 import { useTheme } from "../context/ThemeContext";
 import { getStyles } from "../styles";
 import { ScreenBackground } from "../src/components/ScreenBackground";
+import { ContentContainer } from "../src/components/ContentContainer";
 import AdBanner from "../src/components/AdBanner";
 import { SearchBar } from "../src/components/ui/SearchBar";
 import {
@@ -75,8 +69,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
 
     return countries.filter((country) => {
-      const matchesRegion =
-        !selectedRegion || country.region === selectedRegion;
+      const matchesRegion = !selectedRegion || country.region === selectedRegion;
       const searchableText = getSearchableCountryText(country);
 
       return matchesRegion && searchableText.includes(normalizedQuery);
@@ -98,11 +91,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
   );
 
   const renderItem = ({ item }: { item: Country }): React.JSX.Element => {
-    const metadata = [
-      item.capital,
-      item.region,
-      formatPopulation(item.population),
-    ].filter(Boolean);
+    const metadata = [item.capital, item.region, formatPopulation(item.population)].filter(Boolean);
 
     return (
       <TouchableOpacity
@@ -110,20 +99,13 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
         activeOpacity={0.78}
       >
         <View style={styles.countryCard}>
-          <Image
-            source={FLAG_ASSETS[item.flagPath]}
-            style={styles.countryCardFlag}
-          />
+          <Image source={FLAG_ASSETS[item.flagPath]} style={styles.countryCardFlag} />
           <View style={styles.cardContent}>
-            <Text style={styles.countryName}>
-              {getLocalizedCountryName(item, i18n.language)}
-            </Text>
+            <Text style={styles.countryName}>{getLocalizedCountryName(item, i18n.language)}</Text>
             <Text style={styles.countryMetaText}>{metadata.join(" · ")}</Text>
           </View>
           <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("Comparison", { initialCountries: [item] })
-            }
+            onPress={() => navigation.navigate("Comparison", { initialCountries: [item] })}
             testID={`compare-${item.code}`}
             accessibilityRole="button"
             accessibilityLabel={t("addToComparison", {
@@ -138,95 +120,81 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ navigation }) => {
               color={theme.colors.primary}
             />
           </TouchableOpacity>
-          <MaterialCommunityIcons
-            name="chevron-right"
-            size={22}
-            color={theme.colors.text}
-          />
+          <MaterialCommunityIcons name="chevron-right" size={22} color={theme.colors.text} />
         </View>
       </TouchableOpacity>
     );
   };
 
   return (
-    <View
-      style={[
-        styles.screenRoot,
-        { paddingTop: insets.top, paddingBottom: insets.bottom },
-      ]}
-    >
+    <View style={[styles.screenRoot, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <ScreenBackground gradient="explore" />
-      <View style={styles.containerContent}>
-        <View style={styles.exploreHeaderCard}>
-          <Text style={styles.title}>{t("exploreCountries")}</Text>
-          <Text style={styles.subtitle2}>{t("homeHeroSubtitle")}</Text>
-          <SearchBar
-            onSearch={setSearchQuery}
-            placeholder={t("searchCountryCapital")}
-            style={styles.searchInputWrap}
-          />
+      <ContentContainer>
+        <View style={styles.containerContent}>
+          <View style={styles.exploreHeaderCard}>
+            <Text style={styles.title}>{t("exploreCountries")}</Text>
+            <Text style={styles.subtitle2}>{t("homeHeroSubtitle")}</Text>
+            <SearchBar
+              onSearch={setSearchQuery}
+              placeholder={t("searchCountryCapital")}
+              style={styles.searchInputWrap}
+            />
+          </View>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.regionFilterRow}
+            contentContainerStyle={styles.regionFilterContent}
+          >
+            {REGION_FILTERS.map((filter) => {
+              const isActive = selectedRegion === filter.value;
+
+              return (
+                <TouchableOpacity
+                  key={filter.key}
+                  style={[styles.regionFilterChip, isActive && styles.regionFilterChipActive]}
+                  onPress={() => setSelectedRegion(filter.value)}
+                  activeOpacity={0.78}
+                >
+                  <Text
+                    style={[
+                      styles.regionFilterChipText,
+                      isActive && styles.regionFilterChipTextActive,
+                    ]}
+                  >
+                    {t(filter.labelKey)}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+
+          {loading ? (
+            renderSkeletonRows()
+          ) : (
+            <FlatList
+              data={filteredCountries}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.code3}
+              keyboardShouldPersistTaps="handled"
+              ListEmptyComponent={
+                <View style={styles.exploreEmptyState}>
+                  <MaterialCommunityIcons
+                    name="map-search-outline"
+                    size={32}
+                    color={theme.colors.text}
+                  />
+                  <Text style={styles.settingDescription} numberOfLines={2} ellipsizeMode="tail">
+                    {t("exploreEmptyState")}
+                  </Text>
+                </View>
+              }
+              contentContainerStyle={styles.exploreListContent}
+            />
+          )}
         </View>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.regionFilterRow}
-          contentContainerStyle={styles.regionFilterContent}
-        >
-          {REGION_FILTERS.map((filter) => {
-            const isActive = selectedRegion === filter.value;
-
-            return (
-              <TouchableOpacity
-                key={filter.key}
-                style={[
-                  styles.regionFilterChip,
-                  isActive && styles.regionFilterChipActive,
-                ]}
-                onPress={() => setSelectedRegion(filter.value)}
-                activeOpacity={0.78}
-              >
-                <Text
-                  style={[
-                    styles.regionFilterChipText,
-                    isActive && styles.regionFilterChipTextActive,
-                  ]}
-                >
-                  {t(filter.labelKey)}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-
-        {loading ? (
-          renderSkeletonRows()
-        ) : (
-          <FlatList
-            data={filteredCountries}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.code3}
-            keyboardShouldPersistTaps="handled"
-            ListEmptyComponent={
-              <View style={styles.exploreEmptyState}>
-                <MaterialCommunityIcons
-                  name="map-search-outline"
-                  size={32}
-                  color={theme.colors.text}
-                />
-                <Text
-                  style={styles.settingDescription}
-                  numberOfLines={2}
-                  ellipsizeMode="tail"
-                >
-                  {t("exploreEmptyState")}
-                </Text>
-              </View>
-            }
-            contentContainerStyle={styles.exploreListContent}
-          />
-        )}
-      </View>
+      </ContentContainer>
       <AdBanner />
     </View>
   );
