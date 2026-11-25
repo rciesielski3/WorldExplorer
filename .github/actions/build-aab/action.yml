@@ -28,7 +28,7 @@ runs:
   using: composite
   steps:
     - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
+      uses: gradle/actions/setup-gradle@v4
 
     - name: Decode Production Keystore
       id: keystore
@@ -54,9 +54,10 @@ runs:
         ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_STORE_PASSWORD: ${{ inputs.keystore-password }}
         ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_KEY_ALIAS: ${{ inputs.key-alias }}
         ORG_GRADLE_PROJECT_WORLDEXPLORER_UPLOAD_KEY_PASSWORD: ${{ inputs.key-password }}
+        ORG_GRADLE_PROJECT_MAPS_API_KEY: ${{ inputs.maps-api-key }}
       run: |
         chmod +x gradlew
-        ./gradlew bundleRelease --no-daemon --no-build-cache -x lint -PMAPS_API_KEY="${{ inputs.maps-api-key }}"
+        ./gradlew bundleRelease --no-daemon --no-build-cache -x lint
 
     - name: Verify AAB Output
       shell: bash
@@ -70,3 +71,8 @@ runs:
           echo "❌ AAB not found at $AAB_FILE"
           exit 1
         fi
+
+    - name: Remove keystore
+      if: always()
+      shell: bash
+      run: rm -f /tmp/worldexplorer.keystore

@@ -18,9 +18,10 @@ runs:
 
     - name: Verify AAB Signing
       shell: bash
+      env:
+        EXPECTED_SHA1: ${{ inputs.expected-sha1 }}
       run: |
         AAB_FILE="./android/app/build/outputs/bundle/release/app-release.aab"
-        EXPECTED_SHA1="${{ inputs.expected-sha1 }}"
 
         echo "Verifying AAB signing certificate..."
 
@@ -73,3 +74,8 @@ runs:
           echo "❌ Certificate mismatch! AAB is NOT signed with production key"
           exit 1
         fi
+
+    - name: Remove extracted AAB
+      if: always()
+      shell: bash
+      run: rm -rf /tmp/aab_extract
